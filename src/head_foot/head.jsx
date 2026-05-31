@@ -273,7 +273,7 @@ export default function Head() {
 
               {/* Dropdown panel */}
               {aboutOpen && (
-                <ul className="xl:absolute xl:right-0 xl:mt-2 w-full xl:w-48 bg-white border border-gray-100 rounded-md xl:shadow-lg py-1 z-50 text-xs sm:text-sm font-medium text-slate-700 animate-fadeIn">
+                <ul className="xl:absolute xl:left-0 xl:mt-2 xl:before:content-[''] xl:before:absolute xl:before:-top-2 xl:before:left-0 xl:before:right-0 xl:before:h-2 w-full xl:w-48 bg-white border border-gray-100 rounded-md xl:shadow-lg py-1 z-50 text-xs sm:text-sm font-medium text-slate-700 animate-fadeIn">
                   <li>
                     <NavLink to="/about/overview" className="block px-4 py-2 hover:bg-emerald-50 hover:text-[#08493d] transition-colors">
                       Overview
@@ -338,6 +338,22 @@ export default function Head() {
                 }
               >
                 Contact
+              </NavLink>
+            </li>
+
+            {/* Login Button */}
+            <li className="xl:pl-2">
+              <NavLink 
+                to="/login" 
+                className={({ isActive }) => 
+                  `inline-flex items-center justify-center px-4 py-1.5 rounded-md text-xs font-bold transition-all duration-150 ${
+                    isActive 
+                      ? 'bg-yellow-400 text-[#08493d] shadow-sm' 
+                      : 'bg-[#08493d] text-white hover:bg-[#063b31] hover:shadow-xs'
+                  }`
+                }
+              >
+                Login
               </NavLink>
             </li>
           </ul>

@@ -108,6 +108,143 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Academy Stats Banner Section */}
+      <section className="w-full bg-[#f6ebd8]/60 border-y border-[#e2d5c1] py-8 px-6 sm:px-12 lg:px-20 select-none">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+          
+          {/* Card 1: Conference Hall */}
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div className="text-[#08493d] mb-3">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <rect x="4" y="3" width="16" height="10" rx="1" />
+                <circle cx="12" cy="7" r="1.5" />
+                <path d="M9 11c0-1.2 1.2-1.5 3-1.5s3 .3 3 1.5" />
+                <path d="M2 17h20v2H2z" />
+                <path d="M5 19v2M19 19v2" />
+                <circle cx="8" cy="15" r="0.8" fill="currentColor" />
+                <circle cx="12" cy="15" r="0.8" fill="currentColor" />
+                <circle cx="16" cy="15" r="0.8" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">150</div>
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
+                Conference Hall Capacity
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Sukhatme Library */}
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div className="text-[#08493d] mb-3">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <rect x="4" y="4" width="4" height="16" rx="0.5" />
+                <path d="M4 8h4M4 16h4" />
+                <rect x="9" y="4" width="4" height="16" rx="0.5" />
+                <path d="M9 8h4M9 16h4" />
+                <g transform="rotate(15 15 12)">
+                  <rect x="13" y="3" width="4" height="16" rx="0.5" />
+                  <path d="M13 7h4M13 14h4" />
+                </g>
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">32348+</div>
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
+                Sukhatme Library
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Hostel Rooms */}
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div className="text-[#08493d] mb-3">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <rect x="4" y="6" width="16" height="14" rx="1.5" />
+                <path d="M3 6h18M6 3h12v3H6z" />
+                <rect x="7" y="9" width="3" height="3" rx="0.5" />
+                <rect x="14" y="9" width="3" height="3" rx="0.5" />
+                <rect x="7" y="14" width="3" height="3" rx="0.5" />
+                <rect x="14" y="14" width="3" height="3" rx="0.5" />
+                <path d="M11 20v-3h2v3" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">76+</div>
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
+                Hostel Rooms
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: CBC Accredited */}
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div className="text-[#08493d] mb-3">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="10" r="6" />
+                <path d="M12 6.5l1.1 2.2 2.4.4-1.7 1.7.4 2.4-2.2-1.1-2.2 1.1.4-2.4-1.7-1.7 2.4-.4z" fill="currentColor" />
+                <path d="M9.5 15.5l-1.5 5 4-2 4 2-1.5-5" strokeLinejoin="round" />
+                <circle cx="5" cy="6" r="0.6" fill="currentColor" />
+                <circle cx="19" cy="6" r="0.6" fill="currentColor" />
+                <circle cx="4" cy="11" r="0.6" fill="currentColor" />
+                <circle cx="20" cy="11" r="0.6" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">CBC</div>
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
+                Accredited
+              </div>
+            </div>
+          </div>
+
+          {/* Card 5: Sports Courts */}
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div className="text-[#08493d] mb-3">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <rect x="3" y="5" width="18" height="14" rx="1" />
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <circle cx="12" cy="12" r="3" />
+                <rect x="3" y="8" width="4" height="8" />
+                <rect x="17" y="8" width="4" height="8" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">7</div>
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
+                Sports Courts
+              </div>
+            </div>
+          </div>
+
+          {/* Card 6: Training Participants */}
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div className="text-[#08493d] mb-3">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <rect x="6" y="3" width="12" height="8" rx="1" />
+                <path d="M9 6h6M9 8h4" />
+                <circle cx="4" cy="7" r="1.2" />
+                <path d="M2 12c0-1.5 1-2 2-2s2 .5 2 2" />
+                <line x1="4.5" y1="9" x2="6.5" y2="7" />
+                <circle cx="8" cy="16" r="1" />
+                <path d="M7 19c0-.8.6-1.2 1-1.2s1 .4 1 1.2" />
+                <circle cx="12" cy="16" r="1" />
+                <path d="M11 19c0-.8.6-1.2 1-1.2s1 .4 1 1.2" />
+                <circle cx="16" cy="16" r="1" />
+                <path d="M15 19c0-.8.6-1.2 1-1.2s1 .4 1 1.2" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">4960+</div>
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
+                Training Participants
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* Core Gateways (LMS, KMS, Officers Desktop) */}
       <section className="max-w-7xl mx-auto py-12 px-6 sm:px-12 lg:px-20 grid grid-cols-1 md:grid-cols-3 gap-8">
         
