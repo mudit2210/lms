@@ -207,24 +207,41 @@ export default function SideBar({ activeTab, setActiveTab, isSidebarOpen, setIsS
 
       {/* Menu Links */}
       <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-        {menuItems.map((item) => {
-          const isActive = activeTab === item.id;
+        {menuGroups.map((group, groupIndex) => {
+          // Skip the last group (Workspace Navigation) — it's rendered separately below
+          if (group.title === 'Workspace Navigation') return null;
           return (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id);
-                if (setIsSidebarOpen) setIsSidebarOpen(false);
-              }}
-              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-150 cursor-pointer ${
-                isActive 
-                  ? 'bg-blue-600 text-white shadow-sm' 
-                  : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
-              }`}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
+            <div key={groupIndex} className="space-y-1">
+              {group.title && (
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 pt-2 pb-1">
+                  {group.title}
+                </p>
+              )}
+              {group.items.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.onClick) {
+                        item.onClick();
+                      } else {
+                        setActiveTab(item.id);
+                      }
+                      if (setIsSidebarOpen) setIsSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-150 cursor-pointer ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           );
         })}
 
