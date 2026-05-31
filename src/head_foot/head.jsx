@@ -5,6 +5,40 @@ export default function Head() {
   const [searchQuery, setSearchQuery] = useState('');
   const [aboutOpen, setAboutOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  React.useEffect(() => {
+    const handleAuthChange = () => {
+      try {
+        const savedUser = localStorage.getItem('user');
+        setUser(savedUser ? JSON.parse(savedUser) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener('auth-change', handleAuthChange);
+    window.addEventListener('storage', handleAuthChange);
+    return () => {
+      window.removeEventListener('auth-change', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    setProfileOpen(false);
+    window.dispatchEvent(new Event('auth-change'));
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -329,6 +363,32 @@ export default function Head() {
               </NavLink>
             </li>
 
+            {/* Admin Console (Visible only for admin role) */}
+            {user?.role === 'admin' && (
+              <li>
+                <NavLink 
+                  to="/admin/users" 
+                  className={({ isActive }) => 
+                    `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  }
+                >
+                  Admin Console
+                </NavLink>
+              </li>
+            )}
+
+            {/* Course Registration */}
+            <li>
+              <NavLink 
+                to="/course-registration" 
+                className={({ isActive }) => 
+                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                }
+              >
+                Register Course
+              </NavLink>
+            </li>
+
             {/* Contact */}
             <li>
               <NavLink 
@@ -341,21 +401,56 @@ export default function Head() {
               </NavLink>
             </li>
 
-            {/* Login Button */}
-            <li className="xl:pl-2">
-              <NavLink 
-                to="/login" 
-                className={({ isActive }) => 
-                  `inline-flex items-center justify-center px-4 py-1.5 rounded-md text-xs font-bold transition-all duration-150 ${
-                    isActive 
-                      ? 'bg-yellow-400 text-[#08493d] shadow-sm' 
-                      : 'bg-[#08493d] text-white hover:bg-[#063b31] hover:shadow-xs'
-                  }`
-                }
-              >
-                Login
-              </NavLink>
-            </li>
+            {/* Login Button or Profile Dropdown */}
+            {user ? (
+              <li className="relative xl:pl-2">
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-[#08493d] border border-emerald-250 rounded-md text-xs font-bold hover:bg-emerald-100 transition-colors focus:outline-none cursor-pointer"
+                >
+                  <svg className="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>{user.name}</span>
+                  <svg className={`h-3 w-3 ml-0.5 transform transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {profileOpen && (
+                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-48 bg-white border border-gray-150 rounded-lg shadow-lg py-1.5 z-50 text-xs font-semibold text-slate-700 animate-fadeIn">
+                    <li className="px-4 py-2 border-b border-gray-100 bg-slate-50/50">
+                      <p className="font-extrabold text-slate-800 leading-tight">{user.name}</p>
+                      <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-wider mt-0.5">{user.role} Portal</p>
+                      <p className="text-[10px] text-slate-400 font-normal truncate mt-0.5">{user.email}</p>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2.5 hover:bg-rose-50 hover:text-rose-700 font-bold transition-colors border-t border-gray-100 cursor-pointer"
+                      >
+                        Sign Out
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </li>
+            ) : (
+              <li className="xl:pl-2">
+                <NavLink 
+                  to="/login" 
+                  className={({ isActive }) => 
+                    `inline-flex items-center justify-center px-4 py-1.5 rounded-md text-xs font-bold transition-all duration-150 ${
+                      isActive 
+                        ? 'bg-yellow-400 text-[#08493d] shadow-sm' 
+                        : 'bg-[#08493d] text-white hover:bg-[#063b31] hover:shadow-xs'
+                    }`
+                  }
+                >
+                  Login
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </nav>

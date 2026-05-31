@@ -3,6 +3,8 @@ import Head from './head_foot/head'
 import Foot from './head_foot/foot'
 import Home from './project/home'
 import Login from './project/login'
+import UserManagement from './project/user_management'
+import CourseRegistration from './project/course_registration'
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin/users" element={<UserManagement />} />
+            <Route path="/course-registration" element={<CourseRegistration />} />
             <Route path="/contact" element={<div className="text-lg font-medium text-slate-800 p-6 bg-white m-6 rounded-lg border border-gray-250 shadow-2xs">Contact Page</div>} />
             <Route path="/documents" element={<div className="text-lg font-medium text-slate-800 p-6 bg-white m-6 rounded-lg border border-gray-250 shadow-2xs">Documents Page</div>} />
             <Route path="/trainings" element={<div className="text-lg font-medium text-slate-800 p-6 bg-white m-6 rounded-lg border border-gray-250 shadow-2xs">Trainings Page</div>} />
