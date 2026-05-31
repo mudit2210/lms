@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function GovernanceQueue({
+export default function ApprovalWorkflow({
   repoFiles,
   handleQuarantineAction,
   activeRole
@@ -11,7 +11,7 @@ export default function GovernanceQueue({
   const pendingReviewFiles = repoFiles.filter(f => f.status === 'Quarantine');
 
   return (
-    <div className="space-y-6 animate-fadeIn text-xs font-semibold text-slate-700 select-none">
+    <div className="space-y-6 animate-fadeIn text-xs font-semibold text-slate-700 select-none text-left">
       
       {/* Overview stats header */}
       <div className="bg-white p-5 rounded-2xl border border-gray-155 shadow-2xs grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -99,25 +99,25 @@ export default function GovernanceQueue({
                     </span>
                   </td>
 
-                  {/* Release options */}
+                  {/* Approvals buttons */}
                   <td className="p-4 pr-6 text-right space-x-2">
                     {canModerate ? (
                       <>
-                        <button
-                          onClick={() => handleQuarantineAction(file.id, 'approve')}
-                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-extrabold text-[10px] shadow-2xs cursor-pointer"
+                        <button 
+                          onClick={() => handleQuarantineAction(file.id, 'Active')}
+                          className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-extrabold shadow-3xs cursor-pointer"
                         >
-                          Release & Publish
+                          Approve Release (✓)
                         </button>
-                        <button
-                          onClick={() => handleQuarantineAction(file.id, 'delete')}
-                          className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-extrabold text-[10px] shadow-2xs cursor-pointer"
+                        <button 
+                          onClick={() => handleQuarantineAction(file.id, 'Reject')}
+                          className="px-2.5 py-1 bg-rose-650 hover:bg-rose-700 text-white rounded text-[10px] font-extrabold shadow-3xs cursor-pointer bg-red-650"
                         >
-                          Delete Draft
+                          Reject
                         </button>
                       </>
                     ) : (
-                      <span className="text-[10px] font-medium text-slate-400 italic">Director Approval Required</span>
+                      <span className="text-slate-400 italic">Unauthorized</span>
                     )}
                   </td>
 
@@ -126,8 +126,9 @@ export default function GovernanceQueue({
             </tbody>
           </table>
         ) : (
-          <div className="p-12 text-center text-slate-400 italic">
-            ✓ Excellent! No draft documents are pending supervisor quality validation currently.
+          <div className="p-8 text-center text-slate-400 italic text-xs space-y-1">
+            <p className="font-bold">✓ All document submissions cleared and released!</p>
+            <p className="text-[10px] text-slate-400 font-normal">Academic review quarantine pipeline contains 0 pending files.</p>
           </div>
         )}
 

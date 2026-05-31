@@ -18,7 +18,7 @@ export default function CourseTreeBuilder({
   handleSaveTopicContent,
   handleOrderSequence
 }) {
-  const canEdit = ['admin', 'coordinator', 'trainer'].includes(activeRole);
+  const canEdit = ['Super Admin', 'Content Manager', 'Trainer'].includes(activeRole);
 
   const activeCourse = coursesData.find(c => c.id === selectedCourseId);
   const activeLesson = activeCourse?.lessons.find(l => l.id === selectedLessonId);

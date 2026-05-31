@@ -14,8 +14,8 @@ export default function CentralRepository({
   setShowUploadModal,
   onDownload
 }) {
-  const canUpload = ['admin', 'coordinator', 'director', 'trainer'].includes(activeRole);
-  const canModerate = ['admin', 'director'].includes(activeRole);
+  const canUpload = ['Super Admin', 'Content Manager', 'Trainer'].includes(activeRole);
+  const canModerate = ['Super Admin', 'Reviewer'].includes(activeRole);
 
   const filteredFiles = repoFiles.filter(file => {
     const matchesSearch = file.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
