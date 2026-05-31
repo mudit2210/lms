@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import TrainingModule from './modules/TrainingModule';
+import EventsModule from './modules/EventsModule';
+import TNAModule from './modules/TNAModule';
+import BatchModule from './modules/BatchModule';
+import AttendanceModule from './modules/AttendanceModule';
+import AssignmentModule from './modules/AssignmentModule';
+import CMSModule from './modules/CMSModule';
+
 // Custom Reusable Expandable Sidebar Sub-menu Component
 function SidebarExpandableMenu({
   title,
@@ -397,8 +405,94 @@ export default function AdminDashboard() {
             ]}
           />
 
+          {/* TNA Needs assessment */}
+          <button
+            onClick={() => { setActiveDashboardTab('tna'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              activeDashboardTab === 'tna'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>TNA Need Assessment</span>
+          </button>
+
+          {/* Group & Batches */}
+          <button
+            onClick={() => { setActiveDashboardTab('batch'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              activeDashboardTab === 'batch'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>Batches & Groups</span>
+          </button>
+
+          {/* Attendance Module */}
+          <button
+            onClick={() => { setActiveDashboardTab('attendance'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              activeDashboardTab === 'attendance'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            <span>Roster Attendance</span>
+          </button>
+
+          {/* Assignment Desk */}
+          <button
+            onClick={() => { setActiveDashboardTab('assignment'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              activeDashboardTab === 'assignment'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+            </svg>
+            <span>Assignment Desk</span>
+          </button>
+
+          {/* CMS Module */}
+          <button
+            onClick={() => { setActiveDashboardTab('cms'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              activeDashboardTab === 'cms'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span>Syllabus CMS</span>
+          </button>
+
           <button
             onClick={() => { navigate('/admin/e-hostel'); setIsSidebarOpen(false); }}
+
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
               theme === 'light'
                 ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
@@ -1590,487 +1684,39 @@ export default function AdminDashboard() {
           </>
         )}
 
-        {/* 🎓 Course & Training Management Workspace Layout */}
+        {/* 🎓 Course & Training Management Module */}
         {activeDashboardTab === 'training' && (
-          <div className="space-y-6 text-left animate-fadeIn">
-            {/* Header Section */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <span className="w-2.5 h-6 bg-emerald-500 rounded-full inline-block"></span>
-                  🎓 Course & Training Management Workspace
-                </h2>
-                <p className="text-xs text-slate-400 font-semibold mt-1">
-                  Administer training catalogs, session schedules, faculty allocations, and isolated batch workspaces.
-                </p>
-              </div>
-              <button
-                onClick={() => setActiveDashboardTab('console')}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                ➔ Back to Console Dashboard
-              </button>
-            </div>
-
-            {/* Sub-Tab Pills Navigation */}
-            <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3 font-sans">
-              {[
-                { id: 'all', label: '🗂️ Overview Summary' },
-                { id: 'induction', label: '🎓 Induction Training' },
-                { id: 'refresher', label: '🔄 Refresher Training' },
-                { id: 'domain', label: '💻 Domain Training' },
-                { id: 'international', label: '🌎 International Training' },
-                { id: 'schedules', label: '🗓️ Session Schedules' },
-                { id: 'faculty', label: '👥 Faculty Mapping' },
-                { id: 'venues', label: '📍 Venue Allocation' }
-              ].map(sub => (
-                <button
-                  key={sub.id}
-                  onClick={() => setActiveSubTab(sub.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeSubTab === sub.id
-                      ? 'bg-[#08493d] text-white shadow-xs'
-                      : 'bg-white border border-gray-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  {sub.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Active Content renders */}
-            {activeSubTab === 'all' && (
-              <div className="space-y-6">
-                {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Active Programs</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">{simulatedCounts.programs}</p>
-                    <p className="text-[10px] text-emerald-600 mt-1.5 font-bold">✓ MoSPI aligned</p>
-                  </div>
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Scheduled Batches</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">18 Batches</p>
-                    <p className="text-[10px] text-purple-600 mt-1.5 font-bold">👤 1,200 Trainees Mapped</p>
-                  </div>
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Mapped Faculty</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">42 Professors</p>
-                    <p className="text-[10px] text-blue-600 mt-1.5 font-bold">✓ 4.8 / 5 Rating Average</p>
-                  </div>
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Venues Allocated</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">4 / 6 Lecture Halls</p>
-                    <p className="text-[10px] text-amber-600 mt-1.5 font-bold">⚠ 2 available halls</p>
-                  </div>
-                </div>
-
-                {/* Training Catalog Table */}
-                <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs">
-                  <div className="p-5 border-b border-gray-150 flex justify-between items-center">
-                    <div>
-                      <h4 className="font-extrabold text-slate-800">MoSPI Course Training Programs Catalog</h4>
-                      <p className="text-[11px] text-slate-400 font-medium">Currently active official programs inside the Academy.</p>
-                    </div>
-                    <span className="bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold px-3 py-1 rounded text-xs">
-                      Live Registry
-                    </span>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs font-semibold text-slate-600">
-                      <thead className="bg-slate-50 border-b border-gray-150 uppercase tracking-wider text-slate-400 font-black text-[10px]">
-                        <tr>
-                          <th className="p-4">Program Code</th>
-                          <th className="p-4">Program Name</th>
-                          <th className="p-4">Type</th>
-                          <th className="p-4">Duration</th>
-                          <th className="p-4">Venue</th>
-                          <th className="p-4">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100 font-medium text-slate-700">
-                        {[
-                          { code: 'TRN-IND-001', name: '46th Batch Induction Course for ISS Probationers', type: 'Induction Training', duration: '2 Weeks', venue: 'Lecture Hall A', status: 'ACTIVE' },
-                          { code: 'TRN-REF-002', name: 'Time Series & Forecasting Applied Practicum', type: 'Refresher Training', duration: '1 Week', venue: 'Computer Lab 2', status: 'ACTIVE' },
-                          { code: 'TRN-DOM-003', name: 'National Accounts Statistics & GDP Estimations', type: 'Domain Training', duration: '3 Days', venue: 'Conference Room 1', status: 'ACTIVE' },
-                          { code: 'TRN-INT-004', name: 'SAARC Senior Statistical Officers Seminar', type: 'International Training', duration: '5 Days', venue: 'Lecture Hall B', status: 'ACTIVE' }
-                        ].map((prog) => (
-                          <tr key={prog.code} className="hover:bg-slate-50/50">
-                            <td className="p-4 font-mono font-bold text-slate-500">{prog.code}</td>
-                            <td className="p-4 font-extrabold text-slate-800">{prog.name}</td>
-                            <td className="p-4">
-                              <span className="bg-slate-100 border border-gray-200 px-2 py-0.5 rounded text-[10px] font-bold">
-                                {prog.type}
-                              </span>
-                            </td>
-                            <td className="p-4">{prog.duration}</td>
-                            <td className="p-4">{prog.venue}</td>
-                            <td className="p-4">
-                              <span className="bg-emerald-50 text-emerald-700 border border-emerald-250 px-2 py-0.5 rounded text-[9px] font-black tracking-wider">
-                                {prog.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Induction, Refresher, Domain, International sub-tabs */}
-            {['induction', 'refresher', 'domain', 'international'].includes(activeSubTab) && (
-              <div className="space-y-6">
-                <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-4">
-                  <h4 className="font-extrabold text-slate-800 capitalize">{activeSubTab} Training Directory</h4>
-                  <p className="text-xs text-slate-400 font-medium">Manage and review curriculum tracks assigned specifically to {activeSubTab} tracks.</p>
-
-                  <div className="border border-gray-150 rounded-xl bg-slate-50 p-4 space-y-3">
-                    <p className="text-xs font-extrabold text-slate-700">Add New Mapped Program to Category:</p>
-                    <form onSubmit={handleCreateMockProgram} className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <input
-                        type="text"
-                        required
-                        value={programInput.name}
-                        onChange={(e) => setProgramInput({ name: e.target.value, type: activeSubTab === 'induction' ? 'Induction Training' : activeSubTab === 'refresher' ? 'Refresher Training' : activeSubTab === 'domain' ? 'Domain Training' : 'International Training' })}
-                        placeholder="Program Name (e.g. Statistical Estimations Phase 2)..."
-                        className="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-slate-755 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium col-span-2"
-                      />
-                      <button
-                        type="submit"
-                        className="bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs py-1.5 rounded-lg cursor-pointer transition-colors"
-                      >
-                        Create Mapped Program
-                      </button>
-                    </form>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center text-slate-450 py-12">
-                  <svg className="w-12 h-12 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                  </svg>
-                  <p className="font-extrabold text-slate-600">Simulated database entries populated successfully.</p>
-                  <p className="text-[11px] mt-1">Use the creator card above to register customized mock courses dynamically.</p>
-                </div>
-              </div>
-            )}
-
-            {/* Session Schedules sub-tab */}
-            {activeSubTab === 'schedules' && (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xs space-y-4">
-                <div>
-                  <h4 className="font-extrabold text-slate-800 font-sans">Dynamic Session Schedules Scheduler</h4>
-                  <p className="text-xs text-slate-400 font-semibold mt-0.5">Define session times, lectures, mapping courses to active batches.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-100 pt-4 font-semibold text-slate-600">
-                  <div className="space-y-1 bg-slate-50 p-4 rounded-xl border border-gray-150">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Schedule Slot 1</p>
-                    <p className="text-sm font-extrabold text-slate-800 mt-1">09:30 AM - 11:30 AM</p>
-                    <p className="text-xs text-slate-500 mt-1">Topic: Linear Regression & ARIMA Models</p>
-                    <p className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-100 rounded px-1.5 py-0.5 inline-block mt-2 font-bold">Lecture Hall A</p>
-                  </div>
-                  <div className="space-y-1 bg-slate-50 p-4 rounded-xl border border-gray-150">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Schedule Slot 2</p>
-                    <p className="text-sm font-extrabold text-slate-800 mt-1">12:00 PM - 02:00 PM</p>
-                    <p className="text-xs text-slate-500 mt-1">Topic: Official Statistics Protocols & TNA Needs</p>
-                    <p className="text-[10px] text-purple-700 bg-purple-50 border border-purple-100 rounded px-1.5 py-0.5 inline-block mt-2 font-bold">Conference Room 1</p>
-                  </div>
-                  <div className="space-y-1 bg-slate-50 p-4 rounded-xl border border-gray-150">
-                    <p className="text-[10px] text-slate-400 font-black uppercase">Schedule Slot 3</p>
-                    <p className="text-sm font-extrabold text-slate-800 mt-1">03:00 PM - 05:00 PM</p>
-                    <p className="text-xs text-slate-500 mt-1">Topic: P2P Governance draft evaluations</p>
-                    <p className="text-[10px] text-blue-700 bg-blue-50 border border-blue-100 rounded px-1.5 py-0.5 inline-block mt-2 font-bold">Lecture Hall B</p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => alert("Successfully added simulated Session. Notifications dispatched to mapped batch Trainees.")}
-                  className="px-4 py-2 bg-[#08493d] hover:bg-[#063b31] text-white font-bold text-xs rounded-lg cursor-pointer mt-2"
-                >
-                  + Add Simulated Session Schedule Slot
-                </button>
-              </div>
-            )}
-
-            {/* Faculty Mapping sub-tab */}
-            {activeSubTab === 'faculty' && (
-              <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs">
-                <div className="p-5 border-b border-gray-150">
-                  <h4 className="font-extrabold text-slate-800 font-sans">Faculty & Instructor Mapping Register</h4>
-                  <p className="text-xs text-slate-450 mt-0.5">Assign professors and external field coordinators to active schedules.</p>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs font-semibold text-slate-655">
-                    <thead className="bg-slate-50 border-b border-gray-150 uppercase tracking-wider text-slate-400 font-black text-[10px]">
-                      <tr>
-                        <th className="p-4">Faculty Name</th>
-                        <th className="p-4">Designation</th>
-                        <th className="p-4">Department</th>
-                        <th className="p-4">Assigned Active Course</th>
-                        <th className="p-4">Load / Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 text-slate-700">
-                      {[
-                        { name: 'Dr. Ramesh Kumar', des: 'Senior Advisor', dept: 'Applied Statistics', course: 'Time Series forecasting II', load: '4 Lectures / Week', status: 'ACTIVE' },
-                        { name: 'Prof. Ananya Sen', des: 'Warden Faculty', dept: 'Macroeconomics Dept', course: 'National Accounts Statistics', load: '2 Lectures / Week', status: 'ACTIVE' },
-                        { name: 'Sanjay Deshmukh', des: 'System Admin Coordinator', dept: 'NIC Security Desk', course: 'SSO SSO Protocols', load: '1 Seminar / Week', status: 'ACTIVE' }
-                      ].map((fac) => (
-                        <tr key={fac.name} className="hover:bg-slate-50/50">
-                          <td className="p-4 font-extrabold text-slate-800">{fac.name}</td>
-                          <td className="p-4">{fac.des}</td>
-                          <td className="p-4">{fac.dept}</td>
-                          <td className="p-4 font-bold text-[#08493d]">{fac.course}</td>
-                          <td className="p-4">
-                            <span className="text-[10px] text-slate-500 font-bold bg-slate-100 border border-gray-200 rounded px-2 py-0.5">{fac.load}</span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Venue Allocation sub-tab */}
-            {activeSubTab === 'venues' && (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xs space-y-4">
-                <div>
-                  <h4 className="font-extrabold text-slate-800 font-sans">Venue & Lecture Hall Allocations Dashboard</h4>
-                  <p className="text-xs text-slate-450 font-semibold mt-0.5">Track and book academic lecture spaces across campus wings.</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-semibold text-slate-655 pt-2">
-                  {[
-                    { hall: 'Lecture Hall A', cap: '60 Learners', status: 'OCCUPIED', border: 'border-rose-200 bg-rose-50/30' },
-                    { hall: 'Lecture Hall B', cap: '45 Learners', status: 'AVAILABLE', border: 'border-emerald-200 bg-emerald-50/30' },
-                    { hall: 'Conference Room 1', cap: '20 Learners', status: 'OCCUPIED', border: 'border-rose-200 bg-rose-50/30' },
-                    { hall: 'Computer Lab 2', cap: '30 Learners', status: 'AVAILABLE', border: 'border-emerald-200 bg-emerald-50/30' }
-                  ].map(ven => (
-                    <div key={ven.hall} className={`p-4 border rounded-xl shadow-3xs flex flex-col justify-between ${ven.border}`}>
-                      <div>
-                        <p className="text-xs font-black text-slate-800">{ven.hall}</p>
-                        <p className="text-[10px] text-slate-450 mt-0.5">Capacity: {ven.cap}</p>
-                      </div>
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded border inline-block mt-3 w-max ${
-                        ven.status === 'AVAILABLE' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-rose-100 text-rose-800 border-rose-200'
-                      }`}>
-                        {ven.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <TrainingModule activeSubTab={activeSubTab} setActiveSubTab={setActiveSubTab} theme={theme} />
         )}
 
-        {/* 📅 Calendar & Event Management Workspace Layout */}
+        {/* 📅 Calendar & Event Management Module */}
         {activeDashboardTab === 'events' && (
-          <div className="space-y-6 text-left animate-fadeIn">
-            {/* Header Section */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <span className="w-2.5 h-6 bg-amber-500 rounded-full inline-block"></span>
-                  📅 Calendar & Event Management Workspace
-                </h2>
-                <p className="text-xs text-slate-400 font-semibold mt-1">
-                  Coordinate trainee timelines, publish sports events, essay contests, and verify participant certificates.
-                </p>
-              </div>
-              <button
-                onClick={() => setActiveDashboardTab('console')}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                ➔ Back to Console Dashboard
-              </button>
-            </div>
+          <EventsModule activeSubTab={activeSubTab} setActiveSubTab={setActiveSubTab} theme={theme} />
+        )}
 
-            {/* Sub-Tab Pills Navigation */}
-            <div className="flex flex-wrap gap-2 border-b border-gray-250 pb-3 font-sans">
-              {[
-                { id: 'all', label: '🗂️ Events Overview' },
-                { id: 'training_cal', label: '📅 Training Calendar' },
-                { id: 'faculty_cal', label: '👨‍🏫 Faculty Calendar' },
-                { id: 'trainee_cal', label: '👨‍🎓 Trainee Calendar' },
-                { id: 'campus_events', label: '🏅 Campus Events' }
-              ].map(sub => (
-                <button
-                  key={sub.id}
-                  onClick={() => setActiveSubTab(sub.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeSubTab === sub.id
-                      ? 'bg-amber-600 text-white shadow-xs'
-                      : 'bg-white border border-gray-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  {sub.label}
-                </button>
-              ))}
-            </div>
+        {/* 🎯 Training Need Assessment (TNA) Module */}
+        {activeDashboardTab === 'tna' && (
+          <TNAModule theme={theme} />
+        )}
 
-            {/* Active Content renders */}
-            {activeSubTab === 'all' && (
-              <div className="space-y-6">
-                {/* Event Highlights stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-450 font-black uppercase">Published Events</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">{simulatedCounts.events} Live</p>
-                    <p className="text-[10px] text-amber-700 mt-1.5 font-bold">✓ Active registration</p>
-                  </div>
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-455 font-black uppercase">Enrolled Contesters</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">112 Registrants</p>
-                    <p className="text-[10px] text-blue-600 mt-1.5 font-bold">👥 Sports & Quiz categories</p>
-                  </div>
-                  <div className="bg-white border border-gray-200 p-5 rounded-2xl shadow-xs">
-                    <p className="text-[10px] text-slate-455 font-black uppercase">Certificates Issued</p>
-                    <p className="text-3xl font-black text-slate-800 mt-1">94 Mapped</p>
-                    <p className="text-[10px] text-emerald-600 mt-1.5 font-bold">✓ Cryptographically Sealed</p>
-                  </div>
-                </div>
+        {/* 👥 Group & Batch Management Module */}
+        {activeDashboardTab === 'batch' && (
+          <BatchModule theme={theme} />
+        )}
 
-                {/* Campus Events Table */}
-                <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs">
-                  <div className="p-5 border-b border-gray-150">
-                    <h4 className="font-extrabold text-slate-800 font-sans">Active Extracurricular Events Board</h4>
-                    <p className="text-xs text-slate-455 mt-0.5">Syllabus-aligned sports, essay contests and quiz sessions.</p>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs font-semibold text-slate-600">
-                      <thead className="bg-slate-50 border-b border-gray-150 uppercase tracking-wider text-slate-400 font-black text-[10px]">
-                        <tr>
-                          <th className="p-4">Event Category</th>
-                          <th className="p-4">Event Title</th>
-                          <th className="p-4">Scheduled Date</th>
-                          <th className="p-4">Registrations</th>
-                          <th className="p-4">Status Check</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100 text-slate-700">
-                        {[
-                          { cat: 'Quiz Event', title: 'National Statistical Academy General Quiz 2026', date: 'June 05, 2026', regs: '42 Trainees', status: 'REGISTRATION OPEN' },
-                          { cat: 'Essay Competition', title: 'Economic Policy Writing & Forecasting Contest', date: 'June 12, 2026', regs: '18 Submissions', status: 'PENDING SUBMISSIONS' },
-                          { cat: 'Sports Event', title: 'NSTA Annual Inter-Batch Table Tennis Cup', date: 'June 20, 2026', regs: '32 Contesters', status: 'REGISTRATION OPEN' }
-                        ].map((evt, index) => (
-                          <tr key={index} className="hover:bg-slate-50/50">
-                            <td className="p-4">
-                              <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded text-[10px] font-bold">
-                                {evt.cat}
-                              </span>
-                            </td>
-                            <td className="p-4 font-extrabold text-slate-800">{evt.title}</td>
-                            <td className="p-4 font-bold">{evt.date}</td>
-                            <td className="p-4">{evt.regs}</td>
-                            <td className="p-4">
-                              <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[9px] font-black tracking-wider">
-                                {evt.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
+        {/* 📊 Attendance Management Module */}
+        {activeDashboardTab === 'attendance' && (
+          <AttendanceModule theme={theme} />
+        )}
 
-            {/* Training Calendar / Faculty Calendar / Trainee Calendar month view grid */}
-            {['training_cal', 'faculty_cal', 'trainee_cal'].includes(activeSubTab) && (
-              <div className="space-y-6">
-                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-4">
-                  <h4 className="font-extrabold text-slate-800 capitalize font-sans">{activeSubTab.replace('_', ' ')} Grid View</h4>
-                  <p className="text-xs text-slate-400 font-semibold">Interactive Monthly calendar console block.</p>
-                  
-                  {/* Calendar Grid 7 columns */}
-                  <div className="grid grid-cols-7 gap-1 text-center font-sans font-extrabold text-xs text-slate-500 select-none border-b border-gray-200 pb-2">
-                    {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(day => (
-                      <div key={day} className="p-2 text-[10px] font-black text-slate-400">{day}</div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-1.5 font-sans font-bold text-xs select-none">
-                    {/* Render 31 mock days */}
-                    {Array.from({ length: 31 }).map((_, index) => {
-                      const dayNumber = index + 1;
-                      const hasEvent = dayNumber === 5 || dayNumber === 12 || dayNumber === 20;
-                      return (
-                        <div
-                          key={dayNumber}
-                          onClick={() => {
-                            if (hasEvent) {
-                              alert(`Event on Day ${dayNumber}: Mapped official NSTA Session active.`);
-                            } else {
-                              alert(`Day ${dayNumber} is clear. Click 'Add Session' to book this slot.`);
-                            }
-                          }}
-                          className={`p-3 rounded-xl border flex flex-col justify-between items-start h-20 transition-all cursor-pointer ${
-                            hasEvent 
-                              ? 'border-amber-250 bg-amber-50/50 hover:bg-amber-100/50' 
-                              : 'border-gray-200 bg-white hover:bg-slate-50'
-                          }`}
-                        >
-                          <span className="text-[11px] text-slate-400 font-black">{dayNumber}</span>
-                          {hasEvent && (
-                            <span className="text-[9px] bg-amber-600 text-white font-extrabold px-1.5 py-0.2 rounded mt-2 truncate w-full block text-left">
-                              {dayNumber === 5 ? '🎯 NSTA Quiz' : dayNumber === 12 ? '📝 Essay Contest' : '🏓 TT Cup'}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
+        {/* 📝 Assignment Management Module */}
+        {activeDashboardTab === 'assignment' && (
+          <AssignmentModule theme={theme} />
+        )}
 
-            {/* Campus Events Subtab */}
-            {activeSubTab === 'campus_events' && (
-              <div className="space-y-6">
-                <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-4">
-                  <h4 className="font-extrabold text-slate-800">Publish Campus Extracurricular Event</h4>
-                  <form onSubmit={handleCreateMockEvent} className="border-t border-gray-100 pt-4 space-y-4 font-semibold text-slate-655">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label>Event Category Type</label>
-                        <select
-                          value={eventInput.type}
-                          onChange={(e) => setEventInput({ ...eventInput, type: e.target.value })}
-                          className="w-full bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium"
-                        >
-                          <option value="Quiz Event">Quiz Event</option>
-                          <option value="Sports Event">Sports Event</option>
-                          <option value="Essay Competition">Essay Competition</option>
-                        </select>
-                      </div>
-                      <div className="space-y-1">
-                        <label>Event Name Title</label>
-                        <input
-                          type="text"
-                          required
-                          value={eventInput.name}
-                          onChange={(e) => setEventInput({ ...eventInput, name: e.target.value })}
-                          placeholder="e.g. Academy Chess Tournament 2026..."
-                          className="w-full bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-slate-750 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="px-5 py-2 bg-amber-700 hover:bg-amber-855 text-white font-bold text-xs rounded-lg cursor-pointer"
-                    >
-                      Publish Simulated Event
-                    </button>
-                  </form>
-                </div>
-              </div>
-            )}
-          </div>
+        {/* 📚 Content Management System (CMS) */}
+        {activeDashboardTab === 'cms' && (
+          <CMSModule theme={theme} />
         )}
         </main>
       </div>
