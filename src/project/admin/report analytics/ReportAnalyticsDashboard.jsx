@@ -22,6 +22,7 @@ export default function ReportAnalyticsDashboard() {
   const [selectedCadre, setSelectedCadre] = useState('All Cadres');
   const [selectedDesignation, setSelectedDesignation] = useState('All Designations');
   const [selectedTrainingType, setSelectedTrainingType] = useState('All Types');
+  const [selectedCourse, setSelectedCourse] = useState('All Courses');
   const [activeProfile, setActiveProfile] = useState('Super Admin');
 
   // Report Center Form state
@@ -38,7 +39,8 @@ export default function ReportAnalyticsDashboard() {
   // KPI metrics (filter-responsive)
   const [kpiData, setKpiData] = useState({
     learners: 245860, courses: 1250, completionRate: 87.5,
-    dropoutRate: 8.2, certifications: 195420, avgHours: 16.5
+    dropoutRate: 8.2, certifications: 195420, avgHours: 16.5,
+    attendanceRate: 92.4, feedbackScore: 4.6
   });
 
   // Update KPI when global filters change
@@ -78,9 +80,11 @@ export default function ReportAnalyticsDashboard() {
       completionRate: Number((82 + (seed % 10) + (dateMultiplier * 5)).toFixed(1)),
       dropoutRate: Number((5 + (seed % 6) + (2 - dateMultiplier * 2)).toFixed(1)),
       certifications: Math.max(5, Math.floor(195420 * m)),
-      avgHours: Number((12 + (seed % 8)).toFixed(1))
+      avgHours: Number((12 + (seed % 8)).toFixed(1)),
+      attendanceRate: Number((85 + (seed % 10) + (profileMultiplier * 5)).toFixed(1)),
+      feedbackScore: Number((3.8 + (seed % 10) / 10 + (profileMultiplier * 0.2)).toFixed(1))
     });
-  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, financialYear, startDate, endDate, activeProfile]);
+  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, selectedCourse, financialYear, startDate, endDate, activeProfile]);
 
   // Dynamic state distribution data based on filters
   const stateData = React.useMemo(() => {
@@ -452,7 +456,12 @@ export default function ReportAnalyticsDashboard() {
       </div>
 
       {/* Horizontal Filters Panel */}
-      <div className="bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 items-end">
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+        <h3 className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+          Global Dashboard Filters
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-9 gap-3 items-end">
         {[
           {l:'Financial Year',v:financialYear,s:setFinancialYear,o:['2024-25','2023-24']},
           {l:'Start Date',v:startDate,s:setStartDate,isDate:true},
@@ -461,7 +470,8 @@ export default function ReportAnalyticsDashboard() {
           {l:'Ministry',v:selectedMinistry,s:setSelectedMinistry,o:['All Ministries','MoSPI','Rural Development','Agriculture']},
           {l:'Cadre',v:selectedCadre,s:setSelectedCadre,o:['All Cadres','Indian Statistical Service (ISS)','Subordinate Statistical Service (SSS)','State Statistical Service','Administrative Service','Revenue Service','Accounts & Audit Service','Planning Service','Technical Cadre','Ministerial Cadre','Field Staff Cadre']},
           {l:'Designation',v:selectedDesignation,s:setSelectedDesignation,o:['All Designations','Additional Director General','Director','Joint Director','Deputy Director','Senior Statistical Officer','Junior Statistical Officer']},
-          {l:'Training Type',v:selectedTrainingType,s:setSelectedTrainingType,o:['All Types','Foundation Training','Refresher Training']}
+          {l:'Training Type',v:selectedTrainingType,s:setSelectedTrainingType,o:['All Types','Foundation Training','Refresher Training']},
+          {l:'Course',v:selectedCourse,s:setSelectedCourse,o:['All Courses','SDG Indicator Methods','Advanced Statistical Methods','Database Systems Basics']}
         ].map((f,i) => (
           <div key={i} className="space-y-0.5">
             <label className="text-[8.5px] text-slate-400 font-black uppercase tracking-wider block">{f.l}</label>
@@ -474,26 +484,29 @@ export default function ReportAnalyticsDashboard() {
             )}
           </div>
         ))}
+        </div>
       </div>
 
       {/* 3. KPI Key metrics Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         {[
           {label:'Total Learners',value:formatNum(kpiData.learners),change:'▲ 12.5% vs last year',color:'blue',icon:'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'},
           {label:'Courses Conducted',value:formatNum(kpiData.courses),change:'▲ 8.3% vs last year',color:'blue',icon:'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'},
           {label:'Completion Rate',value:`${kpiData.completionRate}%`,change:'▲ 6.7% vs last year',color:'emerald',icon:'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'},
+          {label:'Avg. Attendance',value:`${kpiData.attendanceRate}%`,change:'▲ 4.1% vs last year',color:'emerald',icon:'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z'},
           {label:'Dropout Rate',value:`${kpiData.dropoutRate}%`,change:'▼ -1.3% vs last year',color:'rose',icon:'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6',isDown:true},
-          {label:'Certifications Issued',value:formatNum(kpiData.certifications),change:'▲ 10.3% vs last year',color:'amber',icon:'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z'},
-          {label:'Avg. Learning Hours',value:`${kpiData.avgHours} hrs`,change:'▲ 2.8% vs last year',color:'purple',icon:'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'}
+          {label:'Learner Feedback',value:`${kpiData.feedbackScore} / 5.0`,change:'▲ 0.4 pts vs last year',color:'amber',icon:'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z'},
+          {label:'Certifications',value:formatNum(kpiData.certifications),change:'▲ 10.3% vs last year',color:'amber',icon:'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z'},
+          {label:'Learning Hours',value:`${kpiData.avgHours} hrs`,change:'▲ 2.8% vs last year',color:'purple',icon:'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'}
         ].map((m,i) => (
-          <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3 hover:shadow-md transition-shadow">
-            <div className={`w-11 h-11 rounded-full bg-${m.color}-50 flex items-center justify-center shrink-0`}>
+          <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] flex items-center gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className={`w-11 h-11 rounded-full bg-${m.color}-50 flex items-center justify-center shrink-0 border border-${m.color}-100`}>
               <svg className={`w-5 h-5 text-${m.color}-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d={m.icon} /></svg>
             </div>
             <div className="min-w-0">
-              <p className="text-[8.5px] text-slate-400 uppercase font-black tracking-wider truncate">{m.label}</p>
-              <h3 className="text-[15px] font-black text-slate-800 leading-tight">{m.value}</h3>
-              <span className={`text-[9px] font-bold ${m.isDown ? 'text-emerald-600' : 'text-emerald-600'}`}>{m.change}</span>
+              <p className="text-[8.5px] text-slate-400 uppercase font-black tracking-widest truncate">{m.label}</p>
+              <h3 className="text-[15px] font-black text-slate-800 leading-tight tracking-tight mt-0.5">{m.value}</h3>
+              <span className={`text-[9px] font-extrabold ${m.isDown ? 'text-rose-600' : 'text-emerald-600'}`}>{m.change}</span>
             </div>
           </div>
         ))}
@@ -715,31 +728,31 @@ export default function ReportAnalyticsDashboard() {
               <tr className="border-b">
                 <td className="p-1 text-left text-slate-900 font-extrabold text-[10px]">Rajasthan</td>
                 {heatmapData.rajasthan.map((v, i) => (
-                  <td key={i} className="p-1 text-white text-[9.5px]" style={{ backgroundColor: v >= 93 ? '#047857' : v >= 90 ? '#10b981' : '#34d399' }}>{v}%</td>
+                  <td key={i} className="p-1 text-white text-[9.5px] font-black" style={{ backgroundColor: v >= 93 ? '#08493d' : v >= 90 ? '#0d6b5c' : '#34d399' }}>{v}%</td>
                 ))}
               </tr>
               <tr className="border-b">
                 <td className="p-1 text-left text-slate-900 font-extrabold text-[10px]">Uttar Pradesh</td>
                 {heatmapData.up.map((v, i) => (
-                  <td key={i} className="p-1 text-slate-800 text-[9.5px]" style={{ backgroundColor: v >= 90 ? '#a7f3d0' : v >= 85 ? '#d1fae5' : '#fef08a' }}>{v}%</td>
+                  <td key={i} className="p-1 text-slate-800 text-[9.5px] font-bold" style={{ backgroundColor: v >= 90 ? '#6ee7b7' : v >= 85 ? '#d1fae5' : '#fef08a' }}>{v}%</td>
                 ))}
               </tr>
               <tr className="border-b">
                 <td className="p-1 text-left text-slate-900 font-extrabold text-[10px]">Maharashtra</td>
                 {heatmapData.maharashtra.map((v, i) => (
-                  <td key={i} className="p-1 text-white text-[9.5px]" style={{ backgroundColor: v >= 93 ? '#047857' : v >= 90 ? '#10b981' : '#34d399' }}>{v}%</td>
+                  <td key={i} className="p-1 text-white text-[9.5px] font-black" style={{ backgroundColor: v >= 93 ? '#08493d' : v >= 90 ? '#0d6b5c' : '#34d399' }}>{v}%</td>
                 ))}
               </tr>
               <tr className="border-b">
                 <td className="p-1 text-left text-slate-900 font-extrabold text-[10px]">Karnataka</td>
                 {heatmapData.karnataka.map((v, i) => (
-                  <td key={i} className="p-1 text-white text-[9.5px]" style={{ backgroundColor: v >= 93 ? '#047857' : v >= 90 ? '#10b981' : '#34d399' }}>{v}%</td>
+                  <td key={i} className="p-1 text-white text-[9.5px] font-black" style={{ backgroundColor: v >= 93 ? '#08493d' : v >= 90 ? '#0d6b5c' : '#34d399' }}>{v}%</td>
                 ))}
               </tr>
               <tr>
                 <td className="p-1 text-left text-slate-900 font-extrabold text-[10px]">Madhya Pradesh</td>
                 {heatmapData.mp.map((v, i) => (
-                  <td key={i} className="p-1 text-slate-800 text-[9.5px]" style={{ backgroundColor: v >= 90 ? '#a7f3d0' : v >= 85 ? '#d1fae5' : '#fde047' }}>{v}%</td>
+                  <td key={i} className="p-1 text-slate-800 text-[9.5px] font-bold" style={{ backgroundColor: v >= 90 ? '#6ee7b7' : v >= 85 ? '#d1fae5' : '#fde047' }}>{v}%</td>
                 ))}
               </tr>
             </tbody>
