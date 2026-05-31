@@ -2,17 +2,52 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from './side_bar';
 
+// Modular Components
+import DashboardTab from './components/DashboardTab';
+import RoomAllotmentTab from './components/RoomAllotmentTab';
+import CheckInOutTab from './components/CheckInOutTab';
+import PaymentsTab from './components/PaymentsTab';
+import TicketsTab from './components/TicketsTab';
+import VenueSchedulingTab from './components/VenueSchedulingTab';
+import ClassroomAllocationTab from './components/ClassroomAllocationTab';
+import TransportTab from './components/TransportTab';
+import ResourceTab from './components/ResourceTab';
+import HostelReportsTab from './components/HostelReportsTab';
+import LogisticsReportsTab from './components/LogisticsReportsTab';
+import MasterDataTab from './components/MasterDataTab';
+import SystemSettingsTab from './components/SystemSettingsTab';
+
 export default function Home() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : { name: 'Admin Administrator', email: 'admin@mospi.gov.in', role: 'admin' };
+    } catch {
+      return { name: 'Admin Administrator', email: 'admin@mospi.gov.in', role: 'admin' };
+    }
+  });
+
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case 'admin': return 'Administrator';
+      case 'faculty': return 'Trainer / Faculty';
+      case 'student': return 'Trainee / Learner';
+      case 'course-director': return 'Course Director';
+      case 'course-coordinator': return 'Course Coordinator';
+      case 'warden': return 'Warden';
+      case 'cms': return 'Content Manager';
+      default: return role || 'User';
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     window.dispatchEvent(new Event('auth-change'));
     navigate('/login');
   };
-  const [activeSidebarTab, setActiveSidebarTab] = useState('room_allotment');
-  const [activeOverviewTab, setActiveOverviewTab] = useState('ehostel'); // 'ehostel', 'logistics'
+  const [activeSidebarTab, setActiveSidebarTab] = useState('dashboard');
   
   // Profile & Notification Dropdown States
   const [profileOpen, setProfileOpen] = useState(false);
@@ -24,7 +59,6 @@ export default function Home() {
   const [showDetailsModal, setShowDetailsModal] = useState(null); // 'total', 'occupied', 'available', 'checkouts', 'payments'
 
   // Dynamic Data States
-  const [searchTerm, setSearchTerm] = useState('');
   const [allotments, setAllotments] = useState([
     { id: 1, name: 'Rahul Verma', program: 'Leadership Program', room: 'H-204', checkin: '15 May 2025', checkout: '22 May 2025', status: 'Checked In' },
     { id: 2, name: 'Anjali Singh', program: 'Public Policy Program', room: 'H-105', checkin: '16 May 2025', checkout: '23 May 2025', status: 'Checked In' },
@@ -44,12 +78,156 @@ export default function Home() {
   const [newAllotment, setNewAllotment] = useState({ name: '', program: 'Leadership Program', room: '', checkin: '', checkout: '' });
   const [newTicket, setNewTicket] = useState({ category: 'Hostel Facility', description: '', priority: 'High' });
 
-  // Filtering allotments
-  const filteredAllotments = allotments.filter(allot => {
-    return allot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           allot.program.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           allot.room.toLowerCase().includes(searchTerm.toLowerCase());
+  // 1. Transport State
+  const [vehicles, setVehicles] = useState([
+    { id: 'VHC-01', name: 'Innova Crysta', type: 'SUV', capacity: '7 Seater', status: 'Available', driver: 'Rajesh Kumar' },
+    { id: 'VHC-02', name: 'Force Traveller', type: 'Mini Bus', capacity: '17 Seater', status: 'In Transit', driver: 'Satish Yadav' },
+    { id: 'VHC-03', name: 'Maruti Suzuki Ertiga', type: 'MUV', capacity: '7 Seater', status: 'Available', driver: 'Manpreet Singh' },
+    { id: 'VHC-04', name: 'Tata Winger', type: 'Van', capacity: '15 Seater', status: 'Maintenance', driver: 'Ravi Shankar' }
+  ]);
+  const [transitLogs, setTransitLogs] = useState([
+    { id: 'TR-102', vehicle: 'VHC-02', route: 'Airport to Academy Hostel', time: '15 May 2025 • 02:00 PM', status: 'Active', trainees: '12 Officers' },
+    { id: 'TR-101', vehicle: 'VHC-01', route: 'Academy to Railway Station', time: '14 May 2025 • 10:00 AM', status: 'Completed', trainees: '4 Speakers' }
+  ]);
+  const [newTrip, setNewTrip] = useState({ vehicleId: 'VHC-01', route: '', time: '', traineesCount: '' });
+
+  const handleTripSubmit = (e) => {
+    e.preventDefault();
+    if (!newTrip.route || !newTrip.time || !newTrip.traineesCount) {
+      alert('Please fill all trip details.');
+      return;
+    }
+    const newTripId = `TR-${Math.floor(100 + Math.random() * 900)}`;
+    setTransitLogs([
+      {
+        id: newTripId,
+        vehicle: newTrip.vehicleId,
+        route: newTrip.route,
+        time: newTrip.time,
+        status: 'Active',
+        trainees: `${newTrip.traineesCount} Officers`
+      },
+      ...transitLogs
+    ]);
+    setVehicles(vehicles.map(vh => vh.id === newTrip.vehicleId ? { ...vh, status: 'In Transit' } : vh));
+    setNewTrip({ vehicleId: 'VHC-01', route: '', time: '', traineesCount: '' });
+  };
+
+  // 2. Resource Inventory State
+  const [resources, setResources] = useState([
+    { id: 'RES-01', name: 'Single Bedsheet (White)', category: 'Linen', total: 350, available: 120, status: 'In Stock' },
+    { id: 'RES-02', name: 'Pillow Cover (Green)', category: 'Linen', total: 200, available: 45, status: 'Low Stock' },
+    { id: 'RES-03', name: 'Executive Wooden Desk', category: 'Furniture', total: 120, available: 120, status: 'In Stock' },
+    { id: 'RES-04', name: 'Ergonomic Office Chair', category: 'Furniture', total: 150, available: 12, status: 'Low Stock' },
+    { id: 'RES-05', name: 'LED Desk Lamp', category: 'Appliances', total: 80, available: 65, status: 'In Stock' }
+  ]);
+  const [resourceSearch, setResourceSearch] = useState('');
+  const [newResource, setNewResource] = useState({ name: '', category: 'Linen', total: '', available: '' });
+
+  const handleResourceSubmit = (e) => {
+    e.preventDefault();
+    if (!newResource.name || !newResource.total || !newResource.available) {
+      alert('Please fill out all resource details.');
+      return;
+    }
+    const totalNum = parseInt(newResource.total);
+    const availNum = parseInt(newResource.available);
+    const newId = `RES-${Math.floor(10 + Math.random() * 90)}`;
+    setResources([
+      ...resources,
+      {
+        id: newId,
+        name: newResource.name,
+        category: newResource.category,
+        total: totalNum,
+        available: availNum,
+        status: availNum < 50 ? 'Low Stock' : 'In Stock'
+      }
+    ]);
+    setNewResource({ name: '', category: 'Linen', total: '', available: '' });
+  };
+
+  // 3. Hostel Reports State
+  const [selectedHostelReport, setSelectedHostelReport] = useState('occupancy');
+  const [isExportingHostel, setIsExportingHostel] = useState(false);
+  const [hostelSuccessMsg, setHostelSuccessMsg] = useState('');
+
+  // 4. Logistics Reports State
+  const [isExportingLogistics, setIsExportingLogistics] = useState(false);
+  const [logisticsSuccessMsg, setLogisticsSuccessMsg] = useState('');
+  const [diningCounts, setDiningCounts] = useState({ breakfast: 85, lunch: 140, dinner: 120 });
+  const [fuelLogs, setFuelLogs] = useState([
+    { id: 'FL-01', date: '14 May 2025', vehicle: 'VHC-01', fuelQty: '40 L', amount: '4,100', driver: 'Rajesh Kumar' },
+    { id: 'FL-02', date: '12 May 2025', vehicle: 'VHC-02', fuelQty: '80 L', amount: '8,200', driver: 'Satish Yadav' }
+  ]);
+
+  // 5. Master Data Catalog State
+  const [masterRooms, setMasterRooms] = useState([
+    { roomNo: 'H-101', type: 'Single Occupancy', block: 'Block A', status: 'Occupied' },
+    { roomNo: 'H-102', type: 'Single Occupancy', block: 'Block A', status: 'Available' },
+    { roomNo: 'H-201', type: 'Double Occupancy', block: 'Block B', status: 'Available' },
+    { roomNo: 'H-204', type: 'Double Occupancy', block: 'Block B', status: 'Occupied' },
+    { roomNo: 'H-301', type: 'VIP Suite', block: 'Executive Block', status: 'Occupied' }
+  ]);
+  const [masterVenues, setMasterVenues] = useState([
+    { name: 'Main Auditorium', capacity: 250, type: 'Hall', location: 'Ground Floor' },
+    { name: 'Seminar Hall - 1', capacity: 60, type: 'Classroom', location: 'First Floor' },
+    { name: 'Seminar Hall - 2', capacity: 60, type: 'Classroom', location: 'First Floor' },
+    { name: 'Conference Room', capacity: 25, type: 'Meeting Room', location: 'Second Floor' }
+  ]);
+  const [newMasterRoom, setNewMasterRoom] = useState({ roomNo: '', type: 'Single Occupancy', block: 'Block A' });
+  const [newMasterVenue, setNewMasterVenue] = useState({ name: '', capacity: '', type: 'Classroom', location: '' });
+
+  const handleMasterRoomSubmit = (e) => {
+    e.preventDefault();
+    if (!newMasterRoom.roomNo) return;
+    if (masterRooms.some(r => r.roomNo.toUpperCase() === newMasterRoom.roomNo.toUpperCase())) {
+      alert('Room already exists in Master Catalog.');
+      return;
+    }
+    setMasterRooms([
+      ...masterRooms,
+      {
+        roomNo: newMasterRoom.roomNo.toUpperCase(),
+        type: newMasterRoom.type,
+        block: newMasterRoom.block,
+        status: 'Available'
+      }
+    ]);
+    setNewMasterRoom({ roomNo: '', type: 'Single Occupancy', block: 'Block A' });
+  };
+
+  const handleMasterVenueSubmit = (e) => {
+    e.preventDefault();
+    if (!newMasterVenue.name || !newMasterVenue.capacity || !newMasterVenue.location) return;
+    if (masterVenues.some(v => v.name.toLowerCase() === newMasterVenue.name.toLowerCase())) {
+      alert('Venue already exists.');
+      return;
+    }
+    setMasterVenues([
+      ...masterVenues,
+      {
+        name: newMasterVenue.name,
+        capacity: parseInt(newMasterVenue.capacity),
+        type: newMasterVenue.type,
+        location: newMasterVenue.location
+      }
+    ]);
+    setNewMasterVenue({ name: '', capacity: '', type: 'Classroom', location: '' });
+  };
+
+  // 6. System Settings State
+  const [systemSettings, setSystemSettings] = useState({
+    ssoClientId: 'PARICHAY-LMS-5542-PROD',
+    ssoEndpoint: 'https://parichay.nic.in/api/v2/auth',
+    mfaEnabled: true,
+    activeDirectorySync: true,
+    adDomain: 'lms.academy.local',
+    emailGatewayHost: 'smtp.lms.academy.gov.in',
+    emailGatewayPort: '465',
+    smsGatewayUrl: 'https://sms.gov.in/api/send'
   });
+  const [settingsSaved, setSettingsSaved] = useState(false);
 
   // Handle forms submissions
   const handleAllotSubmit = (e) => {
@@ -111,6 +289,7 @@ export default function Home() {
         setActiveTab={setActiveSidebarTab} 
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        onRaiseTicket={() => setShowTicketModal(true)}
       />
 
       {/* Backdrop overlay for mobile drawer */}
@@ -134,6 +313,15 @@ export default function Home() {
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              onClick={() => navigate('/admin/dashboard')}
+              title="Back to Admin Dashboard"
+              className="mr-1.5 p-1.5 rounded-full hover:bg-slate-100 text-slate-650 hover:text-[#08493d] transition-all cursor-pointer focus:outline-none inline-flex items-center justify-center shrink-0 border border-transparent hover:border-gray-200 shadow-3xs hover:shadow-xs"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
             <h1 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
@@ -193,31 +381,43 @@ export default function Home() {
             <div className="relative">
               <button 
                 onClick={() => { setProfileOpen(!profileOpen); setNotificationsOpen(false); }}
-                className="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-50 border border-gray-200 rounded-xl transition-colors cursor-pointer focus:outline-none"
+                className="flex items-center gap-2.5 px-3 py-1.5 hover:bg-slate-50 border border-gray-200 rounded-xl transition-all cursor-pointer focus:outline-none select-none shadow-3xs"
               >
-                <img 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-                  alt="Arun Kumar avatar" 
-                  className="w-8 h-8 rounded-full border border-slate-300"
-                />
-                <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-slate-800">Arun Kumar</p>
-                  <p className="text-[9px] text-slate-400 font-semibold uppercase leading-none">Administrator</p>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-sm flex items-center justify-center shrink-0">
+                  <div className="w-full h-full bg-white rounded-full flex items-center justify-center font-black text-xs text-[#08493d]">
+                    {user.name?.[0] || 'A'}
+                  </div>
                 </div>
-                <svg className={`w-4.5 h-4.5 text-slate-500 transform transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-extrabold text-slate-800 leading-tight">{user.name}</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none mt-0.5">{getRoleLabel(user.role)}</p>
+                </div>
+                <svg className={`w-4 h-4 text-slate-500 transform transition-transform duration-150 ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-2.5 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-1.5 z-40 text-xs text-slate-700 font-semibold animate-fadeIn">
-                  <div className="px-4 py-2 border-b border-gray-100 bg-slate-50/50">
-                    <p className="font-extrabold text-slate-800">Arun Kumar</p>
-                    <p className="text-[10px] text-slate-400">admin@lms.academy</p>
+                <div className="absolute right-0 mt-2.5 w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-1 z-40 text-xs text-slate-700 font-semibold animate-fadeIn overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100 bg-slate-50/50">
+                    <p className="font-extrabold text-slate-850 truncate">{user.name}</p>
+                    <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">{user.email}</p>
                   </div>
-                  <button className="w-full text-left px-4 py-2 hover:bg-slate-50 transition-colors">Profile Details</button>
-                  <button className="w-full text-left px-4 py-2 hover:bg-slate-50 transition-colors">System Settings</button>
-                  <button onClick={handleLogout} className="w-full text-left px-4 py-2 border-t border-gray-100 text-rose-700 hover:bg-rose-50 font-bold transition-colors cursor-pointer">Sign Out</button>
+                  <button onClick={() => navigate('/admin/dashboard')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors font-bold text-emerald-800 flex items-center gap-2">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Admin Dashboard
+                  </button>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 border-t border-gray-100 text-rose-700 hover:bg-rose-50 font-extrabold transition-colors cursor-pointer flex items-center gap-2">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    Sign Out
+                  </button>
                 </div>
               )}
             </div>
@@ -228,497 +428,125 @@ export default function Home() {
         {/* Outer Dashboard Area */}
         <main className="flex-grow p-6 sm:p-8 space-y-6 overflow-y-auto max-h-[calc(100vh-65px)]">
 
-          {/* Sub Overview Tabs under Header */}
-          <div className="flex border-b border-gray-200 pb-0.5 text-sm font-bold text-slate-400 gap-6 select-none">
-            <button 
-              onClick={() => setActiveOverviewTab('ehostel')}
-              className={`pb-2.5 border-b-2 transition-all cursor-pointer ${activeOverviewTab === 'ehostel' ? 'border-blue-600 text-blue-600' : 'border-transparent hover:text-slate-800'}`}
-            >
-              e-Hostel Overview
-            </button>
-            <button 
-              onClick={() => setActiveOverviewTab('logistics')}
-              className={`pb-2.5 border-b-2 transition-all cursor-pointer ${activeOverviewTab === 'logistics' ? 'border-blue-600 text-blue-600' : 'border-transparent hover:text-slate-800'}`}
-            >
-              Logistics Overview
-            </button>
-          </div>
+          {/* Active Tab Dispatcher */}
+          {activeSidebarTab === 'dashboard' && (
+            <DashboardTab 
+              setActiveSidebarTab={setActiveSidebarTab}
+              setShowDetailsModal={setShowDetailsModal}
+              allotments={allotments}
+              tickets={tickets}
+            />
+          )}
 
-          {activeOverviewTab === 'ehostel' ? (
-            /* E-Hostel Content */
-            <>
-              {/* Info Stats Cards Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                
-                {/* 1. Total Rooms */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Rooms</p>
-                      <h3 className="text-2xl font-extrabold text-slate-800">120</h3>
-                    </div>
-                    <div className="p-3 bg-blue-50 text-blue-700 rounded-xl">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
-                      </svg>
-                    </div>
-                  </div>
-                  <button onClick={() => setShowDetailsModal('total')} className="text-[10px] font-bold text-blue-600 hover:text-blue-800 mt-4 text-left hover:underline">
-                    View Details
-                  </button>
-                </div>
+          {activeSidebarTab === 'room_allotment' && (
+            <RoomAllotmentTab 
+              allotments={allotments}
+              deleteAllotment={deleteAllotment}
+              setShowAllotModal={setShowAllotModal}
+            />
+          )}
 
-                {/* 2. Occupied Rooms */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Occupied Rooms</p>
-                      <h3 className="text-2xl font-extrabold text-slate-800">98</h3>
-                    </div>
-                    <div className="p-3 bg-emerald-50 text-emerald-700 rounded-xl">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
-                      </svg>
-                    </div>
-                  </div>
-                  <button onClick={() => setShowDetailsModal('occupied')} className="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 mt-4 text-left hover:underline">
-                    View Details
-                  </button>
-                </div>
+          {activeSidebarTab === 'check_in_out' && (
+            <CheckInOutTab />
+          )}
 
-                {/* 3. Available Rooms */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Available Rooms</p>
-                      <h3 className="text-2xl font-extrabold text-slate-800">22</h3>
-                    </div>
-                    <div className="p-3 bg-amber-50 text-amber-700 rounded-xl">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                      </svg>
-                    </div>
-                  </div>
-                  <button onClick={() => setShowDetailsModal('available')} className="text-[10px] font-bold text-amber-750 hover:text-amber-900 mt-4 text-left hover:underline">
-                    View Details
-                  </button>
-                </div>
+          {activeSidebarTab === 'payments' && (
+            <PaymentsTab />
+          )}
 
-                {/* 4. Today Check-outs */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Today Check-outs</p>
-                      <h3 className="text-2xl font-extrabold text-slate-800">12</h3>
-                    </div>
-                    <div className="p-3 bg-purple-50 text-purple-700 rounded-xl">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                    </div>
-                  </div>
-                  <button onClick={() => setShowDetailsModal('checkouts')} className="text-[10px] font-bold text-purple-700 hover:text-purple-900 mt-4 text-left hover:underline">
-                    View Details
-                  </button>
-                </div>
+          {activeSidebarTab === 'tickets' && (
+            <TicketsTab 
+              tickets={tickets}
+              setShowTicketModal={setShowTicketModal}
+            />
+          )}
 
-                {/* 5. Pending Payments */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pending Payments</p>
-                      <h3 className="text-2xl font-extrabold text-slate-800">₹ 45,600</h3>
-                    </div>
-                    <div className="p-3 bg-teal-50 text-teal-700 rounded-xl font-bold">
-                      ₹
-                    </div>
-                  </div>
-                  <button onClick={() => setShowDetailsModal('payments')} className="text-[10px] font-bold text-teal-700 hover:text-teal-900 mt-4 text-left hover:underline">
-                    View Details
-                  </button>
-                </div>
+          {activeSidebarTab === 'venue_scheduling' && (
+            <VenueSchedulingTab />
+          )}
 
-              </div>
+          {activeSidebarTab === 'classroom_allocation' && (
+            <ClassroomAllocationTab />
+          )}
 
-              {/* Main Grid: Room Allotment Table & Sidebar Lists */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                {/* Room Allotment (Span 8) */}
-                <div className="lg:col-span-8 bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h3 className="text-base font-extrabold text-slate-800">Room Allotment</h3>
-                    
-                    <div className="flex w-full sm:w-auto gap-3 items-center">
-                      {/* Search Bar */}
-                      <div className="relative flex-grow sm:w-60">
-                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
-                        </span>
-                        <input 
-                          type="text" 
-                          placeholder="Search by Name/Program/Room..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-full pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-xs font-semibold"
-                        />
-                      </div>
+          {activeSidebarTab === 'transport_management' && (
+            <TransportTab 
+              vehicles={vehicles}
+              transitLogs={transitLogs}
+              newTrip={newTrip}
+              setNewTrip={setNewTrip}
+              handleTripSubmit={handleTripSubmit}
+            />
+          )}
 
-                      {/* Allot Button */}
-                      <button 
-                        onClick={() => setShowAllotModal(true)}
-                        className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-lg shadow-sm hover:shadow transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                      >
-                        <span className="text-sm font-light">+</span> Allot New Room
-                      </button>
-                    </div>
-                  </div>
+          {activeSidebarTab === 'resource_management' && (
+            <ResourceTab 
+              resources={resources}
+              resourceSearch={resourceSearch}
+              setResourceSearch={setResourceSearch}
+              newResource={newResource}
+              setNewResource={setNewResource}
+              handleResourceSubmit={handleResourceSubmit}
+            />
+          )}
 
-                  {/* Room Allotment Table */}
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
-                      <thead>
-                        <tr className="bg-slate-50 border-b border-gray-100 text-slate-500 font-bold uppercase tracking-wider">
-                          <th className="px-4 py-3">Trainee Name</th>
-                          <th className="px-4 py-3">Program</th>
-                          <th className="px-4 py-3">Room No.</th>
-                          <th className="px-4 py-3">Check-in</th>
-                          <th className="px-4 py-3">Check-out</th>
-                          <th className="px-4 py-3">Status</th>
-                          <th className="px-4 py-3 text-right">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {filteredAllotments.length > 0 ? (
-                          filteredAllotments.map((allot) => (
-                            <tr key={allot.id} className="hover:bg-slate-50/50 transition-colors">
-                              <td className="px-4 py-3.5 font-extrabold text-slate-800">{allot.name}</td>
-                              <td className="px-4 py-3.5 text-slate-500">{allot.program}</td>
-                              <td className="px-4 py-3.5 font-mono text-slate-800 font-bold">{allot.room}</td>
-                              <td className="px-4 py-3.5 text-slate-400">{allot.checkin}</td>
-                              <td className="px-4 py-3.5 text-slate-400">{allot.checkout}</td>
-                              <td className="px-4 py-3.5 whitespace-nowrap">
-                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                                  allot.status === 'Checked In' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                                  allot.status === 'Checked Out' ? 'bg-slate-100 text-slate-500 border border-slate-200' :
-                                  'bg-amber-50 text-amber-800 border border-amber-200'
-                                }`}>
-                                  {allot.status}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                                <button 
-                                  onClick={() => deleteAllotment(allot.id)}
-                                  className="text-rose-600 hover:text-rose-800 text-[10px] font-extrabold uppercase hover:underline cursor-pointer"
-                                >
-                                  Remove
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="7" className="text-center py-8 text-slate-400">
-                              No allotments found matching "{searchTerm}"
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+          {activeSidebarTab === 'hostel_reports' && (
+            <HostelReportsTab 
+              selectedHostelReport={selectedHostelReport}
+              setSelectedHostelReport={setSelectedHostelReport}
+              isExportingHostel={isExportingHostel}
+              setIsExportingHostel={setIsExportingHostel}
+              hostelSuccessMsg={hostelSuccessMsg}
+              setHostelSuccessMsg={setHostelSuccessMsg}
+            />
+          )}
 
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                      View All
-                    </button>
-                  </div>
-                </div>
+          {activeSidebarTab === 'logistics_reports' && (
+            <LogisticsReportsTab 
+              isExportingLogistics={isExportingLogistics}
+              setIsExportingLogistics={setIsExportingLogistics}
+              logisticsSuccessMsg={logisticsSuccessMsg}
+              setLogisticsSuccessMsg={setLogisticsSuccessMsg}
+              diningCounts={diningCounts}
+              setDiningCounts={setDiningCounts}
+              fuelLogs={fuelLogs}
+              setFuelLogs={setFuelLogs}
+            />
+          )}
 
-                {/* Right Side Column (Span 4) */}
-                <div className="lg:col-span-4 space-y-6">
-                  
-                  {/* Card: Check-in / Check-out Tracking */}
-                  <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4">
-                    <h3 className="text-base font-extrabold text-slate-800">Check-in / Check-out Tracking</h3>
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-emerald-50/75 border border-emerald-100 rounded-xl p-3 text-center">
-                        <p className="text-[9px] font-bold text-emerald-800 uppercase tracking-wider">Today Check-ins</p>
-                        <p className="text-2xl font-extrabold text-emerald-950 mt-1">18</p>
-                      </div>
-                      <div className="bg-rose-50/75 border border-rose-100 rounded-xl p-3 text-center">
-                        <p className="text-[9px] font-bold text-rose-800 uppercase tracking-wider">Today Check-outs</p>
-                        <p className="text-2xl font-extrabold text-rose-950 mt-1">12</p>
-                      </div>
-                    </div>
+          {activeSidebarTab === 'master_data' && (
+            <MasterDataTab 
+              masterRooms={masterRooms}
+              setMasterRooms={setMasterRooms}
+              masterVenues={masterVenues}
+              setMasterVenues={setMasterVenues}
+              newMasterRoom={newMasterRoom}
+              setNewMasterRoom={setNewMasterRoom}
+              newMasterVenue={newMasterVenue}
+              setNewMasterVenue={setNewMasterVenue}
+              handleMasterRoomSubmit={handleMasterRoomSubmit}
+              handleMasterVenueSubmit={handleMasterVenueSubmit}
+            />
+          )}
 
-                    <div className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 flex justify-between items-center text-xs">
-                      <span className="font-bold text-slate-500">Currently Occupied</span>
-                      <span className="font-extrabold text-slate-800 text-sm">98 / 120 Rooms</span>
-                    </div>
-
-                    {/* Recent activity log list */}
-                    <div className="space-y-3 pt-2">
-                      <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Recent Activity</h4>
-                      <ul className="space-y-2.5 font-medium text-xs">
-                        <li className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            <span className="font-bold text-slate-700">Rahul Verma</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">Checked In • 10:30 AM</span>
-                        </li>
-                        <li className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                            <span className="font-bold text-slate-700">Vikram Das</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">Checked Out • 09:15 AM</span>
-                        </li>
-                        <li className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            <span className="font-bold text-slate-700">Anjali Singh</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">Checked In • 11:45 AM</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="text-center pt-2">
-                      <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                        View All Activity
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Card: Payment Receipts */}
-                  <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4">
-                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                      <h3 className="text-base font-extrabold text-slate-800">Payment Receipts</h3>
-                      <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View All</button>
-                    </div>
-
-                    <div className="space-y-3">
-                      {[
-                        { name: 'Rahul Verma', receipt: 'RCP1254', amount: '12,000', date: '15 May 2025' },
-                        { name: 'Anjali Singh', receipt: 'RCP1253', amount: '12,000', date: '15 May 2025' },
-                        { name: 'Meera Nair', receipt: 'RCP1252', amount: '12,000', date: '14 May 2025' }
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex justify-between items-center p-2.5 bg-slate-50/50 border border-slate-150/50 rounded-xl text-xs font-semibold">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 bg-emerald-50 text-emerald-800 rounded-lg">
-                              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <p className="font-bold text-slate-800">{item.name}</p>
-                              <p className="text-[9px] text-slate-400 font-mono">Receipt: {item.receipt} • {item.date}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-extrabold text-slate-800">₹ {item.amount}</p>
-                            <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full inline-block mt-0.5">Paid</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="text-center pt-2">
-                      <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                        View All Receipts
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Bottom Row Grid: Venue Scheduling, Classroom Allocation, Maintenance Tickets */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                {/* Venue Scheduling */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <h3 className="text-sm font-extrabold text-slate-800">Venue Scheduling</h3>
-                    <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View Calendar</button>
-                  </div>
-
-                  <div className="space-y-3 flex-grow">
-                    {[
-                      { day: '15', month: 'MAY', title: 'Leadership Program Inauguration', room: 'Main Auditorium', time: '09:00 AM - 11:00 AM', status: 'Confirmed' },
-                      { day: '15', month: 'MAY', title: 'Policy Workshop', room: 'Seminar Hall - 2', time: '02:00 PM - 05:00 PM', status: 'Confirmed' },
-                      { day: '16', month: 'MAY', title: 'Group Discussion', room: 'Conference Hall', time: '10:00 AM - 12:00 PM', status: 'Pending' }
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex gap-3 items-start text-xs font-semibold">
-                        <div className="bg-slate-100 border border-slate-200 rounded-lg p-1.5 text-center min-w-[36px]">
-                          <p className="text-sm font-extrabold text-slate-800 leading-none">{item.day}</p>
-                          <p className="text-[8px] font-bold text-slate-400 mt-0.5">{item.month}</p>
-                        </div>
-                        <div className="space-y-0.5 flex-grow">
-                          <p className="font-extrabold text-slate-800 leading-tight">{item.title}</p>
-                          <p className="text-[10px] text-slate-400 leading-tight">{item.room} • {item.time}</p>
-                          <span className={`inline-block text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full mt-1 ${
-                            item.status === 'Confirmed' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                            'bg-amber-50 text-amber-800 border border-amber-200'
-                          }`}>{item.status}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                      View All Schedule
-                    </button>
-                  </div>
-                </div>
-
-                {/* Classroom Allocation */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <h3 className="text-sm font-extrabold text-slate-800">Classroom Allocation</h3>
-                    <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View All</button>
-                  </div>
-
-                  <div className="overflow-x-auto flex-grow">
-                    <table className="w-full text-left border-collapse text-[10px] sm:text-xs font-semibold text-slate-700">
-                      <thead>
-                        <tr className="bg-slate-50 text-slate-400 font-bold uppercase">
-                          <th className="px-2 py-2">Room</th>
-                          <th className="px-2 py-2">Cap.</th>
-                          <th className="px-2 py-2">For</th>
-                          <th className="px-2 py-2">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {[
-                          { name: 'Classroom 1', cap: 30, program: 'Governance', status: 'Allocated' },
-                          { name: 'Classroom 2', cap: 40, program: 'Public Policy', status: 'Allocated' },
-                          { name: 'Seminar Hall', cap: 60, program: 'Leadership', status: 'Allocated' },
-                          { name: 'Smart Class 1', cap: 25, program: 'Discussion', status: 'Pending' }
-                        ].map((room, idx) => (
-                          <tr key={idx}>
-                            <td className="px-2 py-2 font-extrabold text-slate-800">{room.name}</td>
-                            <td className="px-2 py-2 text-slate-500 font-mono">{room.cap}</td>
-                            <td className="px-2 py-2 text-slate-500">{room.program}</td>
-                            <td className="px-2 py-2 whitespace-nowrap">
-                              <span className={`inline-block px-1.5 py-0.2 rounded-full text-[8px] font-bold uppercase tracking-wider ${
-                                room.status === 'Allocated' ? 'bg-emerald-50 text-emerald-800 border border-emerald-250' : 'bg-amber-50 text-amber-800 border border-amber-250'
-                              }`}>{room.status}</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                      View All Allocations
-                    </button>
-                  </div>
-                </div>
-
-                {/* Maintenance Tickets */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <h3 className="text-sm font-extrabold text-slate-800">Maintenance Tickets</h3>
-                    <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View All</button>
-                  </div>
-
-                  <div className="overflow-x-auto flex-grow max-h-[160px] overflow-y-auto">
-                    <table className="w-full text-left border-collapse text-[10px] sm:text-xs font-semibold text-slate-700">
-                      <thead>
-                        <tr className="bg-slate-50 text-slate-400 font-bold uppercase">
-                          <th className="px-2 py-2">ID</th>
-                          <th className="px-2 py-2">Description</th>
-                          <th className="px-2 py-2">Status</th>
-                          <th className="px-2 py-2">Priority</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {tickets.slice(0, 4).map((ticket) => (
-                          <tr key={ticket.id}>
-                            <td className="px-2 py-2 font-mono font-bold text-slate-500">{ticket.id}</td>
-                            <td className="px-2 py-2 text-slate-700 font-bold truncate max-w-[120px]" title={ticket.description}>
-                              {ticket.description}
-                            </td>
-                            <td className="px-2 py-2 whitespace-nowrap">
-                              <span className={`inline-block px-1.5 py-0.2 rounded-full text-[8px] font-bold uppercase tracking-wider ${
-                                ticket.status === 'Resolved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                                ticket.status === 'In Progress' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
-                                'bg-rose-50 text-rose-800 border border-rose-200'
-                              }`}>{ticket.status}</span>
-                            </td>
-                            <td className="px-2 py-2">
-                              <span className={`inline-block text-[8px] font-bold uppercase ${
-                                ticket.priority === 'High' ? 'text-rose-700 font-bold' :
-                                ticket.priority === 'Medium' ? 'text-amber-700 font-bold' : 'text-emerald-700 font-bold'
-                              }`}>{ticket.priority}</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button 
-                      onClick={() => setShowTicketModal(true)}
-                      className="px-4 py-1.5 bg-[#08493d] hover:bg-[#063b31] text-white font-extrabold text-[10px] rounded-lg shadow-sm hover:shadow transition-colors uppercase tracking-wider cursor-pointer"
-                    >
-                      Raise New Ticket
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            </>
-          ) : (
-            /* Logistics Content (Alternative high-fidelity tab layout) */
-            <div className="bg-white rounded-2xl border border-gray-150 p-8 text-center space-y-4 animate-fadeIn">
-              <div className="w-16 h-16 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center mx-auto border border-blue-150">
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-              </div>
-              <div className="max-w-md mx-auto space-y-2">
-                <h3 className="text-base font-extrabold text-slate-800">Logistics & Transport Management</h3>
-                <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                  Monitor vehicle schedules, driver assignments, airport/railway station pickups, and logistics dispatches for academic visitors and delegate batches.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-4 text-xs font-semibold">
-                <div className="border border-gray-150 p-4 rounded-xl space-y-1 bg-slate-50/50">
-                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Active Fleet</p>
-                  <p className="text-lg font-extrabold text-slate-800">8 Vehicles</p>
-                </div>
-                <div className="border border-gray-150 p-4 rounded-xl space-y-1 bg-slate-50/50">
-                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Scheduled Pickups</p>
-                  <p className="text-lg font-extrabold text-slate-800">4 Today</p>
-                </div>
-                <div className="border border-gray-150 p-4 rounded-xl space-y-1 bg-slate-50/50">
-                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Logistics Costs</p>
-                  <p className="text-lg font-extrabold text-slate-800">₹ 14,250</p>
-                </div>
-              </div>
-            </div>
+          {activeSidebarTab === 'system_settings' && (
+            <SystemSettingsTab 
+              systemSettings={systemSettings}
+              setSystemSettings={setSystemSettings}
+              settingsSaved={settingsSaved}
+              setSettingsSaved={setSettingsSaved}
+            />
           )}
 
           {/* Footer Copyright bar */}
           <footer className="pt-6 border-t border-gray-200/50 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] sm:text-xs text-slate-400 font-semibold select-none">
             <span>© 2025 LMS. All rights reserved.</span>
             <div className="flex gap-4">
-              <a href="#privacy" className="hover:text-slate-600">Privacy Policy</a>
+              <a href="#privacy" className="hover:text-slate-650">Privacy Policy</a>
               <span>•</span>
-              <a href="#terms" className="hover:text-slate-600">Terms of Use</a>
+              <a href="#terms" className="hover:text-slate-655" >Terms of Use</a>
               <span>•</span>
-              <a href="#support" className="hover:text-slate-600">Help & Support</a>
+              <a href="#support" className="hover:text-slate-650">Help & Support</a>
             </div>
           </footer>
 
@@ -730,7 +558,7 @@ export default function Home() {
       {showAllotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs select-none">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 overflow-hidden relative animate-fadeIn mx-4">
-            <div className="bg-blue-900 text-white p-5 flex justify-between items-center">
+            <div className="bg-[#053229] text-white p-5 flex justify-between items-center">
               <h3 className="font-extrabold text-sm sm:text-base uppercase tracking-wider">Allot Room</h3>
               <button onClick={() => setShowAllotModal(false)} className="text-slate-300 hover:text-white focus:outline-none">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -739,7 +567,7 @@ export default function Home() {
               </button>
             </div>
 
-            <form onSubmit={handleAllotSubmit} className="p-6 space-y-4 text-xs sm:text-sm font-semibold text-slate-600">
+            <form onSubmit={handleAllotSubmit} className="p-6 space-y-4 text-xs sm:text-sm font-semibold text-slate-650">
               
               {/* Trainee Name */}
               <div className="space-y-1.5">
@@ -750,7 +578,7 @@ export default function Home() {
                   placeholder="e.g. Arun Patel"
                   value={newAllotment.name}
                   onChange={(e) => setNewAllotment({ ...newAllotment, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850"
                 />
               </div>
 
@@ -760,7 +588,7 @@ export default function Home() {
                 <select 
                   value={newAllotment.program}
                   onChange={(e) => setNewAllotment({ ...newAllotment, program: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 bg-white"
                 >
                   <option value="Leadership Program">Leadership Program</option>
                   <option value="Public Policy Program">Public Policy Program</option>
@@ -777,7 +605,7 @@ export default function Home() {
                   placeholder="e.g. H-204"
                   value={newAllotment.room}
                   onChange={(e) => setNewAllotment({ ...newAllotment, room: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 font-mono"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 font-mono"
                 />
               </div>
 
@@ -791,7 +619,7 @@ export default function Home() {
                     placeholder="e.g. 18 May 2025"
                     value={newAllotment.checkin}
                     onChange={(e) => setNewAllotment({ ...newAllotment, checkin: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -802,7 +630,7 @@ export default function Home() {
                     placeholder="e.g. 25 May 2025"
                     value={newAllotment.checkout}
                     onChange={(e) => setNewAllotment({ ...newAllotment, checkout: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
                   />
                 </div>
               </div>
@@ -817,7 +645,7 @@ export default function Home() {
                 </button>
                 <button 
                   type="submit" 
-                  className="w-1/2 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow cursor-pointer"
+                  className="w-1/2 py-2 bg-[#08493d] hover:bg-[#063b31] text-white font-bold rounded-lg shadow cursor-pointer"
                 >
                   Allot Room
                 </button>
@@ -832,7 +660,7 @@ export default function Home() {
       {showTicketModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs select-none">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 overflow-hidden relative animate-fadeIn mx-4">
-            <div className="bg-[#08493d] text-white p-5 flex justify-between items-center">
+            <div className="bg-[#053229] text-white p-5 flex justify-between items-center">
               <h3 className="font-extrabold text-sm sm:text-base uppercase tracking-wider">Raise Maintenance Ticket</h3>
               <button onClick={() => setShowTicketModal(false)} className="text-slate-350 hover:text-white focus:outline-none">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -867,7 +695,7 @@ export default function Home() {
                   placeholder="e.g. AC leaking water in Class 2"
                   value={newTicket.description}
                   onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 text-slate-800 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 text-slate-850 resize-none"
                 ></textarea>
               </div>
 

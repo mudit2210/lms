@@ -1,9 +1,604 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
+
+const searchDatabase = [
+  // 1. Courses
+  { 
+    title: "Induction Training for ISS Officers", 
+    type: "Course", 
+    category: "Course & Training Module", 
+    desc: "Foundation training program for newly recruited Indian Statistical Service (ISS) officers.",
+    duration: "8 Weeks",
+    syllabus: ["Principles of Official Statistics", "National Accounts Overview", "Survey Sampling Designs", "Field Training Clearance"],
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "Refresher Course on Advanced Statistics", 
+    type: "Course", 
+    category: "Course & Training Module", 
+    desc: "Update program on regressions, advanced modeling, R, and Python applications in official data.",
+    duration: "2 Weeks",
+    syllabus: ["Linear Regressions", "Machine Learning in Official Statistics", "Data Visualizations", "Practical Hands-on Auditing"],
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "Agricultural Statistics Domain Course", 
+    type: "Course", 
+    category: "Course & Training Module", 
+    desc: "Domain training covering crop estimation surveys, yield metrics, and agricultural listing registers.",
+    duration: "3 Weeks",
+    syllabus: ["Crop Yield Estimation Methodology", "GIS Mapping in Agriculture", "Area Estimation Surveys", "Farming Datasets Analysis"],
+    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "SNDG Global Indicators Workshop", 
+    type: "Course", 
+    category: "Course & Training Module", 
+    desc: "International training program mapping United Nations Sustainable Development Goals (SDG) tracking.",
+    duration: "1 Week",
+    syllabus: ["SDG Global Progress Indices", "Metadata Tagging for Indicators", "Cross-national Data Exchanges", "Voluntary Reviews Compilation"],
+    image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "National Accounts Statistics", 
+    type: "Course", 
+    category: "Course & Training Module", 
+    desc: "Domain-specific training on national economy accounts, domestic savings, and capital metrics.",
+    duration: "4 Weeks",
+    syllabus: ["System of National Accounts Fundamentals", "Gross Domestic Product Calculations", "Balance of Payments", "Price Indexing Mechanics"],
+    image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&auto=format&fit=crop&q=60"
+  },
+
+  // 2. Lessons
+  { 
+    title: "Gross Domestic Product (GDP) Principles", 
+    type: "Lesson", 
+    category: "Content Management Module (CMS)", 
+    desc: "Core lesson mapping GDP output calculations, basic prices, and index adjustments.",
+    duration: "3 hours",
+    syllabus: ["Basic Prices vs Producer Prices", "Intermediate Consumption Analysis", "GDP Production Approach Methodology"],
+    image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "System of National Accounts (SNA 2008)", 
+    type: "Lesson", 
+    category: "Content Management Module (CMS)", 
+    desc: "Fundamental lesson mapping standard guidelines set by United Nations and IMF.",
+    duration: "4 hours",
+    syllabus: ["Institutional Sector Classifications", "Accumulation Accounts", "SNA 2008 vs SNA 1993 Revisions"],
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "Stratified Random Sampling Designs", 
+    type: "Lesson", 
+    category: "Content Management Module (CMS)", 
+    desc: "Academic lesson analyzing standard stratification parameters and variances.",
+    duration: "5 hours",
+    syllabus: ["Strata Formations & Division Rules", "Standard Error Calculations", "Neyman Allocation Methods"],
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "Cluster Sampling and Estimators", 
+    type: "Lesson", 
+    category: "Content Management Module (CMS)", 
+    desc: "Specialized sampling designs analyzing standard cluster formations and indicators.",
+    duration: "4.5 hours",
+    syllabus: ["Cluster vs Stratified Comparison", "Design Effects Formulation", "Intra-class Correlation Matrices"],
+    image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=500&auto=format&fit=crop&q=60"
+  },
+
+  // 3. Topics
+  { 
+    title: "GDP Expenditure Approach Analysis", 
+    type: "Topic", 
+    category: "Content Management Module (CMS)", 
+    desc: "Specialized topic reviewing household consumptions, investments, and net exports.",
+    duration: "1.5 hours",
+    syllabus: ["Private Final Consumption Expenditure", "Gross Fixed Capital Formation", "Exports/Imports Price Adjustments"],
+    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "Gross Value Added (GVA) Computations", 
+    type: "Topic", 
+    category: "Content Management Module (CMS)", 
+    desc: "Sectoral GDP computation overview across primary, secondary, and tertiary sectors.",
+    duration: "2 hours",
+    syllabus: ["GVA at Basic Prices Calculation", "Product Taxes and Subsidies Adjustments", "Sectoral Production Valuation"],
+    image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "Optimal Allocation in Stratified Sampling", 
+    type: "Topic", 
+    category: "Content Management Module (CMS)", 
+    desc: "Techniques for Neyman allocation formulas under cost and precision constraints.",
+    duration: "1.2 hours",
+    syllabus: ["Cost Functions Optimization", "Lagrangian Multipliers Application", "Variance Minimization Equations"],
+    image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&auto=format&fit=crop&q=60"
+  },
+
+  // 4. Events
+  { 
+    title: "Annual Sports Meet 2025", 
+    type: "Event", 
+    category: "Calendar & Event Module", 
+    desc: "Academy-wide sports meet featuring badminton, table tennis, and chess matches.",
+    duration: "3 Days",
+    syllabus: ["Inauguration Shuttles", "Trainee-Faculty Chess Match", "Badminton Doubles Final", "Medals Ceremony"],
+    image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "National Essay Competition on Data Science", 
+    type: "Event", 
+    category: "Calendar & Event Module", 
+    desc: "Essay competition open to all central ministries statistics personnel on official data.",
+    duration: "Submission by June 30",
+    syllabus: ["Essay Prompt: AI in Official Statistics", "Review Committee Screening", "Awards and Certifications Release"],
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=60"
+  },
+  { 
+    title: "LMS Republic Day Quiz Event", 
+    type: "Event", 
+    category: "Calendar & Event Module", 
+    desc: "Interactive quiz mapping national history, statistical acts, and constitutional laws.",
+    duration: "1 Day (Jan 26)",
+    syllabus: ["Preliminary Screening Round", "Stage Finale Quiz", "National Statistics Day Trophies"],
+    image: "https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?w=500&auto=format&fit=crop&q=60"
+  }
+];
 
 export default function Head() {
   const [searchQuery, setSearchQuery] = useState('');
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [selectedSearchItem, setSelectedSearchItem] = useState(null);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [enrollMsg, setEnrollMsg] = useState('');
+
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
+  const spotlightInputRef = useRef(null);
+
+  // Focus spotlight input when it opens
+  useEffect(() => {
+    if (spotlightOpen) {
+      const timer = setTimeout(() => {
+        if (spotlightInputRef.current) {
+          spotlightInputRef.current.focus();
+        }
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [spotlightOpen]);
+
+  // Handle keyboard shortcuts Ctrl+K and Escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSpotlightOpen(true);
+      }
+      if (e.key === 'Escape') {
+        setSpotlightOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const getRecommendedSearches = () => {
+    switch (activeCategory) {
+      case 'Course':
+        return [
+          {
+            title: "Induction Training for ISS Officers",
+            type: "Course",
+            category: "Course & Training Module",
+            desc: "Foundation training program for newly recruited Indian Statistical Service (ISS) officers.",
+            syllabus: ["Principles of Official Statistics", "National Accounts Overview", "Survey Sampling Designs", "Field Training Clearance"],
+            image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=300&auto=format&fit=crop&q=60",
+            tagText: "8-WEEK CURRICULUM",
+            themeColor: "emerald"
+          },
+          {
+            title: "Refresher Course on Advanced Statistics",
+            type: "Course",
+            category: "Course & Training Module",
+            desc: "Update program on regressions, advanced modeling, R, and Python applications in official data.",
+            syllabus: ["Linear Regressions", "Machine Learning in Official Statistics", "Data Visualizations", "Practical Hands-on Auditing"],
+            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&auto=format&fit=crop&q=60",
+            tagText: "2-WEEK REFRESHER",
+            themeColor: "emerald"
+          },
+          {
+            title: "Agricultural Statistics Domain Course",
+            type: "Course",
+            category: "Course & Training Module",
+            desc: "Domain training covering crop estimation surveys, yield metrics, and agricultural listing registers.",
+            syllabus: ["Crop Yield Estimation Methodology", "GIS Mapping in Agriculture", "Area Estimation Surveys", "Farming Datasets Analysis"],
+            image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=300&auto=format&fit=crop&q=60",
+            tagText: "3-WEEK DOMAIN",
+            themeColor: "emerald"
+          },
+          {
+            title: "National Accounts Statistics",
+            type: "Course",
+            category: "Course & Training Module",
+            desc: "Domain-specific training on national economy accounts, domestic savings, and capital metrics.",
+            syllabus: ["System of National Accounts Fundamentals", "Gross Domestic Product Calculations", "Balance of Payments", "Price Indexing Mechanics"],
+            image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=300&auto=format&fit=crop&q=60",
+            tagText: "4-WEEK ACCOUNTS",
+            themeColor: "emerald"
+          }
+        ];
+      case 'Lesson':
+        return [
+          {
+            title: "System of National Accounts (SNA 2008)",
+            type: "Lesson",
+            category: "Content Management Module (CMS)",
+            desc: "Fundamental lesson mapping standard guidelines set by United Nations and IMF.",
+            syllabus: ["Institutional Sector Classifications", "Accumulation Accounts", "SNA 2008 vs SNA 1993 Revisions"],
+            image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=300&auto=format&fit=crop&q=60",
+            tagText: "FEATURED LESSON",
+            themeColor: "blue"
+          },
+          {
+            title: "Gross Domestic Product (GDP) Principles",
+            type: "Lesson",
+            category: "Content Management Module (CMS)",
+            desc: "Core lesson mapping GDP output calculations, basic prices, and index adjustments.",
+            syllabus: ["Basic Prices vs Producer Prices", "Intermediate Consumption Analysis", "GDP Production Approach Methodology"],
+            image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=300&auto=format&fit=crop&q=60",
+            tagText: "GDP BASICS",
+            themeColor: "blue"
+          },
+          {
+            title: "Stratified Random Sampling Designs",
+            type: "Lesson",
+            category: "Content Management Module (CMS)",
+            desc: "Academic lesson analyzing standard stratification parameters and variances.",
+            syllabus: ["Strata Formations & Division Rules", "Standard Error Calculations", "Neyman Allocation Methods"],
+            image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&auto=format&fit=crop&q=60",
+            tagText: "SAMPLING METHOD",
+            themeColor: "blue"
+          },
+          {
+            title: "Cluster Sampling and Estimators",
+            type: "Lesson",
+            category: "Content Management Module (CMS)",
+            desc: "Specialized sampling designs analyzing standard cluster formations and indicators.",
+            syllabus: ["Cluster vs Stratified Comparison", "Design Effects Formulation", "Intra-class Correlation Matrices"],
+            image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=300&auto=format&fit=crop&q=60",
+            tagText: "ADVANCED ESTIMATORS",
+            themeColor: "blue"
+          }
+        ];
+      case 'Topic':
+        return [
+          {
+            title: "Optimal Allocation in Stratified Sampling",
+            type: "Topic",
+            category: "Content Management Module (CMS)",
+            desc: "Techniques for Neyman allocation formulas under cost and precision constraints.",
+            syllabus: ["Cost Functions Optimization", "Lagrangian Multipliers Application", "Variance Minimization Equations"],
+            image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=300&auto=format&fit=crop&q=60",
+            tagText: "STATISTICS METHODOLOGY",
+            themeColor: "purple"
+          },
+          {
+            title: "GDP Expenditure Approach Analysis",
+            type: "Topic",
+            category: "Content Management Module (CMS)",
+            desc: "Specialized topic reviewing household consumptions, investments, and net exports.",
+            syllabus: ["Private Final Consumption Expenditure", "Gross Fixed Capital Formation", "Exports/Imports Price Adjustments"],
+            image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=300&auto=format&fit=crop&q=60",
+            tagText: "GDP EXPENDITURE",
+            themeColor: "purple"
+          },
+          {
+            title: "Gross Value Added (GVA) Computations",
+            type: "Topic",
+            category: "Content Management Module (CMS)",
+            desc: "Sectoral GDP computation overview across primary, secondary, and tertiary sectors.",
+            syllabus: ["GVA at Basic Prices Calculation", "Product Taxes and Subsidies Adjustments", "Sectoral Production Valuation"],
+            image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=300&auto=format&fit=crop&q=60",
+            tagText: "GVA COMPUTATIONS",
+            themeColor: "purple"
+          }
+        ];
+      case 'Event':
+        return [
+          {
+            title: "National Essay Competition on Data Science",
+            type: "Event",
+            category: "Calendar & Event Module",
+            desc: "Essay competition open to all central ministries statistics personnel on official data.",
+            syllabus: ["Essay Prompt: AI in Official Statistics", "Review Committee Screening", "Awards and Certifications Release"],
+            image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&auto=format&fit=crop&q=60",
+            tagText: "ACADEMY EVENT",
+            themeColor: "amber"
+          },
+          {
+            title: "Annual Sports Meet 2025",
+            type: "Event",
+            category: "Calendar & Event Module",
+            desc: "Academy-wide sports meet featuring badminton, table tennis, and chess matches.",
+            syllabus: ["Inauguration Shuttles", "Trainee-Faculty Chess Match", "Badminton Doubles Final", "Medals Ceremony"],
+            image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=300&auto=format&fit=crop&q=60",
+            tagText: "ACADEMY MEET",
+            themeColor: "amber"
+          },
+          {
+            title: "LMS Republic Day Quiz Event",
+            type: "Event",
+            category: "Calendar & Event Module",
+            desc: "Interactive quiz mapping national history, statistical acts, and constitutional laws.",
+            syllabus: ["Preliminary Screening Round", "Stage Finale Quiz", "National Statistics Day Trophies"],
+            image: "https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?w=300&auto=format&fit=crop&q=60",
+            tagText: "QUIZ COMPETITION",
+            themeColor: "amber"
+          }
+        ];
+      default: // 'All'
+        return [
+          {
+            title: "System of National Accounts (SNA 2008)",
+            type: "Lesson",
+            category: "Content Management Module (CMS)",
+            desc: "Fundamental lesson mapping standard guidelines set by United Nations and IMF.",
+            syllabus: ["Institutional Sector Classifications", "Accumulation Accounts", "SNA 2008 vs SNA 1993 Revisions"],
+            image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=300&auto=format&fit=crop&q=60",
+            tagText: "FEATURED LESSON",
+            themeColor: "emerald"
+          },
+          {
+            title: "Optimal Allocation in Stratified Sampling",
+            type: "Topic",
+            category: "Content Management Module (CMS)",
+            desc: "Techniques for Neyman allocation formulas under cost and precision constraints.",
+            syllabus: ["Cost Functions Optimization", "Lagrangian Multipliers Application", "Variance Minimization Equations"],
+            image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=300&auto=format&fit=crop&q=60",
+            tagText: "STATISTICS METHODOLOGY",
+            themeColor: "purple"
+          },
+          {
+            title: "Induction Training for ISS Officers",
+            type: "Course",
+            category: "Course & Training Module",
+            desc: "Foundation training program for newly recruited Indian Statistical Service (ISS) officers.",
+            syllabus: ["Principles of Official Statistics", "National Accounts Overview", "Survey Sampling Designs", "Field Training Clearance"],
+            image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=300&auto=format&fit=crop&q=60",
+            tagText: "8-WEEK CURRICULUM",
+            themeColor: "blue"
+          },
+          {
+            title: "National Essay Competition on Data Science",
+            type: "Event",
+            category: "Calendar & Event Module",
+            desc: "Essay competition open to all central ministries statistics personnel on official data.",
+            syllabus: ["Essay Prompt: AI in Official Statistics", "Review Committee Screening", "Awards and Certifications Release"],
+            image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&auto=format&fit=crop&q=60",
+            tagText: "ACADEMY EVENT",
+            themeColor: "amber"
+          }
+        ];
+    }
+  };
+
+  const filteredSpotlightResults = searchDatabase.filter(item => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return false;
+    const matchesQuery = item.title.toLowerCase().includes(query) ||
+                         item.type.toLowerCase().includes(query) ||
+                         item.category.toLowerCase().includes(query) ||
+                         item.desc.toLowerCase().includes(query);
+    const matchesCategory = activeCategory === 'All' || item.type === activeCategory;
+    return matchesQuery && matchesCategory;
+  });
+
+  const filteredSuggestions = searchDatabase.filter(item => {
+    if (!searchQuery) return false;
+    const query = searchQuery.toLowerCase();
+    return item.title.toLowerCase().includes(query) ||
+           item.type.toLowerCase().includes(query) ||
+           item.category.toLowerCase().includes(query) ||
+           item.desc.toLowerCase().includes(query);
+  });
+
+  const renderCalendarSheet = (item) => {
+    let top = 'EVENT';
+    let center = 'CAL';
+    let bottom = 'INFO';
+
+    if (item.title.toLowerCase().includes('sports')) {
+      top = 'SPORTS';
+      center = '3D';
+      bottom = '2025';
+    } else if (item.duration.toLowerCase().includes('june 30')) {
+      top = 'DEADLINE';
+      center = '30';
+      bottom = 'JUN';
+    } else if (item.duration.toLowerCase().includes('jan 26')) {
+      top = 'QUIZ';
+      center = '26';
+      bottom = 'JAN';
+    }
+
+    return (
+      <div className="w-20 h-20 bg-white border-2 border-amber-200 rounded-xl overflow-hidden shadow-xs flex flex-col shrink-0 select-none text-center font-sans">
+        <div className="bg-rose-600 text-white text-[8px] font-black uppercase py-1 tracking-wider leading-none">
+          {top}
+        </div>
+        <div className="flex-grow flex flex-col justify-center bg-amber-50/15">
+          <span className="text-[#08493d] font-black text-2xl leading-none tracking-tighter">{center}</span>
+          <span className="text-slate-450 font-black text-[9px] uppercase tracking-widest mt-0.5">{bottom}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const renderItemCard = (item, onClick) => {
+    const type = item.type;
+    if (type === 'Course') {
+      return (
+        <div 
+          onClick={onClick}
+          className="border border-blue-150 bg-blue-50/20 hover:bg-blue-50/40 hover:border-blue-300 hover:shadow-md transition-all duration-200 rounded-xl p-4 cursor-pointer flex gap-4 items-center text-left group hover:-translate-y-0.5"
+        >
+          {item.image && (
+            <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 border border-blue-200/50 bg-white">
+              <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            </div>
+          )}
+          <div className="space-y-1.5 min-w-0 flex-grow">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[8px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded border text-blue-805 bg-blue-100 border-blue-200">
+                ⏱ {item.duration || '8 WEEKS'} Course
+              </span>
+              <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide truncate">{item.category}</span>
+            </div>
+            <h5 className="font-extrabold text-slate-800 text-xs sm:text-sm leading-snug group-hover:text-blue-900 truncate">
+              {item.title}
+            </h5>
+            <p className="text-[11px] text-slate-505 leading-normal font-medium line-clamp-1">
+              {item.desc}
+            </p>
+            {item.syllabus && item.syllabus.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {item.syllabus.slice(0, 2).map((syl, i) => (
+                  <span key={i} className="text-[8.5px] font-extrabold text-blue-900 bg-blue-100/60 border border-blue-200/40 px-2 py-0.2 rounded truncate max-w-[120px]">
+                    ✓ {syl}
+                  </span>
+                ))}
+                {item.syllabus.length > 2 && (
+                  <span className="text-[8.5px] font-extrabold text-slate-450 bg-slate-50 border border-slate-200 px-1.5 py-0.2 rounded">
+                    +{item.syllabus.length - 2} more
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+          <span className="text-blue-800 font-extrabold shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline-flex items-center gap-0.5">
+            Access ➔
+          </span>
+        </div>
+      );
+    } else if (type === 'Lesson') {
+      return (
+        <div 
+          onClick={onClick}
+          className="border border-emerald-100 bg-[#eff7f5]/25 hover:bg-[#eff7f5]/55 hover:border-emerald-350 hover:shadow-md transition-all duration-200 rounded-xl p-4 cursor-pointer flex gap-4 items-center text-left group hover:-translate-y-0.5"
+        >
+          {item.image && (
+            <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 border border-emerald-200/50 bg-white relative">
+              <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-[#08493d]/15 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow">
+                  <svg className="w-3.5 h-3.5 text-[#08493d] ml-0.5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="space-y-1.5 min-w-0 flex-grow">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[8px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded border text-emerald-850 bg-emerald-100 border-emerald-250">
+                📖 {item.duration || 'Core'} Lesson
+              </span>
+              <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide truncate">{item.category}</span>
+            </div>
+            <h5 className="font-extrabold text-slate-800 text-xs sm:text-sm leading-snug group-hover:text-[#08493d] truncate">
+              {item.title}
+            </h5>
+            <p className="text-[11px] text-slate-505 leading-normal font-medium line-clamp-1">
+              {item.desc}
+            </p>
+            {item.syllabus && item.syllabus.length > 0 && (
+              <div className="text-[10px] font-semibold text-emerald-800 flex items-center gap-1 mt-1">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                <span>Includes {item.syllabus.length} key learning topics</span>
+              </div>
+            )}
+          </div>
+          <span className="text-[#08493d] font-extrabold shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline-flex items-center gap-0.5">
+            Learn ➔
+          </span>
+        </div>
+      );
+    } else if (type === 'Topic') {
+      return (
+        <div 
+          onClick={onClick}
+          className="border border-purple-150 bg-purple-50/20 hover:bg-purple-50/40 hover:border-purple-300 hover:shadow-md transition-all duration-200 rounded-xl p-4 cursor-pointer flex gap-4 items-center text-left group hover:-translate-y-0.5"
+        >
+          {item.image && (
+            <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 border border-purple-200/50 bg-white">
+              <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            </div>
+          )}
+          <div className="space-y-1.5 min-w-0 flex-grow">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[8px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded border text-purple-800 bg-purple-100 border-purple-200">
+                🔬 {item.duration || 'Specialized'} Topic
+              </span>
+              <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide truncate">{item.category}</span>
+            </div>
+            <h5 className="font-extrabold text-slate-800 text-xs sm:text-sm leading-snug group-hover:text-purple-900 truncate">
+              {item.title}
+            </h5>
+            <p className="text-[11px] text-slate-550 leading-normal font-medium line-clamp-1">
+              {item.desc}
+            </p>
+            {item.syllabus && item.syllabus.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {item.syllabus.slice(0, 1).map((syl, i) => (
+                  <span key={i} className="text-[8.5px] font-bold text-purple-900 bg-purple-100/50 border border-purple-200/30 px-2 py-0.2 rounded truncate max-w-[150px]">
+                    Method: {syl}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          <span className="text-purple-800 font-extrabold shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline-flex items-center gap-0.5">
+            View ➔
+          </span>
+        </div>
+      );
+    } else { // type === 'Event'
+      return (
+        <div 
+          onClick={onClick}
+          className="border border-amber-150 bg-amber-50/20 hover:bg-amber-55/35 hover:border-amber-300 hover:shadow-md transition-all duration-200 rounded-xl p-4 cursor-pointer flex gap-4 items-center text-left group hover:-translate-y-0.5"
+        >
+          {renderCalendarSheet(item)}
+          
+          <div className="space-y-1.5 min-w-0 flex-grow">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[8px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded border text-amber-850 bg-amber-100 border-amber-250">
+                📅 Notice / {item.duration || 'Academy Event'}
+              </span>
+              <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide truncate">{item.category}</span>
+            </div>
+            <h5 className="font-extrabold text-slate-800 text-xs sm:text-sm leading-snug group-hover:text-amber-900 truncate">
+              {item.title}
+            </h5>
+            <p className="text-[11px] text-slate-550 leading-normal font-medium line-clamp-1">
+              {item.desc}
+            </p>
+            {item.syllabus && item.syllabus.length > 0 && (
+              <div className="text-[10px] text-amber-800 font-extrabold flex items-center gap-1.5 mt-1.5">
+                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                <span>Active: {item.syllabus[0]}</span>
+              </div>
+            )}
+          </div>
+          <span className="text-amber-800 font-extrabold shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline-flex items-center gap-0.5">
+            Register ➔
+          </span>
+        </div>
+      );
+    }
+  };
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [user, setUser] = useState(() => {
@@ -176,25 +771,27 @@ export default function Head() {
         {/* Right Section: Search & Data for Development Logo & Menu trigger */}
         <div className="flex items-center justify-between xl:justify-end w-full xl:w-auto gap-4">
           
-          {/* Search Box Form */}
-          <form onSubmit={handleSearch} className="flex items-center flex-grow max-w-md xl:max-w-xs relative">
-            <input
-              type="text"
-              placeholder="Namaste! What can I find for you?"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border-2 border-[#08493d] rounded-md px-3 py-1.5 pr-8 text-xs sm:text-sm font-medium placeholder-gray-500 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-shadow shadow-inner"
-            />
-            <button 
-              type="submit" 
-              className="absolute right-2 text-emerald-800 hover:text-emerald-600 transition-colors p-1"
-              aria-label="Search button"
-            >
+          {/* Spotlight Search Box Trigger Button */}
+          <div 
+            onClick={() => {
+              setSpotlightOpen(true);
+              setSearchQuery('');
+              setActiveCategory('All');
+            }}
+            className="flex items-center flex-grow max-w-md xl:max-w-xs relative cursor-pointer group select-none"
+          >
+            <div className="w-full border-2 border-[#08493d] rounded-md px-3.5 py-1.5 pr-14 text-xs font-semibold text-slate-400 bg-[#eff7f5]/40 group-hover:bg-white group-hover:border-emerald-600 transition-all flex items-center justify-between shadow-inner">
+              <span className="truncate">Search lessons, courses, events...</span>
+              <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-bold bg-white text-slate-400 rounded border border-slate-200 shadow-xs">
+                Ctrl K
+              </kbd>
+            </div>
+            <div className="absolute right-3.5 text-emerald-800 group-hover:text-emerald-600 transition-colors">
               <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 fill-current" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
               </svg>
-            </button>
-          </form>
+            </div>
+          </div>
 
           {/* Data for Development Circular Logo */}
           <div className="flex items-center" title="Data for Development / MoSPI Logo">
@@ -264,18 +861,22 @@ export default function Head() {
 
       {/* 3. Navigation Bar (Desktop layout: items aligned, Mobile layout: drawer/stacked list) */}
       <nav 
-        className={`w-full bg-[#f8fafc] border-b border-gray-200 select-none ${
+        className={`w-full bg-white border-b border-gray-250 select-none ${
           mobileMenuOpen ? 'block' : 'hidden'
         } xl:block`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 xl:py-3 flex flex-col xl:flex-row xl:items-center xl:justify-end">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-2 xl:py-2.5 flex flex-col xl:flex-row xl:items-center xl:justify-end">
           <ul className="flex flex-col xl:flex-row xl:items-center space-y-2 xl:space-y-0 xl:space-x-8 text-sm font-bold text-slate-800">
             {/* Home link */}
             <li>
               <NavLink 
                 to="/" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Home
@@ -290,18 +891,19 @@ export default function Head() {
             >
               <button 
                 onClick={() => setAboutOpen(!aboutOpen)}
-                className="flex items-center w-full py-1 xl:py-0 text-left hover:text-[#08493d] focus:outline-none transition-colors"
+                className="flex items-center w-full py-1 xl:py-2 text-left hover:text-[#08493d] focus:outline-none transition-colors border-b-[3px] border-transparent text-slate-800"
                 aria-expanded={aboutOpen}
                 aria-haspopup="true"
               >
                 <span>About us</span>
                 <svg 
-                  className={`h-4 w-4 ml-1 transform transition-transform ${aboutOpen ? 'rotate-180' : ''}`}
+                  className={`h-3.5 w-3.5 ml-1 transform transition-transform ${aboutOpen ? 'rotate-180' : ''}`}
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
+                  strokeWidth={2.5}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
@@ -332,7 +934,11 @@ export default function Head() {
               <NavLink 
                 to="/documents" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Documents
@@ -344,7 +950,11 @@ export default function Head() {
               <NavLink 
                 to="/trainings" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Trainings
@@ -356,7 +966,11 @@ export default function Head() {
               <NavLink 
                 to="/announcements" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Announcements
@@ -369,7 +983,11 @@ export default function Head() {
                 <NavLink 
                   to="/admin/users" 
                   className={({ isActive }) => 
-                    `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                    `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                      isActive 
+                        ? 'text-[#08493d] border-[#08493d]' 
+                        : 'text-slate-800 border-transparent'
+                    }`
                   }
                 >
                   Admin Console
@@ -382,7 +1000,11 @@ export default function Head() {
               <NavLink 
                 to="/course-registration" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Register Course
@@ -394,7 +1016,11 @@ export default function Head() {
               <NavLink 
                 to="/contact" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Contact
@@ -406,32 +1032,77 @@ export default function Head() {
               <li className="relative xl:pl-2">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-[#08493d] border border-emerald-250 rounded-md text-xs font-bold hover:bg-emerald-100 transition-colors focus:outline-none cursor-pointer"
+                  className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#eff7f5] text-[#08493d] border border-[#08493d] rounded-md text-xs font-bold hover:bg-[#e2f2ef] transition-colors focus:outline-none cursor-pointer"
                 >
-                  <svg className="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-4.5 h-4.5 text-[#08493d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span>{user.name}</span>
-                  <svg className={`h-3 w-3 ml-0.5 transform transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  <svg className={`h-3.5 w-3.5 ml-1 transform transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
                 {profileOpen && (
-                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-48 bg-white border border-gray-150 rounded-lg shadow-lg py-1.5 z-50 text-xs font-semibold text-slate-700 animate-fadeIn">
-                    <li className="px-4 py-2 border-b border-gray-100 bg-slate-50/50">
-                      <p className="font-extrabold text-slate-800 leading-tight">{user.name}</p>
-                      <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-wider mt-0.5">{user.role} Portal</p>
-                      <p className="text-[10px] text-slate-400 font-normal truncate mt-0.5">{user.email}</p>
+                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-64 bg-white border border-[#08493d]/30 rounded-xl shadow-xl py-0 z-50 text-xs font-semibold text-slate-700 animate-fadeIn overflow-hidden">
+                    
+                    {/* Profile Details Card */}
+                    <li className="bg-gradient-to-br from-[#08493d] to-[#0d6b5c] px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {/* Avatar Circle with initial */}
+                        <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center shrink-0 shadow-inner">
+                          <span className="text-white text-base font-black uppercase">
+                            {user.name?.[0] || 'U'}
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-white font-extrabold text-sm leading-tight truncate">{user.name || '—'}</p>
+                          <p className="text-white/70 text-[10px] font-medium truncate mt-0.5">{user.email || '—'}</p>
+                        </div>
+                      </div>
+                      {/* Role Badge */}
+                      <div className="mt-2.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/15 border border-white/25 text-[9px] font-extrabold text-white uppercase tracking-wider">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 shrink-0"></span>
+                          {user.role === 'admin' ? 'Administrator'
+                            : user.role === 'faculty' ? 'Trainer / Faculty'
+                            : user.role === 'student' ? 'Trainee / Learner'
+                            : user.role === 'course-director' ? 'Course Director'
+                            : user.role === 'course-coordinator' ? 'Course Coordinator'
+                            : user.role === 'warden' ? 'Warden'
+                            : user.role === 'cms' ? 'Content Manager'
+                            : (user.role || 'User')}
+                        </span>
+                      </div>
                     </li>
+
+                    {/* Admin-only links */}
                     {user.role === 'admin' && (
                       <>
+                        <li className="pt-1.5 pb-0.5">
+                          <NavLink 
+                            to="/admin/" 
+                            onClick={() => setProfileOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 hover:bg-[#eff7f5] hover:text-[#08493d] transition-colors font-bold text-slate-700"
+                          >
+                            <svg className="w-3.5 h-3.5 text-[#08493d] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                              <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                              <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                              <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Management Dashboard
+                          </NavLink>
+                        </li>
                         <li>
                           <NavLink 
                             to="/admin/e-hostel" 
                             onClick={() => setProfileOpen(false)}
-                            className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                            className="flex items-center gap-2.5 px-4 py-1.5 hover:bg-slate-50 hover:text-[#08493d] transition-colors text-slate-600"
                           >
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
                             e-Hostel Dashboard
                           </NavLink>
                         </li>
@@ -439,18 +1110,26 @@ export default function Head() {
                           <NavLink 
                             to="/admin/kms" 
                             onClick={() => setProfileOpen(false)}
-                            className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                            className="flex items-center gap-2.5 px-4 py-1.5 hover:bg-slate-50 hover:text-[#08493d] transition-colors text-slate-600"
                           >
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
                             KMS Content Dashboard
                           </NavLink>
                         </li>
                       </>
                     )}
-                    <li>
+
+                    {/* Sign out */}
+                    <li className="border-t border-gray-100 mt-1">
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2.5 hover:bg-rose-50 hover:text-rose-700 font-bold transition-colors border-t border-gray-100 cursor-pointer"
+                        className="w-full text-left flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50 hover:text-rose-700 text-slate-500 font-bold transition-colors text-xs cursor-pointer"
                       >
+                        <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                         Sign Out
                       </button>
                     </li>
@@ -476,6 +1155,300 @@ export default function Head() {
           </ul>
         </div>
       </nav>
+      {/* 4. Spotlight Search Overlay */}
+      {spotlightOpen && (
+        <div className="fixed inset-0 z-50 bg-[#053229]/80 backdrop-blur-md flex flex-col items-center pt-[8vh] sm:pt-[12vh] px-4 select-none animate-fadeIn font-sans">
+          {/* Click-away backdrop container */}
+          <div className="fixed inset-0 -z-10" onClick={() => setSpotlightOpen(false)} />
+
+          {/* Modal Container */}
+          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-emerald-900/10 overflow-hidden flex flex-col max-h-[80vh] animate-scaleUp">
+            
+            {/* Search Input Box Header */}
+            <div className="relative border-b border-gray-150 p-4 sm:p-5 bg-gradient-to-r from-[#eff7f5] to-white flex items-center gap-3">
+              <div className="absolute left-8 text-emerald-800">
+                <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+              </div>
+
+              <input
+                ref={spotlightInputRef}
+                type="text"
+                placeholder="Type to search ISS trainings, SNA principles, events, essays..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white border-2 border-[#08493d] rounded-xl py-3 pl-12 pr-32 text-sm sm:text-base font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-emerald-700/20 focus:border-[#08493d] transition-all shadow-inner"
+              />
+
+              <div className="absolute right-8 flex items-center gap-2">
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="p-1.5 text-gray-400 hover:text-gray-650 rounded-full hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+                    title="Clear input"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                <span className="hidden sm:inline-block px-2 py-0.5 text-[9px] font-bold bg-gray-100 text-slate-500 rounded border border-gray-250 select-none">
+                  ESC
+                </span>
+                <button
+                  onClick={() => setSpotlightOpen(false)}
+                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-full hover:bg-rose-50 transition-colors focus:outline-none cursor-pointer"
+                  title="Close Search"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Category Navigation Bar */}
+            <div className="px-5 py-2.5 bg-slate-50 border-b border-gray-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+              {['All', 'Course', 'Lesson', 'Topic', 'Event'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-3.5 py-1 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+                    activeCategory === cat
+                      ? 'bg-[#08493d] text-white border-[#08493d] shadow-sm'
+                      : 'bg-white text-slate-650 border-gray-200 hover:bg-gray-100 hover:text-slate-800'
+                  }`}
+                >
+                  {cat === 'All' ? 'All Resources' : cat + 's'}
+                </button>
+              ))}
+            </div>
+
+            {/* Content Results & Suggestions Scroll Pane */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-white max-h-[50vh]">
+              {searchQuery.trim().length === 0 ? (
+                // 1. Recommended / Spotlight Welcome Dashboard State
+                <div className="space-y-5 animate-fadeIn">
+                  <div>
+                    {activeCategory === 'All' ? (
+                      <>
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Recommended Quick Searches</h4>
+                        <p className="text-xs text-slate-500 mt-0.5 font-medium">Explore standard curriculums and events in high demand:</p>
+                      </>
+                    ) : (
+                      <>
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{activeCategory} Resources Catalog</h4>
+                        <p className="text-xs text-slate-550 mt-0.5 font-medium">Browse our full listing of statistical {activeCategory.toLowerCase()}s:</p>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {(activeCategory === 'All' 
+                      ? getRecommendedSearches() 
+                      : searchDatabase.filter(item => item.type === activeCategory)
+                    ).map((item, idx) => 
+                      renderItemCard(item, () => {
+                        const found = searchDatabase.find(dbItem => dbItem.title === item.title);
+                        if (found) {
+                          setSelectedSearchItem(found);
+                          setSpotlightOpen(false);
+                          setEnrollMsg('');
+                        }
+                      })
+                    )}
+                  </div>
+
+                  {/* Keyboard Guide Footer info inside results */}
+                  <div className="bg-[#eff7f5] rounded-xl p-3 border border-emerald-150 flex items-center justify-between text-[11px] text-emerald-850 font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                      </svg>
+                      Tip: Search filters like Lessons, Courses, or Topics update instantly as you type.
+                    </span>
+                    <span className="hidden sm:inline-block">Press ESC anytime to exit.</span>
+                  </div>
+                </div>
+              ) : (
+                // 2. Real-time Search Results Grid
+                <div className="space-y-3.5 animate-fadeIn">
+                  <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-gray-100 pb-2">
+                    <span>Search Results ({filteredSpotlightResults.length})</span>
+                    <span>Filtering by {activeCategory === 'All' ? 'All Types' : activeCategory + 's'}</span>
+                  </div>
+
+                  {filteredSpotlightResults.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      {filteredSpotlightResults.map((item, idx) => 
+                        renderItemCard(item, () => {
+                          setSelectedSearchItem(item);
+                          setSpotlightOpen(false);
+                          setEnrollMsg('');
+                        })
+                      )}
+                    </div>
+                  ) : (
+                    <div className="py-12 text-center space-y-3">
+                      <div className="w-12 h-12 bg-rose-50 border border-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-500">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-slate-800 font-extrabold text-sm">No results match your criteria</p>
+                        <p className="text-slate-400 font-medium text-xs">Try selecting a different filter above or typing something else.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Keyboard Shortcuts Help Bar */}
+            <div className="px-5 py-3.5 bg-gray-50 border-t border-gray-150 flex items-center justify-between text-[11px] text-slate-450 font-bold select-none">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1">
+                  <kbd className="px-1.5 py-0.5 bg-white border border-gray-250 rounded text-[9px] shadow-xs text-slate-500 font-sans">↑↓</kbd> Navigate
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="px-1.5 py-0.5 bg-white border border-gray-250 rounded text-[9px] shadow-xs text-slate-500 font-sans">↵</kbd> Select
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="px-1.5 py-0.5 bg-white border border-gray-250 rounded text-[9px] shadow-xs text-slate-500 font-sans">ESC</kbd> Close
+                </span>
+              </div>
+              <div className="text-right font-semibold text-slate-400">
+                National Statistics Academy (NSSTA) Portal
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 5. Global Search Detail Modal */}
+      {selectedSearchItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs select-none">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-emerald-900/10 overflow-hidden relative animate-fadeIn mx-4 text-left">
+            
+            {/* cover image inside modal */}
+            {selectedSearchItem.image && (
+              <div className="h-44 w-full relative overflow-hidden bg-slate-100 shrink-0">
+                <img src={selectedSearchItem.image} alt={selectedSearchItem.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-5">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[8.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${
+                      selectedSearchItem.type === 'Course' ? 'bg-blue-600 text-blue-50 border-blue-400' :
+                      selectedSearchItem.type === 'Lesson' ? 'bg-emerald-600 text-emerald-50 border-emerald-400' :
+                      selectedSearchItem.type === 'Topic' ? 'bg-purple-600 text-purple-50 border-purple-400' :
+                      'bg-amber-600 text-amber-50 border-amber-400'
+                    }`}>
+                      {selectedSearchItem.type}
+                    </span>
+                    <span className="text-[10px] text-emerald-300 font-black uppercase tracking-widest">{selectedSearchItem.category}</span>
+                  </div>
+                </div>
+                {/* Close Button overlay */}
+                <button 
+                  onClick={() => setSelectedSearchItem(null)} 
+                  className="absolute top-4 right-4 text-white hover:text-rose-250 bg-slate-900/40 hover:bg-slate-900/60 p-1.5 rounded-full focus:outline-none cursor-pointer transition-colors"
+                  title="Close Modal"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* fallback header if no image */}
+            {!selectedSearchItem.image && (
+              <div className="bg-[#053229] text-white p-5 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <span className={`text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                    selectedSearchItem.type === 'Course' ? 'bg-blue-800/80 text-blue-100 border-blue-600' :
+                    selectedSearchItem.type === 'Lesson' ? 'bg-emerald-800/80 text-emerald-100 border-emerald-600' :
+                    selectedSearchItem.type === 'Topic' ? 'bg-purple-800/80 text-purple-100 border-purple-600' :
+                    'bg-amber-800/80 text-amber-100 border-amber-600'
+                  }`}>
+                    {selectedSearchItem.type}
+                  </span>
+                  <span className="text-[10px] text-emerald-300 font-bold uppercase tracking-wider">{selectedSearchItem.category}</span>
+                </div>
+                <button 
+                  onClick={() => setSelectedSearchItem(null)} 
+                  className="text-slate-350 hover:text-white focus:outline-none cursor-pointer"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            <div className="p-6 space-y-4 text-xs sm:text-sm font-semibold text-slate-650">
+              {enrollMsg && (
+                <div className="bg-emerald-50 border border-emerald-250 text-emerald-850 p-3 rounded-xl text-center text-xs font-bold font-sans">
+                  ✓ {enrollMsg}
+                </div>
+              )}
+
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-800 leading-snug">{selectedSearchItem.title}</h3>
+                <p className="text-xs text-slate-400 mt-1 font-medium leading-normal">
+                  Reference Module: <strong className="text-slate-500">{selectedSearchItem.category}</strong> • Duration: {selectedSearchItem.duration}
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Description</label>
+                <p className="text-slate-650 text-xs leading-relaxed font-semibold bg-slate-50 p-3.5 border border-gray-150 rounded-xl">
+                  {selectedSearchItem.desc}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                  {selectedSearchItem.type === 'Event' ? 'Event Schedule / Agenda' : 'Syllabus & Course Modules'}
+                </label>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  {selectedSearchItem.syllabus.map((syl, i) => (
+                    <li key={i} className="flex items-center gap-2 p-2 bg-slate-50 border border-gray-100 rounded-lg">
+                      <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full shrink-0" />
+                      <span className="truncate text-slate-700 font-bold">{syl}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setSelectedSearchItem(null)}
+                  className="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 border border-gray-300 text-slate-700 font-bold rounded-lg cursor-pointer text-center"
+                >
+                  Close Window
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setEnrollMsg(
+                      selectedSearchItem.type === 'Event' 
+                        ? 'Successfully registered for this quiz/competition! Invitation card cached in Profile.'
+                        : 'Enrolled successfully! Course materials and lectures are now active in your Trainee Dashboard.'
+                    );
+                  }}
+                  className="w-1/2 py-2 bg-[#08493d] hover:bg-[#063b31] text-white font-bold rounded-lg shadow-sm hover:shadow cursor-pointer text-center"
+                >
+                  {selectedSearchItem.type === 'Event' ? 'Register Event' : 'Access Course'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

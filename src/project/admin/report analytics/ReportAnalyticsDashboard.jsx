@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function ReportAnalyticsDashboard() {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Toast notification system
   const [toasts, setToasts] = useState([]);
@@ -21,6 +22,7 @@ export default function ReportAnalyticsDashboard() {
   const [selectedCadre, setSelectedCadre] = useState('All Cadres');
   const [selectedDesignation, setSelectedDesignation] = useState('All Designations');
   const [selectedTrainingType, setSelectedTrainingType] = useState('All Types');
+  const [activeProfile, setActiveProfile] = useState('Super Admin');
 
   // Report Center Form state
   const [reportType, setReportType] = useState('Monthly Report');
@@ -58,11 +60,17 @@ export default function ReportAnalyticsDashboard() {
     const designationFactor = selectedDesignation === 'All Designations' ? 1 : 0.45;
     const trainingTypeFactor = selectedTrainingType === 'All Types' ? 1 : 0.4;
 
-    // 3. Composite multiplier
-    const m = stateFactor * ministryFactor * cadreFactor * designationFactor * trainingTypeFactor * dateMultiplier;
+    // 3. Profile multiplier
+    let profileMultiplier = 1;
+    if (activeProfile === 'State Nodal Officer') profileMultiplier = 0.15;
+    if (activeProfile === 'Ministry Nodal Officer') profileMultiplier = 0.4;
+    if (activeProfile === 'Course Director') profileMultiplier = 0.25;
+
+    // 4. Composite multiplier
+    const m = stateFactor * ministryFactor * cadreFactor * designationFactor * trainingTypeFactor * dateMultiplier * profileMultiplier;
 
     // Deterministic seed value from filter lengths so state updates are stable
-    const seed = selectedState.length + selectedMinistry.length + selectedCadre.length + selectedTrainingType.length + (startDate?.length || 0);
+    const seed = selectedState.length + selectedMinistry.length + selectedCadre.length + selectedTrainingType.length + (startDate?.length || 0) + activeProfile.length;
 
     setKpiData({
       learners: Math.max(10, Math.floor(245860 * m)),
@@ -72,7 +80,7 @@ export default function ReportAnalyticsDashboard() {
       certifications: Math.max(5, Math.floor(195420 * m)),
       avgHours: Number((12 + (seed % 8)).toFixed(1))
     });
-  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, financialYear, startDate, endDate]);
+  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, financialYear, startDate, endDate, activeProfile]);
 
   // Dynamic state distribution data based on filters
   const stateData = React.useMemo(() => {
@@ -108,7 +116,7 @@ export default function ReportAnalyticsDashboard() {
       return { ...item, count };
     });
     return res.sort((a, b) => b.count - a.count);
-  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, startDate, endDate]);
+  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, startDate, endDate, activeProfile]);
 
   // Training Type Distribution donut metrics
   const trainingTypeData = React.useMemo(() => {
@@ -307,43 +315,143 @@ export default function ReportAnalyticsDashboard() {
   const formatNum = (n) => n.toLocaleString('en-IN');
 
   return (
-    <div className="min-h-screen bg-[#f0f4f8] text-slate-800 font-sans text-xs font-semibold text-left select-none p-4 sm:p-6 space-y-5">
+    <div className="w-full min-h-screen bg-slate-100 flex font-sans text-slate-800 antialiased select-none">
       
-      {/* 1. Header Bar */}
-      <div className="bg-white px-5 py-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex items-center gap-3">
-          <button onClick={() => window.history.back()} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500" title="Menu">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
-          </button>
+      {/* Sidebar Navigation — Admin Theme */}
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-68 bg-[#053229] text-white flex flex-col border-r border-[#031b16] transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 h-screen shrink-0 shadow-xl`}>
+        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#03251e]">
           <div>
-            <h1 className="text-lg sm:text-xl font-black text-slate-800 tracking-tight">Report Generation & Analytics</h1>
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mt-0.5">Comprehensive insights on training programs and performance</p>
+            <h2 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              <span className="inline-block w-3.5 h-3.5 bg-yellow-400 rounded-xs animate-pulse"></span>
+              LMS Console
+            </h2>
+            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mt-0.5">Reports & Analytics</p>
           </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-1.5 rounded-lg text-slate-450 hover:text-white hover:bg-white/5 focus:outline-none" aria-label="Close Menu">
+            <svg className="w-5.5 h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
-        <div className="flex items-center gap-3 ml-auto md:ml-0">
-          <div className="flex gap-1.5">
-            <button className="w-8 h-8 rounded-lg bg-slate-50 border border-gray-200 hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer" title="Search">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+
+        <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Central Management</p>
+          
+          <button onClick={() => navigate('/admin/dashboard')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left">
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            <span>Command Dashboard</span>
+          </button>
+          <button onClick={() => navigate('/admin/e-hostel')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left">
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            <span>e-Hostel Logistics</span>
+          </button>
+          <button onClick={() => navigate('/admin/kms')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left">
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            <span>Knowledge (KMS)</span>
+          </button>
+          <button onClick={() => navigate('/admin/users')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left">
+            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <span>User Accounts</span>
+          </button>
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold bg-blue-600 text-white shadow-md hover:bg-blue-700 transition-all cursor-pointer text-left">
+            <svg className="w-4.5 h-4.5 text-blue-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            <span>Reports & Analytics</span>
+          </button>
+
+          <div className="border-t border-white/5 my-4 pt-4 space-y-1.5">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Workspace Navigation</p>
+            
+            <button onClick={() => navigate('/admin/dashboard')} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-350 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left">
+              <svg className="w-4.5 h-4.5 text-blue-450 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Back to Admin Dashboard</span>
             </button>
-            <button className="w-8 h-8 rounded-lg bg-slate-50 border border-gray-200 hover:bg-slate-100 flex items-center justify-center text-slate-500 relative cursor-pointer" title="Notifications">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-            </button>
-            <button className="w-8 h-8 rounded-lg bg-slate-50 border border-gray-200 hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer" title="Help">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+
+            <button onClick={() => navigate('/')} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left">
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Public Site</span>
             </button>
           </div>
-          <div className="flex items-center gap-2 border-l pl-3">
-            <span className="text-[10px] text-slate-400 font-bold hidden sm:inline">Welcome,</span>
-            <div className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=facearea&facepad=2" alt="Admin" className="w-8 h-8 rounded-full border border-gray-200" />
-              <span className="font-extrabold text-slate-800 hidden sm:inline">Admin User ▾</span>
+        </nav>
+
+        <div className="p-4 border-t border-white/5 bg-[#03211b] text-xs font-semibold">
+          <p className="text-slate-450 leading-normal">System Version 3.1.5</p>
+          <p className="text-emerald-400/70 text-[10px] mt-0.5">Gov-Secure Active Sandbox</p>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+        
+        {/* Sticky Top Header */}
+        <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-35 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer" aria-label="Open Menu">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+            <div>
+              <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">📊 Report Generation & Analytics</h1>
+              <p className="text-xs text-slate-400 font-semibold mt-0.5">National Statistical Training Academy (NSSTA) • Comprehensive Insights Dashboard</p>
             </div>
           </div>
+          <div className="flex items-center gap-4 text-xs font-bold text-slate-500">
+            <div className="hidden md:flex items-center gap-3 pr-4 border-r border-slate-200">
+              <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Profile:</span>
+              <div className="relative">
+                <select 
+                  value={activeProfile}
+                  onChange={(e) => {
+                    setActiveProfile(e.target.value);
+                    showToast(`Dashboard view changed to ${e.target.value}`, 'success');
+                  }}
+                  className="appearance-none bg-white border border-slate-200 hover:border-slate-300 text-slate-800 rounded-lg pl-3 pr-8 py-1.5 text-[11px] font-extrabold cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
+                >
+                  <option value="Super Admin">Super Admin</option>
+                  <option value="Ministry Nodal Officer">Ministry Nodal</option>
+                  <option value="State Nodal Officer">State Nodal</option>
+                  <option value="Course Director">Course Director</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+            </div>
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+              <span className="font-extrabold tracking-wide">System Online</span>
+            </span>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <main className="flex-grow p-6 space-y-5 text-xs font-semibold text-left">
+
+      {/* Hero Gradient Banner */}
+      <div className="bg-gradient-to-r from-[#08493d] to-[#0d6b5c] rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="space-y-2 relative z-10">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Reports & Interactive Analytics</h2>
+          <p className="text-emerald-100 text-xs sm:text-sm font-semibold max-w-xl leading-relaxed">
+            Generate comprehensive reports across MoSPI training programs. Apply multi-dimensional filters by State, Cadre, Designation and Training Type to analyze learner distributions, completion heatmaps, and peer benchmarks.
+          </p>
         </div>
+        <div className="bg-white/10 border border-white/20 backdrop-blur-md rounded-xl p-4 shrink-0 w-full md:w-56 text-left select-none relative z-10">
+          <p className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest">Analytics Engine</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <span className="text-3xl font-black tracking-tighter">{formatNum(kpiData.learners)}</span>
+            <span className="text-xs text-emerald-200 font-extrabold uppercase">Learners</span>
+          </div>
+          <div className="mt-3 flex items-center justify-between text-[11px] text-emerald-100 font-bold border-t border-white/10 pt-2.5">
+            <span>Filters Active: {[selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType].filter(f => !f.startsWith('All')).length}/5</span>
+          </div>
+        </div>
+        <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-radial from-white/10 to-transparent pointer-events-none rounded-r-2xl"></div>
       </div>
 
-      {/* 2. Horizontal Filters Panel */}
+      {/* Horizontal Filters Panel */}
       <div className="bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 items-end">
         {[
           {l:'Financial Year',v:financialYear,s:setFinancialYear,o:['2024-25','2023-24']},
@@ -358,9 +466,9 @@ export default function ReportAnalyticsDashboard() {
           <div key={i} className="space-y-0.5">
             <label className="text-[8.5px] text-slate-400 font-black uppercase tracking-wider block">{f.l}</label>
             {f.isDate ? (
-              <input type="date" value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none cursor-pointer" />
+              <input type="date" value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 outline-none cursor-pointer" />
             ) : (
-              <select value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold cursor-pointer focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none appearance-none">
+              <select value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold cursor-pointer focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 outline-none appearance-none">
                 {f.o.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
             )}
@@ -579,7 +687,7 @@ export default function ReportAnalyticsDashboard() {
 
           <button 
             onClick={handleGenerateReport}
-            className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-lg shadow-md tracking-wider uppercase text-[10.5px] cursor-pointer"
+            className="w-full py-2 bg-[#08493d] hover:bg-[#063b31] text-white font-extrabold rounded-lg shadow-md tracking-wider uppercase text-[10.5px] cursor-pointer"
           >
             Generate Report
           </button>
@@ -1039,7 +1147,7 @@ export default function ReportAnalyticsDashboard() {
         <h3 className="font-extrabold text-slate-800 text-[12.5px] uppercase tracking-wide border-b pb-2">Download Reports</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
-            {name:'National Dashboard Report',bg:'bg-emerald-600 hover:bg-emerald-700',icon:'📊'},
+            {name:'National Dashboard Report',bg:'bg-[#08493d] hover:bg-[#063b31]',icon:'📊'},
             {name:'Ministry Benchmark Report',bg:'bg-orange-500 hover:bg-orange-600',icon:'🏛️'},
             {name:'Training Impact Assessment Report',bg:'bg-blue-600 hover:bg-blue-700',icon:'📋'},
             {name:'Course Completion Heatmap Report',bg:'bg-amber-500 hover:bg-amber-600',icon:'🗺️'}
@@ -1050,6 +1158,9 @@ export default function ReportAnalyticsDashboard() {
             </button>
           ))}
         </div>
+      </div>
+
+        </main>
       </div>
 
       {/* Floating Toast Notification Center */}
