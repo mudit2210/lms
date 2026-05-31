@@ -11,8 +11,7 @@ export default function Home() {
     window.dispatchEvent(new Event('auth-change'));
     navigate('/login');
   };
-  const [activeSidebarTab, setActiveSidebarTab] = useState('room_allotment');
-  const [activeOverviewTab, setActiveOverviewTab] = useState('ehostel'); // 'ehostel', 'logistics'
+  const [activeSidebarTab, setActiveSidebarTab] = useState('dashboard');
   
   // Profile & Notification Dropdown States
   const [profileOpen, setProfileOpen] = useState(false);
@@ -111,6 +110,7 @@ export default function Home() {
         setActiveTab={setActiveSidebarTab} 
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        onRaiseTicket={() => setShowTicketModal(true)}
       />
 
       {/* Backdrop overlay for mobile drawer */}
@@ -228,28 +228,10 @@ export default function Home() {
         {/* Outer Dashboard Area */}
         <main className="flex-grow p-6 sm:p-8 space-y-6 overflow-y-auto max-h-[calc(100vh-65px)]">
 
-          {/* Sub Overview Tabs under Header */}
-          <div className="flex border-b border-gray-200 pb-0.5 text-sm font-bold text-slate-400 gap-6 select-none">
-            <button 
-              onClick={() => setActiveOverviewTab('ehostel')}
-              className={`pb-2.5 border-b-2 transition-all cursor-pointer ${activeOverviewTab === 'ehostel' ? 'border-blue-600 text-blue-600' : 'border-transparent hover:text-slate-800'}`}
-            >
-              e-Hostel Overview
-            </button>
-            <button 
-              onClick={() => setActiveOverviewTab('logistics')}
-              className={`pb-2.5 border-b-2 transition-all cursor-pointer ${activeOverviewTab === 'logistics' ? 'border-blue-600 text-blue-600' : 'border-transparent hover:text-slate-800'}`}
-            >
-              Logistics Overview
-            </button>
-          </div>
-
-          {activeOverviewTab === 'ehostel' ? (
-            /* E-Hostel Content */
-            <>
-              {/* Info Stats Cards Row */}
+          {activeSidebarTab === 'dashboard' && (
+            <div className="space-y-6 animate-fadeIn">
+              {/* Stats Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                
                 {/* 1. Total Rooms */}
                 <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
                   <div className="flex justify-between items-start">
@@ -257,17 +239,16 @@ export default function Home() {
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Rooms</p>
                       <h3 className="text-2xl font-extrabold text-slate-800">120</h3>
                     </div>
-                    <div className="p-3 bg-blue-50 text-blue-700 rounded-xl">
+                    <div className="p-3 bg-[#eff7f5] text-[#08493d] rounded-xl">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
                       </svg>
                     </div>
                   </div>
-                  <button onClick={() => setShowDetailsModal('total')} className="text-[10px] font-bold text-blue-600 hover:text-blue-800 mt-4 text-left hover:underline">
+                  <button onClick={() => setShowDetailsModal('total')} className="text-[10px] font-bold text-[#08493d] hover:text-emerald-800 mt-4 text-left hover:underline">
                     View Details
                   </button>
                 </div>
-
                 {/* 2. Occupied Rooms */}
                 <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
                   <div className="flex justify-between items-start">
@@ -285,7 +266,6 @@ export default function Home() {
                     View Details
                   </button>
                 </div>
-
                 {/* 3. Available Rooms */}
                 <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
                   <div className="flex justify-between items-start">
@@ -303,7 +283,6 @@ export default function Home() {
                     View Details
                   </button>
                 </div>
-
                 {/* 4. Today Check-outs */}
                 <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
                   <div className="flex justify-between items-start">
@@ -313,7 +292,7 @@ export default function Home() {
                     </div>
                     <div className="p-3 bg-purple-50 text-purple-700 rounded-xl">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3h4a3 3 0 013 3v1" />
                       </svg>
                     </div>
                   </div>
@@ -321,390 +300,467 @@ export default function Home() {
                     View Details
                   </button>
                 </div>
-
                 {/* 5. Pending Payments */}
                 <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between hover:shadow-md transition-shadow relative group">
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pending Payments</p>
-                      <h3 className="text-2xl font-extrabold text-slate-800">₹ 45,600</h3>
+                      <h3 className="text-2xl font-extrabold text-slate-800 font-sans">₹ 45,600</h3>
                     </div>
-                    <div className="p-3 bg-teal-50 text-teal-700 rounded-xl font-bold">
-                      ₹
-                    </div>
+                    <div className="p-3 bg-teal-50 text-teal-700 rounded-xl font-bold">₹</div>
                   </div>
                   <button onClick={() => setShowDetailsModal('payments')} className="text-[10px] font-bold text-teal-700 hover:text-teal-900 mt-4 text-left hover:underline">
                     View Details
                   </button>
                 </div>
-
               </div>
 
-              {/* Main Grid: Room Allotment Table & Sidebar Lists */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Grid: Activities and Schedules */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Check-ins activity feed */}
+                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 space-y-4">
+                  <h3 className="text-sm font-extrabold text-slate-800">Check-in Tracker</h3>
+                  <div className="space-y-3 font-medium text-xs">
+                    <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span className="font-bold text-slate-700">Rahul Verma</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">Checked In • H-204</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                        <span className="font-bold text-slate-700">Vikram Das</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">Checked Out • H-206</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span className="font-bold text-slate-700">Anjali Singh</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">Checked In • H-105</span>
+                    </div>
+                  </div>
+                  <button onClick={() => setActiveSidebarTab('check_in_out')} className="text-xs font-bold text-[#08493d] hover:underline block text-center w-full pt-1.5 border-t border-gray-100">
+                    View Full Logs →
+                  </button>
+                </div>
+
+                {/* Venue Scheduling summary */}
+                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 space-y-4">
+                  <h3 className="text-sm font-extrabold text-slate-800">Venue Scheduling</h3>
+                  <div className="space-y-3 font-medium text-xs">
+                    <div className="flex gap-2">
+                      <div className="bg-slate-100 border border-slate-200 rounded text-center p-1 min-w-[32px] font-bold text-slate-700">
+                        15
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800">ISS Inauguration</p>
+                        <p className="text-[10px] text-slate-400">Main Aud. • 09:00 AM</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="bg-slate-100 border border-slate-200 rounded text-center p-1 min-w-[32px] font-bold text-slate-700">
+                        15
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800">Policy Workshop</p>
+                        <p className="text-[10px] text-slate-400">Seminar Hall 2 • 02:00 PM</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => setActiveSidebarTab('venue_scheduling')} className="text-xs font-bold text-[#08493d] hover:underline block text-center w-full pt-1.5 border-t border-gray-100">
+                    View Calendar →
+                  </button>
+                </div>
+
+                {/* Open Tickets summary */}
+                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 space-y-4">
+                  <h3 className="text-sm font-extrabold text-slate-800">Maintenance Tickets</h3>
+                  <div className="space-y-3 font-medium text-xs">
+                    <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-gray-100">
+                      <span className="font-mono text-[10px] font-bold text-slate-500">MTK1254</span>
+                      <span className="font-bold text-slate-800 truncate max-w-[120px]">AC Not Working</span>
+                      <span className="text-[9px] font-bold bg-rose-50 text-rose-700 px-2 py-0.2 rounded border border-rose-200">Open</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-gray-100">
+                      <span className="font-mono text-[10px] font-bold text-slate-500">MTK1253</span>
+                      <span className="font-bold text-slate-800 truncate max-w-[120px]">Projector broken</span>
+                      <span className="text-[9px] font-bold bg-amber-50 text-amber-700 px-2 py-0.2 rounded border border-amber-200">Pending</span>
+                    </div>
+                  </div>
+                  <button onClick={() => setActiveSidebarTab('tickets')} className="text-xs font-bold text-[#08493d] hover:underline block text-center w-full pt-1.5 border-t border-gray-100">
+                    View All Tickets →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSidebarTab === 'room_allotment' && (
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-800">Room Allotment List</h3>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">Assign residential hostel rooms to active academy trainees.</p>
+                </div>
                 
-                {/* Room Allotment (Span 8) */}
-                <div className="lg:col-span-8 bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h3 className="text-base font-extrabold text-slate-800">Room Allotment</h3>
-                    
-                    <div className="flex w-full sm:w-auto gap-3 items-center">
-                      {/* Search Bar */}
-                      <div className="relative flex-grow sm:w-60">
-                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <div className="flex w-full sm:w-auto gap-3 items-center">
+                  {/* Search Bar */}
+                  <div className="relative flex-grow sm:w-60">
+                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </span>
+                    <input 
+                      type="text" 
+                      placeholder="Search by Name/Program/Room..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-[#08493d] text-xs font-semibold"
+                    />
+                  </div>
+
+                  {/* Allot Button */}
+                  <button 
+                    onClick={() => setShowAllotModal(true)}
+                    className="px-3.5 py-1.5 bg-[#08493d] hover:bg-[#063b31] text-white font-extrabold text-xs rounded-lg shadow-sm hover:shadow transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  >
+                    + Allot New Room
+                  </button>
+                </div>
+              </div>
+
+              {/* Room Allotment Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-gray-100 text-slate-500 font-bold uppercase tracking-wider">
+                      <th className="px-4 py-3">Trainee Name</th>
+                      <th className="px-4 py-3">Program</th>
+                      <th className="px-4 py-3">Room No.</th>
+                      <th className="px-4 py-3">Check-in</th>
+                      <th className="px-4 py-3">Check-out</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {filteredAllotments.length > 0 ? (
+                      filteredAllotments.map((allot) => (
+                        <tr key={allot.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-4 py-3.5 font-extrabold text-slate-800">{allot.name}</td>
+                          <td className="px-4 py-3.5 text-slate-500">{allot.program}</td>
+                          <td className="px-4 py-3.5 font-mono text-slate-800 font-bold">{allot.room}</td>
+                          <td className="px-4 py-3.5 text-slate-400">{allot.checkin}</td>
+                          <td className="px-4 py-3.5 text-slate-400">{allot.checkout}</td>
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                              allot.status === 'Checked In' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                              allot.status === 'Checked Out' ? 'bg-slate-100 text-slate-500 border border-slate-200' :
+                              'bg-amber-50 text-amber-800 border border-amber-200'
+                            }`}>
+                              {allot.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                            <button 
+                              onClick={() => deleteAllotment(allot.id)}
+                              className="text-rose-600 hover:text-rose-800 text-[10px] font-extrabold uppercase hover:underline cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="text-center py-8 text-slate-400">
+                          No allotments found matching "{searchTerm}"
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeSidebarTab === 'check_in_out' && (
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-6 animate-fadeIn">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800">Check-in / Check-out Logs</h3>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Track and verify check-in timings and checkout logs.</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Today Check-ins</p>
+                  <p className="text-2xl font-extrabold text-emerald-950 mt-1">18</p>
+                </div>
+                <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-bold text-rose-800 uppercase tracking-wider">Today Check-outs</p>
+                  <p className="text-2xl font-extrabold text-rose-950 mt-1">12</p>
+                </div>
+                <div className="bg-[#eff7f5] border border-emerald-100 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Occupied Rooms</p>
+                  <p className="text-2xl font-extrabold text-emerald-950 mt-1">98 / 120</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Recent Activity Ledger</h4>
+                <div className="divide-y divide-gray-100 border border-gray-150 rounded-xl overflow-hidden text-xs">
+                  {[
+                    { name: 'Rahul Verma', status: 'Checked In', time: '15 May 2025 • 10:30 AM', room: 'Room H-204' },
+                    { name: 'Vikram Das', status: 'Checked Out', time: '15 May 2025 • 09:15 AM', room: 'Room H-206' },
+                    { name: 'Anjali Singh', status: 'Checked In', time: '15 May 2025 • 11:45 AM', room: 'Room H-105' },
+                    { name: 'Suresh Kumar', status: 'Checked In', time: '14 May 2025 • 02:00 PM', room: 'Room H-112' },
+                    { name: 'Meera Nair', status: 'Checked In', time: '14 May 2025 • 04:30 PM', room: 'Room H-302' }
+                  ].map((act, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-3.5 hover:bg-slate-50/50 font-semibold text-slate-700">
+                      <div className="flex items-center gap-3">
+                        <span className={`w-2 h-2 rounded-full ${act.status === 'Checked In' ? 'bg-emerald-600' : 'bg-rose-600'}`} />
+                        <div>
+                          <p className="font-extrabold text-slate-800">{act.name}</p>
+                          <p className="text-[9px] text-slate-400 font-normal">{act.time}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-mono text-slate-800 font-bold">{act.room}</p>
+                        <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full inline-block mt-0.5 ${
+                          act.status === 'Checked In' ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+                        }`}>{act.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSidebarTab === 'payments' && (
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-6 animate-fadeIn">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800">Payments & Receipts Ledger</h3>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Manage fees collections, pending hostel dues, and dining receipts.</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="border border-gray-200 bg-slate-50 rounded-xl p-4 flex justify-between items-center">
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Collection</p>
+                    <p className="text-xl font-extrabold text-slate-800 mt-1">₹ 2,48,000</p>
+                  </div>
+                  <span className="text-emerald-700 bg-emerald-50 px-2 py-1 rounded text-xs font-bold font-mono">Paid</span>
+                </div>
+                <div className="border border-gray-200 bg-slate-50 rounded-xl p-4 flex justify-between items-center">
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outstanding Dues</p>
+                    <p className="text-xl font-extrabold text-rose-700 mt-1">₹ 45,600</p>
+                  </div>
+                  <span className="text-rose-700 bg-rose-50 px-2 py-1 rounded text-xs font-bold font-mono">Pending</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Recent Transactions</h4>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Rahul Verma', receipt: 'RCP1254', amount: '12,000', date: '15 May 2025', status: 'Paid' },
+                    { name: 'Anjali Singh', receipt: 'RCP1253', amount: '12,000', date: '15 May 2025', status: 'Paid' },
+                    { name: 'Meera Nair', receipt: 'RCP1252', amount: '12,000', date: '14 May 2025', status: 'Paid' },
+                    { name: 'Vikram Das', receipt: 'RCP1251', amount: '8,500', date: '12 May 2025', status: 'Pending' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-3.5 bg-slate-50/50 border border-slate-150/50 rounded-xl text-xs font-semibold">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-[#eff7f5] text-[#08493d] rounded-lg">
+                          <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                        </span>
-                        <input 
-                          type="text" 
-                          placeholder="Search by Name/Program/Room..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-full pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-xs font-semibold"
-                        />
-                      </div>
-
-                      {/* Allot Button */}
-                      <button 
-                        onClick={() => setShowAllotModal(true)}
-                        className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-lg shadow-sm hover:shadow transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                      >
-                        <span className="text-sm font-light">+</span> Allot New Room
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Room Allotment Table */}
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
-                      <thead>
-                        <tr className="bg-slate-50 border-b border-gray-100 text-slate-500 font-bold uppercase tracking-wider">
-                          <th className="px-4 py-3">Trainee Name</th>
-                          <th className="px-4 py-3">Program</th>
-                          <th className="px-4 py-3">Room No.</th>
-                          <th className="px-4 py-3">Check-in</th>
-                          <th className="px-4 py-3">Check-out</th>
-                          <th className="px-4 py-3">Status</th>
-                          <th className="px-4 py-3 text-right">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {filteredAllotments.length > 0 ? (
-                          filteredAllotments.map((allot) => (
-                            <tr key={allot.id} className="hover:bg-slate-50/50 transition-colors">
-                              <td className="px-4 py-3.5 font-extrabold text-slate-800">{allot.name}</td>
-                              <td className="px-4 py-3.5 text-slate-500">{allot.program}</td>
-                              <td className="px-4 py-3.5 font-mono text-slate-800 font-bold">{allot.room}</td>
-                              <td className="px-4 py-3.5 text-slate-400">{allot.checkin}</td>
-                              <td className="px-4 py-3.5 text-slate-400">{allot.checkout}</td>
-                              <td className="px-4 py-3.5 whitespace-nowrap">
-                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                                  allot.status === 'Checked In' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                                  allot.status === 'Checked Out' ? 'bg-slate-100 text-slate-500 border border-slate-200' :
-                                  'bg-amber-50 text-amber-800 border border-amber-200'
-                                }`}>
-                                  {allot.status}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                                <button 
-                                  onClick={() => deleteAllotment(allot.id)}
-                                  className="text-rose-600 hover:text-rose-800 text-[10px] font-extrabold uppercase hover:underline cursor-pointer"
-                                >
-                                  Remove
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="7" className="text-center py-8 text-slate-400">
-                              No allotments found matching "{searchTerm}"
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                      View All
-                    </button>
-                  </div>
-                </div>
-
-                {/* Right Side Column (Span 4) */}
-                <div className="lg:col-span-4 space-y-6">
-                  
-                  {/* Card: Check-in / Check-out Tracking */}
-                  <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4">
-                    <h3 className="text-base font-extrabold text-slate-800">Check-in / Check-out Tracking</h3>
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-emerald-50/75 border border-emerald-100 rounded-xl p-3 text-center">
-                        <p className="text-[9px] font-bold text-emerald-800 uppercase tracking-wider">Today Check-ins</p>
-                        <p className="text-2xl font-extrabold text-emerald-950 mt-1">18</p>
-                      </div>
-                      <div className="bg-rose-50/75 border border-rose-100 rounded-xl p-3 text-center">
-                        <p className="text-[9px] font-bold text-rose-800 uppercase tracking-wider">Today Check-outs</p>
-                        <p className="text-2xl font-extrabold text-rose-950 mt-1">12</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 flex justify-between items-center text-xs">
-                      <span className="font-bold text-slate-500">Currently Occupied</span>
-                      <span className="font-extrabold text-slate-800 text-sm">98 / 120 Rooms</span>
-                    </div>
-
-                    {/* Recent activity log list */}
-                    <div className="space-y-3 pt-2">
-                      <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Recent Activity</h4>
-                      <ul className="space-y-2.5 font-medium text-xs">
-                        <li className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            <span className="font-bold text-slate-700">Rahul Verma</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">Checked In • 10:30 AM</span>
-                        </li>
-                        <li className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                            <span className="font-bold text-slate-700">Vikram Das</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">Checked Out • 09:15 AM</span>
-                        </li>
-                        <li className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            <span className="font-bold text-slate-700">Anjali Singh</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">Checked In • 11:45 AM</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="text-center pt-2">
-                      <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                        View All Activity
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Card: Payment Receipts */}
-                  <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4">
-                    <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                      <h3 className="text-base font-extrabold text-slate-800">Payment Receipts</h3>
-                      <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View All</button>
-                    </div>
-
-                    <div className="space-y-3">
-                      {[
-                        { name: 'Rahul Verma', receipt: 'RCP1254', amount: '12,000', date: '15 May 2025' },
-                        { name: 'Anjali Singh', receipt: 'RCP1253', amount: '12,000', date: '15 May 2025' },
-                        { name: 'Meera Nair', receipt: 'RCP1252', amount: '12,000', date: '14 May 2025' }
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex justify-between items-center p-2.5 bg-slate-50/50 border border-slate-150/50 rounded-xl text-xs font-semibold">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 bg-emerald-50 text-emerald-800 rounded-lg">
-                              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <p className="font-bold text-slate-800">{item.name}</p>
-                              <p className="text-[9px] text-slate-400 font-mono">Receipt: {item.receipt} • {item.date}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-extrabold text-slate-800">₹ {item.amount}</p>
-                            <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full inline-block mt-0.5">Paid</span>
-                          </div>
                         </div>
-                      ))}
+                        <div>
+                          <p className="font-bold text-slate-800">{item.name}</p>
+                          <p className="text-[9px] text-slate-400 font-mono">Receipt: {item.receipt} • {item.date}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-extrabold text-slate-800">₹ {item.amount}</p>
+                        <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full inline-block mt-0.5 ${
+                          item.status === 'Paid' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+                        }`}>{item.status}</span>
+                      </div>
                     </div>
-
-                    <div className="text-center pt-2">
-                      <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                        View All Receipts
-                      </button>
-                    </div>
-                  </div>
-
+                  ))}
                 </div>
+              </div>
+            </div>
+          )}
 
+          {activeSidebarTab === 'tickets' && (
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-4 animate-fadeIn">
+              <div className="flex justify-between items-center border-b border-gray-100 pb-3 mb-2">
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-800">Maintenance & Facility Tickets</h3>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">Monitor and register maintenance logs for residential facilities.</p>
+                </div>
+                <button 
+                  onClick={() => setShowTicketModal(true)}
+                  className="px-3.5 py-1.5 bg-[#08493d] hover:bg-[#063b31] text-white font-extrabold text-xs rounded-lg shadow-sm hover:shadow transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  Raise Ticket
+                </button>
               </div>
 
-              {/* Bottom Row Grid: Venue Scheduling, Classroom Allocation, Maintenance Tickets */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                {/* Venue Scheduling */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <h3 className="text-sm font-extrabold text-slate-800">Venue Scheduling</h3>
-                    <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View Calendar</button>
-                  </div>
-
-                  <div className="space-y-3 flex-grow">
-                    {[
-                      { day: '15', month: 'MAY', title: 'Leadership Program Inauguration', room: 'Main Auditorium', time: '09:00 AM - 11:00 AM', status: 'Confirmed' },
-                      { day: '15', month: 'MAY', title: 'Policy Workshop', room: 'Seminar Hall - 2', time: '02:00 PM - 05:00 PM', status: 'Confirmed' },
-                      { day: '16', month: 'MAY', title: 'Group Discussion', room: 'Conference Hall', time: '10:00 AM - 12:00 PM', status: 'Pending' }
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex gap-3 items-start text-xs font-semibold">
-                        <div className="bg-slate-100 border border-slate-200 rounded-lg p-1.5 text-center min-w-[36px]">
-                          <p className="text-sm font-extrabold text-slate-800 leading-none">{item.day}</p>
-                          <p className="text-[8px] font-bold text-slate-400 mt-0.5">{item.month}</p>
-                        </div>
-                        <div className="space-y-0.5 flex-grow">
-                          <p className="font-extrabold text-slate-800 leading-tight">{item.title}</p>
-                          <p className="text-[10px] text-slate-400 leading-tight">{item.room} • {item.time}</p>
-                          <span className={`inline-block text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full mt-1 ${
-                            item.status === 'Confirmed' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                            'bg-amber-50 text-amber-800 border border-amber-200'
-                          }`}>{item.status}</span>
-                        </div>
-                      </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
+                  <thead>
+                    <tr className="bg-slate-50 text-slate-400 font-bold uppercase">
+                      <th className="px-4 py-3">Ticket ID</th>
+                      <th className="px-4 py-3">Category</th>
+                      <th className="px-4 py-3">Description</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3">Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50 font-medium">
+                    {tickets.map((ticket) => (
+                      <tr key={ticket.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-4 py-3.5 font-mono font-bold text-slate-500">{ticket.id}</td>
+                        <td className="px-4 py-3.5 text-slate-800 font-extrabold">{ticket.category}</td>
+                        <td className="px-4 py-3.5 text-slate-650" title={ticket.description}>
+                          {ticket.description}
+                        </td>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            ticket.status === 'Resolved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                            ticket.status === 'In Progress' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
+                            'bg-rose-50 text-rose-800 border border-rose-200'
+                          }`}>{ticket.status}</span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <span className={`inline-block text-[10px] font-bold uppercase ${
+                            ticket.priority === 'High' ? 'text-rose-700' :
+                            ticket.priority === 'Medium' ? 'text-amber-700' : 'text-emerald-700'
+                          }`}>{ticket.priority}</span>
+                        </td>
+                      </tr>
                     ))}
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                      View All Schedule
-                    </button>
-                  </div>
-                </div>
-
-                {/* Classroom Allocation */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <h3 className="text-sm font-extrabold text-slate-800">Classroom Allocation</h3>
-                    <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View All</button>
-                  </div>
-
-                  <div className="overflow-x-auto flex-grow">
-                    <table className="w-full text-left border-collapse text-[10px] sm:text-xs font-semibold text-slate-700">
-                      <thead>
-                        <tr className="bg-slate-50 text-slate-400 font-bold uppercase">
-                          <th className="px-2 py-2">Room</th>
-                          <th className="px-2 py-2">Cap.</th>
-                          <th className="px-2 py-2">For</th>
-                          <th className="px-2 py-2">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {[
-                          { name: 'Classroom 1', cap: 30, program: 'Governance', status: 'Allocated' },
-                          { name: 'Classroom 2', cap: 40, program: 'Public Policy', status: 'Allocated' },
-                          { name: 'Seminar Hall', cap: 60, program: 'Leadership', status: 'Allocated' },
-                          { name: 'Smart Class 1', cap: 25, program: 'Discussion', status: 'Pending' }
-                        ].map((room, idx) => (
-                          <tr key={idx}>
-                            <td className="px-2 py-2 font-extrabold text-slate-800">{room.name}</td>
-                            <td className="px-2 py-2 text-slate-500 font-mono">{room.cap}</td>
-                            <td className="px-2 py-2 text-slate-500">{room.program}</td>
-                            <td className="px-2 py-2 whitespace-nowrap">
-                              <span className={`inline-block px-1.5 py-0.2 rounded-full text-[8px] font-bold uppercase tracking-wider ${
-                                room.status === 'Allocated' ? 'bg-emerald-50 text-emerald-800 border border-emerald-250' : 'bg-amber-50 text-amber-800 border border-amber-250'
-                              }`}>{room.status}</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button className="text-[10px] font-bold text-slate-400 hover:text-slate-600 hover:underline">
-                      View All Allocations
-                    </button>
-                  </div>
-                </div>
-
-                {/* Maintenance Tickets */}
-                <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-5 flex flex-col justify-between space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <h3 className="text-sm font-extrabold text-slate-800">Maintenance Tickets</h3>
-                    <button className="text-[10px] font-bold text-blue-600 hover:underline cursor-pointer">View All</button>
-                  </div>
-
-                  <div className="overflow-x-auto flex-grow max-h-[160px] overflow-y-auto">
-                    <table className="w-full text-left border-collapse text-[10px] sm:text-xs font-semibold text-slate-700">
-                      <thead>
-                        <tr className="bg-slate-50 text-slate-400 font-bold uppercase">
-                          <th className="px-2 py-2">ID</th>
-                          <th className="px-2 py-2">Description</th>
-                          <th className="px-2 py-2">Status</th>
-                          <th className="px-2 py-2">Priority</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {tickets.slice(0, 4).map((ticket) => (
-                          <tr key={ticket.id}>
-                            <td className="px-2 py-2 font-mono font-bold text-slate-500">{ticket.id}</td>
-                            <td className="px-2 py-2 text-slate-700 font-bold truncate max-w-[120px]" title={ticket.description}>
-                              {ticket.description}
-                            </td>
-                            <td className="px-2 py-2 whitespace-nowrap">
-                              <span className={`inline-block px-1.5 py-0.2 rounded-full text-[8px] font-bold uppercase tracking-wider ${
-                                ticket.status === 'Resolved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                                ticket.status === 'In Progress' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
-                                'bg-rose-50 text-rose-800 border border-rose-200'
-                              }`}>{ticket.status}</span>
-                            </td>
-                            <td className="px-2 py-2">
-                              <span className={`inline-block text-[8px] font-bold uppercase ${
-                                ticket.priority === 'High' ? 'text-rose-700 font-bold' :
-                                ticket.priority === 'Medium' ? 'text-amber-700 font-bold' : 'text-emerald-700 font-bold'
-                              }`}>{ticket.priority}</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="text-center border-t border-gray-100 pt-3">
-                    <button 
-                      onClick={() => setShowTicketModal(true)}
-                      className="px-4 py-1.5 bg-[#08493d] hover:bg-[#063b31] text-white font-extrabold text-[10px] rounded-lg shadow-sm hover:shadow transition-colors uppercase tracking-wider cursor-pointer"
-                    >
-                      Raise New Ticket
-                    </button>
-                  </div>
-                </div>
-
+                  </tbody>
+                </table>
               </div>
-            </>
-          ) : (
-            /* Logistics Content (Alternative high-fidelity tab layout) */
+            </div>
+          )}
+
+          {activeSidebarTab === 'venue_scheduling' && (
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-6 animate-fadeIn">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800">Venue Scheduling & Booking</h3>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Manage allocations of conference halls, auditoriums, and seminar classrooms.</p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { day: '15', month: 'MAY', title: 'Leadership Program Inauguration', room: 'Main Auditorium', time: '09:00 AM - 11:00 AM', status: 'Confirmed' },
+                  { day: '15', month: 'MAY', title: 'Policy Workshop', room: 'Seminar Hall - 2', time: '02:00 PM - 05:00 PM', status: 'Confirmed' },
+                  { day: '16', month: 'MAY', title: 'Group Discussion', room: 'Conference Hall', time: '10:00 AM - 12:00 PM', status: 'Pending' }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-4 items-start text-xs font-semibold p-4 bg-slate-50 border border-gray-150 rounded-xl">
+                    <div className="bg-[#053229] border border-emerald-900 rounded-lg p-2 text-center min-w-[45px] text-white">
+                      <p className="text-base font-extrabold leading-none">{item.day}</p>
+                      <p className="text-[9px] font-bold mt-1 tracking-wider uppercase">{item.month}</p>
+                    </div>
+                    <div className="space-y-1 flex-grow">
+                      <p className="text-sm font-extrabold text-slate-850 leading-tight">{item.title}</p>
+                      <p className="text-xs text-slate-500 font-medium">{item.room} • {item.time}</p>
+                      <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mt-1.5 ${
+                        item.status === 'Confirmed' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                        'bg-amber-50 text-amber-800 border border-amber-200'
+                      }`}>{item.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeSidebarTab === 'classroom_allocation' && (
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-150 p-6 space-y-6 animate-fadeIn">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800">Classroom Allocation Ledger</h3>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">View capacities and active batches enrolled across statistics classrooms.</p>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-gray-100 text-slate-500 font-bold uppercase">
+                      <th className="px-4 py-3">Classroom Name</th>
+                      <th className="px-4 py-3">Beds / Seat Capacity</th>
+                      <th className="px-4 py-3">Assigned Program</th>
+                      <th className="px-4 py-3">Allocation Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {[
+                      { name: 'Classroom 1', cap: 30, program: 'Governance', status: 'Allocated' },
+                      { name: 'Classroom 2', cap: 40, program: 'Public Policy', status: 'Allocated' },
+                      { name: 'Seminar Hall', cap: 60, program: 'Leadership', status: 'Allocated' },
+                      { name: 'Smart Class 1', cap: 25, program: 'Discussion', status: 'Pending' }
+                    ].map((room, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/50">
+                        <td className="px-4 py-3.5 font-extrabold text-slate-850">{room.name}</td>
+                        <td className="px-4 py-3.5 text-slate-600 font-mono font-bold">{room.cap}</td>
+                        <td className="px-4 py-3.5 text-slate-600">{room.program}</td>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            room.status === 'Allocated' ? 'bg-emerald-50 text-emerald-800 border border-emerald-255' : 'bg-amber-50 text-amber-800 border border-amber-255'
+                          }`}>{room.status}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {!['dashboard', 'room_allotment', 'check_in_out', 'payments', 'tickets', 'venue_scheduling', 'classroom_allocation'].includes(activeSidebarTab) && (
             <div className="bg-white rounded-2xl border border-gray-150 p-8 text-center space-y-4 animate-fadeIn">
-              <div className="w-16 h-16 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center mx-auto border border-blue-150">
+              <div className="w-16 h-16 bg-[#eff7f5] text-[#08493d] rounded-full flex items-center justify-center mx-auto border border-emerald-200">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
               </div>
               <div className="max-w-md mx-auto space-y-2">
-                <h3 className="text-base font-extrabold text-slate-800">Logistics & Transport Management</h3>
+                <h3 className="text-base font-extrabold text-slate-800">
+                  {activeSidebarTab === 'transport_management' && 'Transport & Logistics Management'}
+                  {activeSidebarTab === 'resource_management' && 'Resource & Assets Inventory'}
+                  {activeSidebarTab === 'hostel_reports' && 'e-Hostel Compliance Reports'}
+                  {activeSidebarTab === 'logistics_reports' && 'Logistics Operational Ledger'}
+                  {activeSidebarTab === 'master_data' && 'Global Database Master Data'}
+                  {activeSidebarTab === 'system_settings' && 'System Parameters & Configurations'}
+                </h3>
                 <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                  Monitor vehicle schedules, driver assignments, airport/railway station pickups, and logistics dispatches for academic visitors and delegate batches.
+                  Monitor active details, allocate items, download spreadsheets, and central parameters.
                 </p>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-4 text-xs font-semibold">
                 <div className="border border-gray-150 p-4 rounded-xl space-y-1 bg-slate-50/50">
-                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Active Fleet</p>
-                  <p className="text-lg font-extrabold text-slate-800">8 Vehicles</p>
+                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Status</p>
+                  <p className="text-lg font-extrabold text-emerald-800">Fully Online</p>
                 </div>
                 <div className="border border-gray-150 p-4 rounded-xl space-y-1 bg-slate-50/50">
-                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Scheduled Pickups</p>
-                  <p className="text-lg font-extrabold text-slate-800">4 Today</p>
+                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Parameters</p>
+                  <p className="text-lg font-extrabold text-slate-800">Sync Active</p>
                 </div>
                 <div className="border border-gray-150 p-4 rounded-xl space-y-1 bg-slate-50/50">
-                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Logistics Costs</p>
-                  <p className="text-lg font-extrabold text-slate-800">₹ 14,250</p>
+                  <p className="text-slate-400 uppercase text-[9px] tracking-wider font-bold">Last Inspected</p>
+                  <p className="text-lg font-extrabold text-slate-800">Just now</p>
                 </div>
               </div>
             </div>
@@ -716,7 +772,7 @@ export default function Home() {
             <div className="flex gap-4">
               <a href="#privacy" className="hover:text-slate-600">Privacy Policy</a>
               <span>•</span>
-              <a href="#terms" className="hover:text-slate-600">Terms of Use</a>
+              <a href="#terms" className="hover:text-terms" >Terms of Use</a>
               <span>•</span>
               <a href="#support" className="hover:text-slate-600">Help & Support</a>
             </div>
@@ -730,7 +786,7 @@ export default function Home() {
       {showAllotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs select-none">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 overflow-hidden relative animate-fadeIn mx-4">
-            <div className="bg-blue-900 text-white p-5 flex justify-between items-center">
+            <div className="bg-[#053229] text-white p-5 flex justify-between items-center">
               <h3 className="font-extrabold text-sm sm:text-base uppercase tracking-wider">Allot Room</h3>
               <button onClick={() => setShowAllotModal(false)} className="text-slate-300 hover:text-white focus:outline-none">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -750,7 +806,7 @@ export default function Home() {
                   placeholder="e.g. Arun Patel"
                   value={newAllotment.name}
                   onChange={(e) => setNewAllotment({ ...newAllotment, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
                 />
               </div>
 
@@ -760,7 +816,7 @@ export default function Home() {
                 <select 
                   value={newAllotment.program}
                   onChange={(e) => setNewAllotment({ ...newAllotment, program: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 bg-white"
                 >
                   <option value="Leadership Program">Leadership Program</option>
                   <option value="Public Policy Program">Public Policy Program</option>
@@ -777,7 +833,7 @@ export default function Home() {
                   placeholder="e.g. H-204"
                   value={newAllotment.room}
                   onChange={(e) => setNewAllotment({ ...newAllotment, room: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 font-mono"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 font-mono"
                 />
               </div>
 
@@ -791,7 +847,7 @@ export default function Home() {
                     placeholder="e.g. 18 May 2025"
                     value={newAllotment.checkin}
                     onChange={(e) => setNewAllotment({ ...newAllotment, checkin: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -802,7 +858,7 @@ export default function Home() {
                     placeholder="e.g. 25 May 2025"
                     value={newAllotment.checkout}
                     onChange={(e) => setNewAllotment({ ...newAllotment, checkout: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
                   />
                 </div>
               </div>
@@ -817,7 +873,7 @@ export default function Home() {
                 </button>
                 <button 
                   type="submit" 
-                  className="w-1/2 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow cursor-pointer"
+                  className="w-1/2 py-2 bg-[#08493d] hover:bg-[#063b31] text-white font-bold rounded-lg shadow cursor-pointer"
                 >
                   Allot Room
                 </button>
@@ -832,7 +888,7 @@ export default function Home() {
       {showTicketModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs select-none">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 overflow-hidden relative animate-fadeIn mx-4">
-            <div className="bg-[#08493d] text-white p-5 flex justify-between items-center">
+            <div className="bg-[#053229] text-white p-5 flex justify-between items-center">
               <h3 className="font-extrabold text-sm sm:text-base uppercase tracking-wider">Raise Maintenance Ticket</h3>
               <button onClick={() => setShowTicketModal(false)} className="text-slate-350 hover:text-white focus:outline-none">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

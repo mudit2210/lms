@@ -264,18 +264,22 @@ export default function Head() {
 
       {/* 3. Navigation Bar (Desktop layout: items aligned, Mobile layout: drawer/stacked list) */}
       <nav 
-        className={`w-full bg-[#f8fafc] border-b border-gray-200 select-none ${
+        className={`w-full bg-white border-b border-gray-250 select-none ${
           mobileMenuOpen ? 'block' : 'hidden'
         } xl:block`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 xl:py-3 flex flex-col xl:flex-row xl:items-center xl:justify-end">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-2 xl:py-2.5 flex flex-col xl:flex-row xl:items-center xl:justify-end">
           <ul className="flex flex-col xl:flex-row xl:items-center space-y-2 xl:space-y-0 xl:space-x-8 text-sm font-bold text-slate-800">
             {/* Home link */}
             <li>
               <NavLink 
                 to="/" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Home
@@ -290,18 +294,19 @@ export default function Head() {
             >
               <button 
                 onClick={() => setAboutOpen(!aboutOpen)}
-                className="flex items-center w-full py-1 xl:py-0 text-left hover:text-[#08493d] focus:outline-none transition-colors"
+                className="flex items-center w-full py-1 xl:py-2 text-left hover:text-[#08493d] focus:outline-none transition-colors border-b-[3px] border-transparent text-slate-800"
                 aria-expanded={aboutOpen}
                 aria-haspopup="true"
               >
                 <span>About us</span>
                 <svg 
-                  className={`h-4 w-4 ml-1 transform transition-transform ${aboutOpen ? 'rotate-180' : ''}`}
+                  className={`h-3.5 w-3.5 ml-1 transform transition-transform ${aboutOpen ? 'rotate-180' : ''}`}
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
+                  strokeWidth={2.5}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
@@ -332,7 +337,11 @@ export default function Head() {
               <NavLink 
                 to="/documents" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Documents
@@ -344,7 +353,11 @@ export default function Head() {
               <NavLink 
                 to="/trainings" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Trainings
@@ -356,7 +369,11 @@ export default function Head() {
               <NavLink 
                 to="/announcements" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Announcements
@@ -369,7 +386,11 @@ export default function Head() {
                 <NavLink 
                   to="/admin/users" 
                   className={({ isActive }) => 
-                    `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                    `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                      isActive 
+                        ? 'text-[#08493d] border-[#08493d]' 
+                        : 'text-slate-800 border-transparent'
+                    }`
                   }
                 >
                   Admin Console
@@ -382,7 +403,11 @@ export default function Head() {
               <NavLink 
                 to="/course-registration" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Register Course
@@ -394,7 +419,11 @@ export default function Head() {
               <NavLink 
                 to="/contact" 
                 className={({ isActive }) => 
-                  `block py-1 xl:py-0 hover:text-[#08493d] transition-colors ${isActive ? 'text-[#08493d] border-b-2 border-[#08493d]' : ''}`
+                  `block py-1 xl:py-2 hover:text-[#08493d] transition-colors border-b-[3px] ${
+                    isActive 
+                      ? 'text-[#08493d] border-[#08493d]' 
+                      : 'text-slate-800 border-transparent'
+                  }`
                 }
               >
                 Contact
@@ -406,39 +435,39 @@ export default function Head() {
               <li className="relative xl:pl-2">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-[#08493d] border border-emerald-250 rounded-md text-xs font-bold hover:bg-emerald-100 transition-colors focus:outline-none cursor-pointer"
+                  className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#eff7f5] text-[#08493d] border border-[#08493d] rounded-md text-xs font-bold hover:bg-[#e2f2ef] transition-colors focus:outline-none cursor-pointer"
                 >
-                  <svg className="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-4.5 h-4.5 text-[#08493d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span>{user.name}</span>
-                  <svg className={`h-3 w-3 ml-0.5 transform transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  <svg className={`h-3.5 w-3.5 ml-1 transform transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
                 {profileOpen && (
-                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-48 bg-white border border-gray-150 rounded-lg shadow-lg py-1.5 z-50 text-xs font-semibold text-slate-700 animate-fadeIn">
-                    <li className="px-4 py-2 border-b border-gray-100 bg-slate-50/50">
-                      <p className="font-extrabold text-slate-800 leading-tight">{user.name}</p>
-                      <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-wider mt-0.5">{user.role} Portal</p>
-                      <p className="text-[10px] text-slate-400 font-normal truncate mt-0.5">{user.email}</p>
+                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-48 bg-white border border-[#08493d] rounded-lg shadow-lg py-3 z-50 text-xs font-semibold text-slate-700 animate-fadeIn">
+                    <li className="px-4 pb-2 text-left">
+                      <p className="text-sm font-extrabold text-slate-800 leading-tight">{user.name}</p>
+                      <p className="text-[10px] text-[#15803D] font-extrabold uppercase tracking-wider mt-1">{user.role === 'admin' ? 'ADMIN PORTAL' : (user.role.toUpperCase() + ' PORTAL')}</p>
+                      <p className="text-xs text-slate-400 font-medium lowercase mt-0.5">{user.email}</p>
                     </li>
                     {user.role === 'admin' && (
-                      <li>
+                      <li className="border-t border-gray-100 pt-1.5">
                         <NavLink 
                           to="/admin/e-hostel" 
                           onClick={() => setProfileOpen(false)}
-                          className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                          className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors font-bold text-xs"
                         >
                           e-Hostel Dashboard
                         </NavLink>
                       </li>
                     )}
-                    <li>
+                    <li className="border-t border-gray-100 pt-1">
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2.5 hover:bg-rose-50 hover:text-rose-700 font-bold transition-colors border-t border-gray-100 cursor-pointer"
+                        className="w-full text-left px-4 py-2 hover:bg-rose-50 hover:text-rose-700 font-bold transition-colors text-xs cursor-pointer"
                       >
                         Sign Out
                       </button>
