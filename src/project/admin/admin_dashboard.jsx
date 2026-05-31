@@ -147,26 +147,59 @@ export default function AdminDashboard() {
           </button>
 
           <div className="border-t border-white/5 my-4 pt-4 space-y-1.5">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3">System Actions</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Workspace Navigation</p>
             
             <button
-              onClick={() => { navigate('/'); }}
+              onClick={() => { navigate('/admin/dashboard'); setIsSidebarOpen(false); }}
               className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-350 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
             >
-              <svg className="w-4 h-4 text-slate-450 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4.5 h-4.5 text-blue-450 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Back to Admin Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => { navigate('/'); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               <span>Back to Public Site</span>
             </button>
 
             <button
+              onClick={() => { navigate('/admin/users'); setIsSidebarOpen(false); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span>User Directory</span>
+            </button>
+
+            <button
+              onClick={() => { navigate('/admin/kms'); setIsSidebarOpen(false); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span>Knowledge Management</span>
+            </button>
+
+            <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-rose-300 hover:bg-rose-900/20 hover:text-rose-200 transition-all cursor-pointer text-left"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-rose-350 hover:bg-rose-900/20 hover:text-rose-200 transition-all cursor-pointer text-left"
             >
               <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
-              <span>Sign Out console</span>
+              <span>Sign Out</span>
             </button>
           </div>
         </nav>

@@ -287,101 +287,127 @@ export default function UserManagement() {
     const matchesRole = filterRole === 'All' || u.role === filterRole;
     const matchesStatus = filterStatus === 'All' || u.status === filterStatus;
     const matchesTenant = filterTenant === 'All' || u.tenant === filterTenant;
-    const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().includes(customFieldFilter.toLowerCase());
+const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().includes(customFieldFilter.toLowerCase());
 
     return matchesSearch && matchesRole && matchesStatus && matchesTenant && matchesCustomField;
   });
 
-  return (
-    <div className="max-w-7xl mx-auto py-10 px-6 sm:px-12 select-none animate-fadeIn flex flex-col md:flex-row gap-8">
-      
-      {/* 1. Left Administration Sidebar Tabs */}
-      <aside className="w-full md:w-64 shrink-0 space-y-2">
-        <div className="bg-[#08493d] rounded-xl p-4 text-white space-y-1">
-          <h2 className="text-sm font-extrabold tracking-wider uppercase opacity-85">Admin Workspace</h2>
-          <div className="flex items-center gap-1 mt-2 text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span className="font-semibold">MoSPI Portal Supervisor</span>
-          </div>
-          
-          {/* Tenant Isolation Selector */}
-          <div className="mt-4 pt-4 border-t border-emerald-800 space-y-1.5 text-xs text-slate-100">
-            <label className="block font-bold">Scope Tenancy View:</label>
-            <select 
-              value={selectedTenantScope}
-              onChange={(e) => setSelectedTenantScope(e.target.value)}
-              className="w-full bg-[#063b31] border border-emerald-800 text-white rounded px-2.5 py-1.5 font-bold focus:outline-none"
-            >
-              <option value="All Organizations">All Organizations (Super)</option>
-              {tenants.map(t => (
-                <option key={t.id} value={t.name}>{t.name} - Tenant</option>
-              ))}
-            </select>
-          </div>
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : { name: 'Admin Administrator', email: 'admin@mospi.gov.in', role: 'admin' };
+    } catch {
+      return { name: 'Admin Administrator', email: 'admin@mospi.gov.in', role: 'admin' };
+    }
+  });
 
-          {/* Quick Links */}
-          <div className="mt-3.5 pt-3.5 border-t border-emerald-800/60 flex flex-col gap-2.5 text-xs font-bold text-emerald-100">
-            <button 
-              onClick={() => navigate('/')} 
-              className="w-full text-left hover:text-yellow-300 transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              <span>Back to Public Site</span>
-            </button>
-            <button 
-              onClick={() => navigate('/admin/e-hostel')} 
-              className="w-full text-left hover:text-yellow-300 transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
-              </svg>
-              <span>e-Hostel Dashboard</span>
-            </button>
-            <button 
-              onClick={() => navigate('/admin/kms')} 
-              className="w-full text-left hover:text-yellow-300 transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              <span>KMS Content Dashboard</span>
-            </button>
-            <button 
-              onClick={handleLogout} 
-              className="w-full text-left text-rose-300 hover:text-rose-100 transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span>Sign Out</span>
-            </button>
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case 'admin': return 'Administrator';
+      case 'faculty': return 'Trainer / Faculty';
+      case 'student': return 'Trainee / Learner';
+      case 'course-director': return 'Course Director';
+      case 'course-coordinator': return 'Course Coordinator';
+      case 'warden': return 'Warden';
+      case 'cms': return 'Content Manager';
+      default: return role || 'User';
+    }
+  };
+
+  return (
+    <div className="w-full min-h-screen bg-slate-100 flex font-sans relative select-none">
+      
+      {/* 1. Sidebar Component on the Left */}
+      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-[#053229] text-white flex flex-col select-none shrink-0 font-sans border-r border-[#031b16] transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 h-screen lg:h-auto shadow-xl`}>
+        {/* Title Header */}
+        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#03251e]">
+          <div>
+            <h2 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              <span className="inline-block w-3.5 h-3.5 bg-yellow-400 rounded-xs animate-pulse"></span>
+              LMS Console
+            </h2>
+            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mt-0.5">Admin Management</p>
+          </div>
+          <button 
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none"
+            aria-label="Close menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* User Account Profile Card embedded beautifully */}
+        <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 mx-3 my-2 rounded-xl border border-white/10 shadow-inner">
+          <div className="flex items-center gap-3">
+            {/* Avatar block with HSL gradient border */}
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
+              <div className="w-full h-full bg-[#053229] rounded-[10px] flex items-center justify-center font-black text-sm text-white">
+                {user.name?.[0] || 'A'}
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-white font-extrabold text-xs truncate leading-tight">{user.name}</p>
+              <p className="text-emerald-400/80 text-[9px] font-bold truncate mt-0.5">{getRoleLabel(user.role)}</p>
+            </div>
           </div>
         </div>
 
-        <nav className="bg-white rounded-xl border border-gray-150 p-2 space-y-1 text-xs font-bold text-slate-600 shadow-2xs">
+        {/* Tenancy Scope Selector */}
+        <div className="mx-3 mb-2 p-3 bg-[#063b31] border border-emerald-800 rounded-xl space-y-1.5 text-xs text-emerald-100">
+          <label className="block font-bold">Scope Tenancy View:</label>
+          <select 
+            value={selectedTenantScope}
+            onChange={(e) => setSelectedTenantScope(e.target.value)}
+            className="w-full bg-[#053229] border border-emerald-800 text-white rounded px-2.5 py-1.5 font-bold focus:outline-none"
+          >
+            <option value="All Organizations">All Organizations (Super)</option>
+            {tenants.map(t => (
+              <option key={t.id} value={t.name}>{t.name} - Tenant</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Sidebar Menu Links */}
+        <nav className="flex-1 py-4 px-4 space-y-1.5 overflow-y-auto">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-1.5">User Directory</p>
+          
           <button
             onClick={() => setActiveTab('directory')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-colors ${
-              activeTab === 'directory' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'directory' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            <span>User Directory</span>
-            <span className="bg-slate-100 px-2 py-0.5 rounded text-[10px] text-slate-500 font-normal">
+            <div className="flex items-center gap-2.5">
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span>User Directory</span>
+            </div>
+            <span className={`px-1.5 py-0.2 rounded text-[9px] font-normal ${activeTab === 'directory' ? 'bg-blue-800 text-blue-200' : 'bg-slate-700 text-slate-300'}`}>
               {filteredUsers.length}
             </span>
           </button>
           
           <button
             onClick={() => setActiveTab('inbox')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-colors ${
-              activeTab === 'inbox' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'inbox' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            <span>Nomination Requests</span>
+            <div className="flex items-center gap-2.5">
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 19v-8.93a2 2 0 01.89-1.664l8-5.333a2 2 0 012.22 0l8 5.333A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-2.25-1.5a2 2 0 00-2.22 0l-2.25 1.5" />
+              </svg>
+              <span>Nomination Requests</span>
+            </div>
             {pendingRegs.length > 0 && (
-              <span className="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">
+              <span className="bg-rose-500 text-white px-2 py-0.2 rounded text-[9px] font-bold">
                 {pendingRegs.length}
               </span>
             )}
@@ -389,72 +415,271 @@ export default function UserManagement() {
 
           <button
             onClick={() => setActiveTab('bulk')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'bulk' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'bulk' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            Bulk Operations & Import
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span>Bulk Operations & Import</span>
           </button>
 
           <button
             onClick={() => setActiveTab('groups')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'groups' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'groups' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            User Groups Manager
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>User Groups Manager</span>
           </button>
 
           <button
             onClick={() => setActiveTab('roles')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'roles' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'roles' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            Roles & Permissions
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span>Roles & Permissions</span>
           </button>
 
           <button
             onClick={() => setActiveTab('enrolment')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'enrolment' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'enrolment' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            Course Enrolments
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span>Course Enrolments</span>
           </button>
 
           <button
             onClick={() => setActiveTab('tenancy')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'tenancy' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'tenancy' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            Tenant Organizations
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span>Tenant Organizations</span>
           </button>
 
           <button
             onClick={() => setActiveTab('security')}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'security' ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-slate-50'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
+              activeTab === 'security' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
             }`}
           >
-            SSO & Security Config
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span>SSO & Security Config</span>
           </button>
+
+
+          {/* Symmetrical Workspace Navigation Quicklinks */}
+          <div className="border-t border-[#053d32]/45 my-4 pt-4 space-y-1.5">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-1.5">Workspace Navigation</p>
+            
+            <button
+              onClick={() => { navigate('/admin/dashboard'); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-350 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Back to Admin Dashboard</span>
+            </button>
+            
+            <button
+              onClick={() => { navigate('/'); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Public Site</span>
+            </button>
+
+            <button
+              onClick={() => { navigate('/admin/e-hostel'); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+              </svg>
+              <span>e-Hostel Logistics</span>
+            </button>
+
+            <button
+              onClick={() => { navigate('/admin/kms'); }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span>Knowledge Management</span>
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-rose-350 hover:bg-rose-950/20 hover:text-rose-105 transition-all cursor-pointer text-left"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span>Sign Out</span>
+            </button>
+          </div>
         </nav>
       </aside>
 
-      {/* 2. Right Administration Panel Content */}
-      <main className="flex-1 bg-white border border-gray-150 rounded-2xl shadow-sm p-6 sm:p-8 min-h-[60vh] text-xs sm:text-sm">
+      {/* Backdrop overlay for mobile drawer */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+        />
+      )}
+
+      {/* 2. Main Portal Panel Container on the Right */}
+      <div className="flex-grow flex flex-col min-h-screen overflow-hidden w-full">
+        
+        {/* Header bar */}
+        <header className="bg-white border-b border-gray-200 py-3.5 px-6 sm:px-8 flex justify-between items-center select-none shadow-2xs z-30">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              onClick={() => navigate('/admin/dashboard')}
+              title="Back to Admin Dashboard"
+              className="mr-1.5 p-1.5 rounded-full hover:bg-slate-100 text-slate-655 hover:text-[#08493d] transition-all cursor-pointer focus:outline-none inline-flex items-center justify-center shrink-0 border border-transparent hover:border-gray-200 shadow-3xs hover:shadow-xs"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
+            <h1 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+              User Directory & Accounts Console
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <div className="relative">
+              <button 
+                onClick={() => { setNotificationsOpen(!notificationsOpen); setProfileOpen(false); }}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-655 transition-colors relative cursor-pointer focus:outline-none"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {pendingRegs.length > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 bg-rose-650 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
+                    {pendingRegs.length}
+                  </span>
+                )}
+              </button>
+
+              {notificationsOpen && (
+                <div className="absolute right-0 mt-2.5 w-80 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-40 text-xs text-slate-700 animate-fadeIn text-left">
+                  <div className="px-4 py-2 border-b border-gray-100 font-extrabold text-slate-800 flex justify-between items-center">
+                    <span>Recent Notifications</span>
+                    <span className="text-[10px] text-emerald-800 hover:underline cursor-pointer">Clear all</span>
+                  </div>
+                  <ul className="divide-y divide-gray-50 max-h-64 overflow-y-auto font-medium">
+                    {pendingRegs.map((reg) => (
+                      <li key={reg.id} className="px-4 py-2.5 hover:bg-slate-50 flex items-start gap-2.5">
+                        <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full mt-1.5"></div>
+                        <div>
+                          <p className="font-bold">New Nomination: {reg.fullName}</p>
+                          <p className="text-[9px] text-slate-400">{reg.course}</p>
+                        </div>
+                      </li>
+                    ))}
+                    {pendingRegs.length === 0 && (
+                      <li className="px-4 py-6 text-center text-slate-400 font-normal">
+                        No pending notifications.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Profile Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => { setProfileOpen(!profileOpen); setNotificationsOpen(false); }}
+                className="flex items-center gap-2.5 px-3 py-1.5 hover:bg-slate-50 border border-gray-200 rounded-xl transition-all cursor-pointer focus:outline-none select-none shadow-3xs"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-sm flex items-center justify-center shrink-0">
+                  <div className="w-full h-full bg-white rounded-full flex items-center justify-center font-black text-xs text-[#08493d]">
+                    {user.name?.[0] || 'A'}
+                  </div>
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-extrabold text-slate-800 leading-tight">{user.name}</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none mt-0.5">{getRoleLabel(user.role)}</p>
+                </div>
+                <svg className={`w-4 h-4 text-slate-500 transform transition-transform duration-150 ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 mt-2.5 w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-1 z-40 text-xs text-slate-700 font-semibold animate-fadeIn overflow-hidden text-left">
+                  <div className="px-4 py-3 border-b border-gray-100 bg-slate-50/50">
+                    <p className="font-extrabold text-slate-855 truncate">{user.name}</p>
+                    <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">{user.email}</p>
+                  </div>
+                  <button onClick={() => navigate('/admin/dashboard')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors font-bold text-emerald-800 flex items-center gap-2">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Admin Dashboard
+                  </button>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 border-t border-gray-100 text-rose-700 hover:bg-rose-50 font-extrabold transition-colors cursor-pointer flex items-center gap-2">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Core Workspace Panel Scroll Container */}
+        <main className="flex-grow p-6 sm:p-8 space-y-6 overflow-y-auto max-h-[calc(100vh-65px)]">
         
         {/* Tab 1: User Directory */}
         {activeTab === 'directory' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 mb-4 gap-3">
               <div>
                 <h3 className="text-lg font-extrabold text-slate-800">User Directory</h3>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">Manage details, roles, permissions, status and access control.</p>
               </div>
-            </div>
+
 
             {/* Directory Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-xl border border-gray-100 font-semibold text-slate-600">
@@ -1188,7 +1413,8 @@ export default function UserManagement() {
         )}
 
       </main>
-
     </div>
+  </div>
   );
 }
+

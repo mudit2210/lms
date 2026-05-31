@@ -1,6 +1,28 @@
 import React from 'react';
 
 export default function SideBar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, onRaiseTicket }) {
+  const [user, setUser] = React.useState(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : { name: 'Admin Administrator', email: 'admin@mospi.gov.in', role: 'admin' };
+    } catch {
+      return { name: 'Admin Administrator', email: 'admin@mospi.gov.in', role: 'admin' };
+    }
+  });
+
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case 'admin': return 'Administrator';
+      case 'faculty': return 'Trainer / Faculty';
+      case 'student': return 'Trainee / Learner';
+      case 'course-director': return 'Course Director';
+      case 'course-coordinator': return 'Course Coordinator';
+      case 'warden': return 'Warden';
+      case 'cms': return 'Content Manager';
+      default: return role || 'User';
+    }
+  };
+
   const menuGroups = [
     {
       title: null,
@@ -203,6 +225,22 @@ export default function SideBar({ activeTab, setActiveTab, isSidebarOpen, setIsS
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+      </div>
+
+      {/* User Account Profile Card embedded beautifully */}
+      <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 mx-3 my-2 rounded-xl border border-white/10 shadow-inner">
+        <div className="flex items-center gap-3">
+          {/* Avatar block with HSL gradient border */}
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
+            <div className="w-full h-full bg-[#053229] rounded-[10px] flex items-center justify-center font-black text-sm text-white">
+              {user.name?.[0] || 'A'}
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-white font-extrabold text-xs truncate leading-tight">{user.name}</p>
+            <p className="text-emerald-400/80 text-[9px] font-bold truncate mt-0.5">{getRoleLabel(user.role)}</p>
+          </div>
+        </div>
       </div>
 
       {/* Menu Links */}
