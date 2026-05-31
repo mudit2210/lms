@@ -409,15 +409,15 @@ export default function Head() {
     let center = 'CAL';
     let bottom = 'INFO';
 
-    if (item.title.toLowerCase().includes('sports')) {
+    if (item.title?.toLowerCase().includes('sports')) {
       top = 'SPORTS';
       center = '3D';
       bottom = '2025';
-    } else if (item.duration.toLowerCase().includes('june 30')) {
+    } else if (item.duration?.toLowerCase().includes('june 30')) {
       top = 'DEADLINE';
       center = '30';
       bottom = 'JUN';
-    } else if (item.duration.toLowerCase().includes('jan 26')) {
+    } else if (item.duration?.toLowerCase().includes('jan 26')) {
       top = 'QUIZ';
       center = '26';
       bottom = 'JAN';
