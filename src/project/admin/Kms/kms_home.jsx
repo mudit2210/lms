@@ -294,6 +294,148 @@ export default function KmsHome() {
     setRepoFiles(prev => prev.map(f => f.id === fileId ? { ...f, ...updatedFields } : f));
   };
 
+  const handleUpdateCourse = (courseId, updatedFields) => {
+    setCoursesData(prev => prev.map(c => c.id === courseId ? { ...c, ...updatedFields } : c));
+    logAuditAction('Update Course', `Modified fields for course ID: ${courseId}`);
+  };
+
+  const handleUpdateLesson = (courseId, lessonId, updatedFields) => {
+    setCoursesData(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          lessons: c.lessons.map(l => l.id === lessonId ? { ...l, ...updatedFields } : l)
+        };
+      }
+      return c;
+    }));
+    logAuditAction('Update Lesson', `Updated lesson ID: ${lessonId}`);
+  };
+
+  const handleUpdateTopic = (courseId, lessonId, topicId, updatedFields) => {
+    setCoursesData(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          lessons: c.lessons.map(l => {
+            if (l.id === lessonId) {
+              return {
+                ...l,
+                topics: l.topics.map(t => t.id === topicId ? { ...t, ...updatedFields } : t)
+              };
+            }
+            return l;
+          })
+        };
+      }
+      return c;
+    }));
+    logAuditAction('Update Topic', `Updated topic ID: ${topicId}`);
+  };
+
+  const handleDeleteTopic = (courseId, lessonId, topicId) => {
+    setCoursesData(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          lessons: c.lessons.map(l => {
+            if (l.id === lessonId) {
+              return {
+                ...l,
+                topics: l.topics.filter(t => t.id !== topicId)
+              };
+            }
+            return l;
+          })
+        };
+      }
+      return c;
+    }));
+    setSelectedTopicId('');
+    logAuditAction('Delete Topic', `Deleted topic ID: ${topicId}`);
+  };
+
+  const handleDuplicateTopic = (courseId, lessonId, topicId) => {
+    const activeCourse = coursesData.find(c => c.id === courseId);
+    if (!activeCourse) return;
+    const activeLesson = activeCourse.lessons.find(l => l.id === lessonId);
+    if (!activeLesson) return;
+    const activeTopic = activeLesson.topics.find(t => t.id === topicId);
+    if (!activeTopic) return;
+    const duplicated = {
+      ...activeTopic,
+      id: `TPC-${Math.floor(500 + Math.random() * 9000)}`,
+      title: `${activeTopic.title} (Copy)`,
+      sequence: activeLesson.topics.length + 1
+    };
+    setCoursesData(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          lessons: c.lessons.map(l => {
+            if (l.id === lessonId) {
+              return {
+                ...l,
+                topics: [...l.topics, duplicated]
+              };
+            }
+            return l;
+          })
+        };
+      }
+      return c;
+    }));
+    logAuditAction('Duplicate Topic', `Duplicated topic ID: ${topicId}`);
+    alert("Topic duplicated successfully!");
+  };
+
+  const handleDeleteLesson = (courseId, lessonId) => {
+    setCoursesData(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          lessons: c.lessons.filter(l => l.id !== lessonId)
+        };
+      }
+      return c;
+    }));
+    setSelectedLessonId('');
+    setSelectedTopicId('');
+    logAuditAction('Delete Lesson', `Deleted lesson ID: ${lessonId}`);
+  };
+
+  const handleDuplicateLesson = (courseId, lessonId) => {
+    const activeCourse = coursesData.find(c => c.id === courseId);
+    if (!activeCourse) return;
+    const activeLesson = activeCourse.lessons.find(l => l.id === lessonId);
+    if (!activeLesson) return;
+    const duplicated = {
+      ...activeLesson,
+      id: `LES-${Math.floor(400 + Math.random() * 9000)}`,
+      title: `${activeLesson.title} (Copy)`,
+      sequence: activeCourse.lessons.length + 1
+    };
+    setCoursesData(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          lessons: [...c.lessons, duplicated]
+        };
+      }
+      return c;
+    }));
+    logAuditAction('Duplicate Lesson', `Duplicated lesson ID: ${lessonId}`);
+    alert("Lesson duplicated successfully!");
+  };
+
+  const handleDeleteCourse = (courseId) => {
+    setCoursesData(prev => prev.filter(c => c.id !== courseId));
+    setSelectedCourseId('');
+    setSelectedLessonId('');
+    setSelectedTopicId('');
+    logAuditAction('Delete Course', `Deleted course ID: ${courseId}`);
+  };
+
   const handleAddVersion = (fileId, nextVer, newRev) => {
     setRepoFiles(prev => prev.map(f => {
       if (f.id === fileId) {
@@ -433,37 +575,62 @@ export default function KmsHome() {
     alert('Topic content saved successfully!');
   };
 
-  const handleOrderSequence = (courseId, lessonId, topicId, direction) => {
-    const activeCourse = coursesData.find(c => c.id === courseId);
-    if (!activeCourse) return;
-
-    if (topicId) {
-      const activeLesson = activeCourse.lessons.find(l => l.id === lessonId);
-      if (!activeLesson) return;
-      const index = activeLesson.topics.findIndex(t => t.id === topicId);
+  const handleOrderSequence = (type, index, direction) => {
+    if (type === 'courses') {
       const nextIndex = direction === 'up' ? index - 1 : index + 1;
-      if (nextIndex < 0 || nextIndex >= activeLesson.topics.length) return;
-
-      const updatedTopics = [...activeLesson.topics];
-      const temp = updatedTopics[index];
-      updatedTopics[index] = updatedTopics[nextIndex];
-      updatedTopics[nextIndex] = temp;
-
-      const updatedLessons = activeCourse.lessons.map(l => l.id === lessonId ? { ...l, topics: updatedTopics } : l);
-      const updatedCourses = coursesData.map(c => c.id === courseId ? { ...c, lessons: updatedLessons } : c);
+      if (nextIndex < 0 || nextIndex >= coursesData.length) return;
+      const updatedCourses = [...coursesData];
+      const temp = updatedCourses[index];
+      updatedCourses[index] = updatedCourses[nextIndex];
+      updatedCourses[nextIndex] = temp;
       setCoursesData(updatedCourses);
-    } else {
-      const index = activeCourse.lessons.findIndex(l => l.id === lessonId);
+      logAuditAction('Course Sequence Update', 'Updated sequence order of courses list.');
+    } else if (type === 'lessons') {
+      const activeCourse = coursesData.find(c => c.id === selectedCourseId);
+      if (!activeCourse) return;
       const nextIndex = direction === 'up' ? index - 1 : index + 1;
       if (nextIndex < 0 || nextIndex >= activeCourse.lessons.length) return;
-
       const updatedLessons = [...activeCourse.lessons];
       const temp = updatedLessons[index];
       updatedLessons[index] = updatedLessons[nextIndex];
       updatedLessons[nextIndex] = temp;
-
-      const updatedCourses = coursesData.map(c => c.id === courseId ? { ...c, lessons: updatedLessons } : c);
+      const updatedCourses = coursesData.map(c => c.id === selectedCourseId ? { ...c, lessons: updatedLessons } : c);
       setCoursesData(updatedCourses);
+      logAuditAction('Lesson Sequence Update', `Updated sequence order of lessons inside course: ${activeCourse.title}`);
+    } else if (type === 'topics') {
+      const activeCourse = coursesData.find(c => c.id === selectedCourseId);
+      if (!activeCourse) return;
+      const activeLesson = activeCourse.lessons.find(l => l.id === selectedLessonId);
+      if (!activeLesson) return;
+      const nextIndex = direction === 'up' ? index - 1 : index + 1;
+      if (nextIndex < 0 || nextIndex >= activeLesson.topics.length) return;
+      const updatedTopics = [...activeLesson.topics];
+      const temp = updatedTopics[index];
+      updatedTopics[index] = updatedTopics[nextIndex];
+      updatedTopics[nextIndex] = temp;
+      const updatedLessons = activeCourse.lessons.map(l => l.id === selectedLessonId ? { ...l, topics: updatedTopics } : l);
+      const updatedCourses = coursesData.map(c => c.id === selectedCourseId ? { ...c, lessons: updatedLessons } : c);
+      setCoursesData(updatedCourses);
+      logAuditAction('Topic Sequence Update', `Updated sequence order of topics inside lesson: ${activeLesson.title}`);
+    }
+  };
+
+  const handleOrderSequenceAdapter = (type, arg2, arg3, arg4) => {
+    if (type === 'courses') {
+      const index = arg3;
+      const nextIndex = arg4;
+      const direction = nextIndex < index ? 'up' : 'down';
+      handleOrderSequence('courses', index, direction);
+    } else if (type === 'lessons') {
+      const index = arg2;
+      const nextIndex = arg3;
+      const direction = nextIndex < index ? 'up' : 'down';
+      handleOrderSequence('lessons', index, direction);
+    } else if (type === 'topics') {
+      const index = arg2;
+      const nextIndex = arg3;
+      const direction = nextIndex < index ? 'up' : 'down';
+      handleOrderSequence('topics', index, direction);
     }
   };
 
@@ -800,6 +967,13 @@ export default function KmsHome() {
               <span>e-Hostel Logistics</span>
             </button>
 
+            <button onClick={() => navigate('/admin/reports')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>Report & Analytics</span>
+            </button>
+
             <button onClick={handleLogout} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-rose-300 hover:bg-rose-900/30 hover:text-white text-left cursor-pointer">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -920,11 +1094,9 @@ export default function KmsHome() {
                   setSelectedCourseId={setSelectedCourseId}
                   activeRole={activeRole}
                   handleAddCourse={handleAddCourse}
-                  handleOrderSequence={(type, innerIdx, index, nextIndex) => {
-                    if (type === 'courses') {
-                      handleOrderSequence(selectedCourseId, null, null, index < nextIndex ? 'down' : 'up');
-                    }
-                  }}
+                  handleOrderSequence={handleOrderSequenceAdapter}
+                  onUpdateCourse={handleUpdateCourse}
+                  onDeleteCourse={handleDeleteCourse}
                 />
                 {coursesData.find(c => c.id === selectedCourseId) && (
                   <LessonManagement
@@ -933,9 +1105,10 @@ export default function KmsHome() {
                     setSelectedLessonId={setSelectedLessonId}
                     activeRole={activeRole}
                     handleAddLesson={() => handleAddLesson(selectedCourseId)}
-                    handleOrderSequence={(type, index, nextIndex) => {
-                      handleOrderSequence(selectedCourseId, selectedLessonId, null, index < nextIndex ? 'down' : 'up');
-                    }}
+                    handleOrderSequence={handleOrderSequenceAdapter}
+                    onUpdateLesson={handleUpdateLesson}
+                    onDeleteLesson={handleDeleteLesson}
+                    onDuplicateLesson={handleDuplicateLesson}
                   />
                 )}
                 {coursesData.find(c => c.id === selectedCourseId)?.lessons.find(l => l.id === selectedLessonId) && (
@@ -951,9 +1124,12 @@ export default function KmsHome() {
                     }}
                     activeRole={activeRole}
                     handleAddTopic={() => handleAddTopic(selectedCourseId, selectedLessonId)}
-                    handleOrderSequence={(type, index, nextIndex) => {
-                      handleOrderSequence(selectedCourseId, selectedLessonId, selectedTopicId, index < nextIndex ? 'down' : 'up');
-                    }}
+                    handleOrderSequence={handleOrderSequenceAdapter}
+                    onUpdateTopic={handleUpdateTopic}
+                    onDeleteTopic={handleDeleteTopic}
+                    onDuplicateTopic={handleDuplicateTopic}
+                    courseId={selectedCourseId}
+                    lessonId={selectedLessonId}
                   />
                 )}
               </div>

@@ -127,6 +127,19 @@ export default function SideBar({ activeTab, setActiveTab, isSidebarOpen, setIsS
 
           <button
             onClick={() => {
+              if (setIsSidebarOpen) setIsSidebarOpen(false);
+              window.location.href = '/admin/reports';
+            }}
+            className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+          >
+            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span>Report & Analytics</span>
+          </button>
+
+          <button
+            onClick={() => {
               localStorage.removeItem('user');
               window.dispatchEvent(new Event('auth-change'));
               window.location.href = '/login';
