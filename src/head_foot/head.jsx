@@ -454,15 +454,26 @@ export default function Head() {
                       <p className="text-xs text-slate-400 font-medium lowercase mt-0.5">{user.email}</p>
                     </li>
                     {user.role === 'admin' && (
-                      <li className="border-t border-gray-100 pt-1.5">
-                        <NavLink 
-                          to="/admin/e-hostel" 
-                          onClick={() => setProfileOpen(false)}
-                          className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors font-bold text-xs"
-                        >
-                          e-Hostel Dashboard
-                        </NavLink>
-                      </li>
+                      <>
+                        <li>
+                          <NavLink 
+                            to="/admin/e-hostel" 
+                            onClick={() => setProfileOpen(false)}
+                            className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                          >
+                            e-Hostel Dashboard
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink 
+                            to="/admin/kms" 
+                            onClick={() => setProfileOpen(false)}
+                            className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                          >
+                            KMS Content Dashboard
+                          </NavLink>
+                        </li>
+                      </>
                     )}
                     <li className="border-t border-gray-100 pt-1">
                       <button
