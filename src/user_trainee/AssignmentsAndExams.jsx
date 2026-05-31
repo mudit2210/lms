@@ -29,7 +29,24 @@ export default function AssignmentsAndExams() {
 
     // Load Assessments
     const savedE = localStorage.getItem('trainee_assessments');
-    if (savedE) { setAssessments(JSON.parse(savedE)); }
+    if (savedE) {
+      const parsed = JSON.parse(savedE);
+      // Ensure all assessments have questions (fix stale data)
+      const fixed = parsed.map(a => {
+        if (a.id === 'ASM-004' && (!a.questions || a.questions.length === 0)) {
+          return { ...a, questions: [
+            { id: 'CQ1', text: 'What is the primary reason for discrepancy between GDP estimates from production and expenditure approaches?', options: ['Measurement errors in informal sector', 'Currency fluctuations', 'Population growth', 'Tax evasion only'], correct: 0 },
+            { id: 'CQ2', text: 'Which method is used to estimate GDP at constant prices?', options: ['Single deflation', 'Double deflation', 'Both A and B', 'Neither'], correct: 2 },
+            { id: 'CQ3', text: 'The base year for current GDP series in India is:', options: ['2004-05', '2011-12', '2017-18', '2020-21'], correct: 1 },
+            { id: 'CQ4', text: 'FISIM in national accounts refers to:', options: ['Financial Intermediation Services Indirectly Measured', 'Fiscal Integration Standard Index Method', 'Federal Income Statistical Indicator Model', 'None of the above'], correct: 0 },
+            { id: 'CQ5', text: 'Mixed Income of Self-Employed (MISE) is part of which approach?', options: ['Production approach', 'Income approach', 'Expenditure approach', 'All approaches'], correct: 1 },
+          ]};
+        }
+        return a;
+      });
+      setAssessments(fixed);
+      localStorage.setItem('trainee_assessments', JSON.stringify(fixed));
+    }
     else {
       const seed = [
         {
@@ -44,7 +61,16 @@ export default function AssignmentsAndExams() {
         },
         { id: 'ASM-002', title: 'Descriptive: Survey Methodology Case Study', course: 'ISS Foundation', type: 'Descriptive', totalMarks: 50, obtainedMarks: 42, status: 'Graded', dueDate: '2026-04-10', duration: '90 min', questions: [] },
         { id: 'ASM-003', title: 'MCQ: Sampling Techniques & Estimation', course: 'ISS Foundation', type: 'MCQ', totalMarks: 100, obtainedMarks: 82, status: 'Graded', dueDate: '2026-04-05', duration: '60 min', questions: [] },
-        { id: 'ASM-004', title: 'Case Study: National Accounts Statistics', course: 'Time Series Analysis', type: 'Case-Based', totalMarks: 75, obtainedMarks: null, status: 'Pending', dueDate: '2026-06-12', duration: '120 min', questions: [] },
+        {
+          id: 'ASM-004', title: 'Case Study: National Accounts Statistics', course: 'Time Series Analysis', type: 'Case-Based', totalMarks: 75, obtainedMarks: null, status: 'Pending', dueDate: '2026-06-12', duration: '120 min',
+          questions: [
+            { id: 'CQ1', text: 'What is the primary reason for discrepancy between GDP estimates from production and expenditure approaches?', options: ['Measurement errors in informal sector', 'Currency fluctuations', 'Population growth', 'Tax evasion only'], correct: 0 },
+            { id: 'CQ2', text: 'Which method is used to estimate GDP at constant prices?', options: ['Single deflation', 'Double deflation', 'Both A and B', 'Neither'], correct: 2 },
+            { id: 'CQ3', text: 'The base year for current GDP series in India is:', options: ['2004-05', '2011-12', '2017-18', '2020-21'], correct: 1 },
+            { id: 'CQ4', text: 'FISIM in national accounts refers to:', options: ['Financial Intermediation Services Indirectly Measured', 'Fiscal Integration Standard Index Method', 'Federal Income Statistical Indicator Model', 'None of the above'], correct: 0 },
+            { id: 'CQ5', text: 'Mixed Income of Self-Employed (MISE) is part of which approach?', options: ['Production approach', 'Income approach', 'Expenditure approach', 'All approaches'], correct: 1 },
+          ]
+        },
       ];
       localStorage.setItem('trainee_assessments', JSON.stringify(seed));
       setAssessments(seed);
@@ -62,9 +88,12 @@ export default function AssignmentsAndExams() {
 
   // Assessment handlers
   const handleStartQuiz = (assessment) => {
-    if (assessment.type === 'MCQ' && assessment.questions.length > 0) {
+    if (assessment.questions && assessment.questions.length > 0) {
       setAttemptingQuiz(assessment); setAnswers({}); setQuizSubmitted(false); setQuizScore(null);
-    } else { alert('This assessment opens in a separate window. (Simulation)'); }
+    } else {
+      // For graded assessments with no questions (already completed)
+      alert('This assessment has already been completed or is not yet available.');
+    }
   };
 
   const handleSubmitQuiz = () => {
