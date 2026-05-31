@@ -7,7 +7,7 @@ export default function SideBar({ activeTab, setActiveTab, isSidebarOpen, setIsS
       items: [
         {
           id: 'dashboard',
-          label: 'Dashboard',
+          label: 'e-Hostel Dashboard',
           icon: (
             <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -248,6 +248,22 @@ export default function SideBar({ activeTab, setActiveTab, isSidebarOpen, setIsS
         {/* Separator / Admin Quick Links */}
         <div className="border-t border-[#053d32]/45 my-4 pt-4 space-y-2">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4">Workspace Navigation</p>
+          
+          <button
+            onClick={() => {
+              if (setIsSidebarOpen) setIsSidebarOpen(false);
+              window.location.href = '/admin/dashboard';
+            }}
+            className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-350 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+          >
+            <svg className="w-4.5 h-4.5 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>Back to Admin Dashboard</span>
+          </button>
           
           <button
             onClick={() => {

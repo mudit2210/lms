@@ -779,6 +779,16 @@ export default function KmsHome() {
           <div className="border-t border-[#053229]/60 my-4 pt-4 space-y-2">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4">Workspace Options</p>
             
+            <button onClick={() => navigate('/admin/dashboard')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
+              <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Back to Admin Dashboard</span>
+            </button>
+
             <button onClick={() => navigate('/')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -829,6 +839,15 @@ export default function KmsHome() {
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              onClick={() => navigate('/admin/dashboard')}
+              title="Back to Admin Dashboard"
+              className="mr-1.5 p-1.5 rounded-full hover:bg-slate-100 text-slate-650 hover:text-[#08493d] transition-all cursor-pointer focus:outline-none inline-flex items-center justify-center shrink-0 border border-transparent hover:border-gray-200 shadow-3xs hover:shadow-xs"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
             <h1 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">

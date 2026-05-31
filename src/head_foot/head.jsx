@@ -1044,20 +1044,65 @@ export default function Head() {
                 </button>
 
                 {profileOpen && (
-                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-48 bg-white border border-[#08493d] rounded-lg shadow-lg py-3 z-50 text-xs font-semibold text-slate-700 animate-fadeIn">
-                    <li className="px-4 pb-2 text-left">
-                      <p className="text-sm font-extrabold text-slate-800 leading-tight">{user.name}</p>
-                      <p className="text-[10px] text-[#15803D] font-extrabold uppercase tracking-wider mt-1">{user.role === 'admin' ? 'ADMIN PORTAL' : (user.role.toUpperCase() + ' PORTAL')}</p>
-                      <p className="text-xs text-slate-400 font-medium lowercase mt-0.5">{user.email}</p>
+                  <ul className="xl:absolute xl:right-0 xl:mt-2 w-64 bg-white border border-[#08493d]/30 rounded-xl shadow-xl py-0 z-50 text-xs font-semibold text-slate-700 animate-fadeIn overflow-hidden">
+                    
+                    {/* Profile Details Card */}
+                    <li className="bg-gradient-to-br from-[#08493d] to-[#0d6b5c] px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {/* Avatar Circle with initial */}
+                        <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center shrink-0 shadow-inner">
+                          <span className="text-white text-base font-black uppercase">
+                            {user.name?.[0] || 'U'}
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-white font-extrabold text-sm leading-tight truncate">{user.name || '—'}</p>
+                          <p className="text-white/70 text-[10px] font-medium truncate mt-0.5">{user.email || '—'}</p>
+                        </div>
+                      </div>
+                      {/* Role Badge */}
+                      <div className="mt-2.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/15 border border-white/25 text-[9px] font-extrabold text-white uppercase tracking-wider">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 shrink-0"></span>
+                          {user.role === 'admin' ? 'Administrator'
+                            : user.role === 'faculty' ? 'Trainer / Faculty'
+                            : user.role === 'student' ? 'Trainee / Learner'
+                            : user.role === 'course-director' ? 'Course Director'
+                            : user.role === 'course-coordinator' ? 'Course Coordinator'
+                            : user.role === 'warden' ? 'Warden'
+                            : user.role === 'cms' ? 'Content Manager'
+                            : (user.role || 'User')}
+                        </span>
+                      </div>
                     </li>
+
+                    {/* Admin-only links */}
                     {user.role === 'admin' && (
                       <>
+                        <li className="pt-1.5 pb-0.5">
+                          <NavLink 
+                            to="/admin/" 
+                            onClick={() => setProfileOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 hover:bg-[#eff7f5] hover:text-[#08493d] transition-colors font-bold text-slate-700"
+                          >
+                            <svg className="w-3.5 h-3.5 text-[#08493d] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                              <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                              <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                              <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Management Dashboard
+                          </NavLink>
+                        </li>
                         <li>
                           <NavLink 
                             to="/admin/e-hostel" 
                             onClick={() => setProfileOpen(false)}
-                            className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                            className="flex items-center gap-2.5 px-4 py-1.5 hover:bg-slate-50 hover:text-[#08493d] transition-colors text-slate-600"
                           >
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
                             e-Hostel Dashboard
                           </NavLink>
                         </li>
@@ -1065,18 +1110,26 @@ export default function Head() {
                           <NavLink 
                             to="/admin/kms" 
                             onClick={() => setProfileOpen(false)}
-                            className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                            className="flex items-center gap-2.5 px-4 py-1.5 hover:bg-slate-50 hover:text-[#08493d] transition-colors text-slate-600"
                           >
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
                             KMS Content Dashboard
                           </NavLink>
                         </li>
                       </>
                     )}
-                    <li className="border-t border-gray-100 pt-1">
+
+                    {/* Sign out */}
+                    <li className="border-t border-gray-100 mt-1">
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-rose-50 hover:text-rose-700 font-bold transition-colors text-xs cursor-pointer"
+                        className="w-full text-left flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50 hover:text-rose-700 text-slate-500 font-bold transition-colors text-xs cursor-pointer"
                       >
+                        <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                         Sign Out
                       </button>
                     </li>

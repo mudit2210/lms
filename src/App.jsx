@@ -8,6 +8,7 @@ import UserManagement from './project/user_management'
 import CourseRegistration from './project/course_registration'
 import EHostel from './project/admin/e-hostel/e-hostel_home'
 import KmsHome from './project/admin/Kms/kms_home'
+import AdminDashboard from './project/admin/admin_dashboard'
 
 // Import Navbar components
 import Contact from './project/nav_bar/contact'
@@ -29,6 +30,8 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/e-hostel" element={<EHostel />} />
           <Route path="/admin/kms" element={<KmsHome />} />
