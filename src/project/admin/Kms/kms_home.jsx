@@ -1,20 +1,75 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Import beautiful, reusable sub-components
-import CentralRepository from './CentralRepository';
-import CourseTreeBuilder from './CourseTreeBuilder';
-import KnowledgeBase from './KnowledgeBase';
-import DiscussionForum from './DiscussionForum';
-import GovernanceQueue from './GovernanceQueue';
-import ReportsAnalytics from './ReportsAnalytics';
+// Import 17 Modular Components under MoSPI 3.1.3 Content & Knowledge Management specifications
+import ContentRepository from './ContentRepository';
+import CourseManagement from './CourseManagement';
+import LessonManagement from './LessonManagement';
+import TopicManagement from './TopicManagement';
+import RichContentEditor from './RichContentEditor';
+import FileManagement from './FileManagement';
+import VersionControl from './VersionControl';
+import MetadataTagging from './MetadataTagging';
+import KnowledgeRepository from './KnowledgeRepository';
+import DiscussionForums from './DiscussionForums';
+import ResourceSharing from './ResourceSharing';
+import SearchFiltering from './SearchFiltering';
+import ApprovalWorkflow from './ApprovalWorkflow';
+import Notifications from './Notifications';
+import AnalyticsReporting from './AnalyticsReporting';
+import RolePermissionManagement from './RolePermissionManagement';
+import AuditLogs from './AuditLogs';
 import FilePreviewModal from './FilePreviewModal';
 import VersionCompareModal from './VersionCompareModal';
 import UploadAssetModal from './UploadAssetModal';
 import MetadataDetailModal from './MetadataDetailModal';
+import LearnerDashboard from './LearnerDashboard';
 
 export default function KmsHome() {
   const navigate = useNavigate();
+  
+  const getSidebarLinks = (role) => {
+    switch (role) {
+      case 'Super Admin':
+        return [
+          { id: 'repository', label: 'Central Drive (LCMS)', desc: 'Store & preview training files' },
+          { id: 'courses', label: 'Course Tree Builder', desc: 'Hierarchy & Rich editor page' },
+          { id: 'knowledge', label: 'Knowledge Base', desc: 'SOPs, Policies & Resources' },
+          { id: 'forum', label: 'Peer Discussion Forum', desc: 'Q&As & resource sharing' },
+          { id: 'governance', label: 'Governance Queue', desc: 'Draft approvals workflow' },
+          { id: 'analytics', label: 'Reports & Audit Logs', desc: 'Usage metrics & track records' }
+        ];
+      case 'Content Manager':
+        return [
+          { id: 'repository', label: 'Central Drive (LCMS)', desc: 'Store & preview training files' },
+          { id: 'courses', label: 'Course Tree Builder', desc: 'Hierarchy & Rich editor page' },
+          { id: 'knowledge', label: 'Knowledge Base', desc: 'SOPs, Policies & Resources' },
+          { id: 'forum', label: 'Peer Discussion Forum', desc: 'Q&As & resource sharing' },
+          { id: 'analytics', label: 'Reports & Audit Logs', desc: 'Usage metrics & track records' }
+        ];
+      case 'Trainer':
+        return [
+          { id: 'courses', label: 'Course Tree Builder', desc: 'Hierarchy & Rich editor page' },
+          { id: 'knowledge', label: 'Knowledge Base', desc: 'SOPs, Policies & Resources' },
+          { id: 'forum', label: 'Peer Discussion Forum', desc: 'Q&As & resource sharing' }
+        ];
+      case 'Reviewer':
+        return [
+          { id: 'governance', label: 'Governance Queue', desc: 'Draft approvals workflow' },
+          { id: 'repository', label: 'Central Drive (LCMS)', desc: 'Store & preview training files' },
+          { id: 'knowledge', label: 'Knowledge Base', desc: 'SOPs, Policies & Resources' },
+          { id: 'analytics', label: 'Reports & Audit Logs', desc: 'Usage metrics & track records' }
+        ];
+      case 'Learner':
+        return [
+          { id: 'learner_dashboard', label: 'My Learning Space', desc: 'Personal training & bookmarks' },
+          { id: 'knowledge', label: 'Knowledge Base', desc: 'SOPs, Policies & Resources' },
+          { id: 'forum', label: 'Peer Discussion Forum', desc: 'Q&As & resource sharing' }
+        ];
+      default:
+        return [];
+    }
+  };
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('repository'); // 'repository', 'courses', 'knowledge', 'forum', 'governance', 'analytics'
   const [activeRole, setActiveRole] = useState('Super Admin'); // 'Super Admin', 'Content Manager', 'Trainer', 'Reviewer', 'Learner'
@@ -234,6 +289,23 @@ export default function KmsHome() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [bookmarkedIds, setBookmarkedIds] = useState(['REP-001', 'REP-003']);
   const [activeSector, setActiveSector] = useState('All Wings');
+
+  const handleUpdateMetadata = (fileId, updatedFields) => {
+    setRepoFiles(prev => prev.map(f => f.id === fileId ? { ...f, ...updatedFields } : f));
+  };
+
+  const handleAddVersion = (fileId, nextVer, newRev) => {
+    setRepoFiles(prev => prev.map(f => {
+      if (f.id === fileId) {
+        return {
+          ...f,
+          version: nextVer,
+          versions: [newRev, ...f.versions]
+        };
+      }
+      return f;
+    }));
+  };
 
   // -------------------------------------------------------------
   // COURSE-LESSON-TOPIC HIERARCHICAL STRUCTURE
@@ -535,7 +607,7 @@ export default function KmsHome() {
 
   // Quarantine releasing approval queue
   const handleQuarantineAction = (fileId, action) => {
-    if (action === 'approve') {
+    if (action === 'approve' || action === 'Active') {
       const updated = repoFiles.map(f => {
         if (f.id === fileId) {
           return { ...f, status: 'Active', approvalStatus: 'Published' };
@@ -545,11 +617,11 @@ export default function KmsHome() {
       setRepoFiles(updated);
       logAuditAction('Governance Review', `Released & published quarantined file ID: ${fileId}`);
       alert('Document successfully validated, malware threat-scan signature cleared, and published!');
-    } else if (action === 'delete') {
+    } else if (action === 'delete' || action === 'Reject') {
       const updated = repoFiles.filter(f => f.id !== fileId);
       setRepoFiles(updated);
-      logAuditAction('Governance Review', `Deleted quarantined/draft file ID: ${fileId}`);
-      alert('Draft document deleted successfully.');
+      logAuditAction('Governance Review', `Deleted/Rejected quarantined/draft file ID: ${fileId}`);
+      alert('Draft document deleted/rejected successfully.');
     }
   };
 
@@ -669,7 +741,14 @@ export default function KmsHome() {
           <label className="block font-bold">Scope Role Permissions:</label>
           <select 
             value={activeRole} 
-            onChange={(e) => setActiveRole(e.target.value)}
+            onChange={(e) => {
+              const newRole = e.target.value;
+              setActiveRole(newRole);
+              const links = getSidebarLinks(newRole);
+              if (links.length > 0) {
+                setActiveTab(links[0].id);
+              }
+            }}
             className="w-full bg-[#053229] border border-emerald-800 text-white rounded px-2.5 py-1.5 font-bold focus:outline-none"
           >
             <option value="Super Admin">Super Admin (System Control)</option>
@@ -681,14 +760,7 @@ export default function KmsHome() {
         </div>
 
         <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-          {[
-            { id: 'repository', label: 'Central Drive (LCMS)', desc: 'Store & preview training files' },
-            { id: 'courses', label: 'Course Tree Builder', desc: 'Hierarchy & Rich editor page' },
-            { id: 'knowledge', label: 'Knowledge Base', desc: 'SOPs, Policies & Resources' },
-            { id: 'forum', label: 'Peer Discussion Forum', desc: 'Q&As & resource sharing' },
-            { id: 'governance', label: 'Governance Queue', desc: 'Draft approvals workflow' },
-            { id: 'analytics', label: 'Reports & Audit Logs', desc: 'Usage metrics & track records' }
-          ].map((link) => {
+          {getSidebarLinks(activeRole).map((link) => {
             const isActive = activeTab === link.id;
             return (
               <button
@@ -771,49 +843,136 @@ export default function KmsHome() {
         {/* Core Workspace Panel Scroll Container */}
         <main className="flex-grow p-6 sm:p-8 space-y-6 overflow-y-auto max-h-[calc(100vh-70px)]">
 
-          {activeTab === 'repository' && (
-            <CentralRepository
+          {activeTab === 'learner_dashboard' && (
+            <LearnerDashboard
               repoFiles={repoFiles}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              filterType={filterType}
-              setFilterType={setFilterType}
-              activeRole={activeRole}
+              bookmarkedIds={bookmarkedIds}
               setSelectedFile={setSelectedFile}
-              setShowCompareModal={setShowCompareModal}
-              setShowMetadataDrawer={setShowMetadataDrawer}
-              handleQuarantineAction={handleQuarantineAction}
-              setShowUploadModal={setShowUploadModal}
+              coursesData={coursesData}
               onDownload={handleDownloadFile}
+              setActiveTab={setActiveTab}
+              setSelectedCourseId={setSelectedCourseId}
             />
+          )}
+
+                    {activeTab === 'repository' && (
+            <div className="space-y-6">
+              <SearchFiltering
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                filterType={filterType}
+                setFilterType={setFilterType}
+              />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-8 space-y-6">
+                  <ContentRepository
+                    repoFiles={repoFiles}
+                    searchQuery={searchQuery}
+                    filterType={filterType}
+                    activeRole={activeRole}
+                    setSelectedFile={setSelectedFile}
+                    setShowCompareModal={setShowCompareModal}
+                    setShowMetadataDrawer={setShowMetadataDrawer}
+                    handleQuarantineAction={handleQuarantineAction}
+                    setShowUploadModal={setShowUploadModal}
+                    onDownload={handleDownloadFile}
+                  />
+                </div>
+                <div className="lg:col-span-4 space-y-6">
+                  <FileManagement
+                    activeRole={activeRole}
+                    setShowUploadModal={setShowUploadModal}
+                    onUploadSuccess={(newFile) => setRepoFiles(prev => [newFile, ...prev])}
+                    logAuditAction={logAuditAction}
+                  />
+                  {selectedFile && (
+                    <>
+                      <VersionControl
+                        activeFile={selectedFile}
+                        activeRole={activeRole}
+                        onAddVersion={handleAddVersion}
+                        logAuditAction={logAuditAction}
+                      />
+                      <MetadataTagging
+                        activeFile={selectedFile}
+                        activeRole={activeRole}
+                        onUpdateMetadata={handleUpdateMetadata}
+                        logAuditAction={logAuditAction}
+                      />
+                      <ResourceSharing
+                        activeFile={selectedFile}
+                        activeRole={activeRole}
+                        logAuditAction={logAuditAction}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
 
           {activeTab === 'courses' && (
-            <CourseTreeBuilder
-              coursesData={coursesData}
-              setCoursesData={setCoursesData}
-              selectedCourseId={selectedCourseId}
-              setSelectedCourseId={setSelectedCourseId}
-              selectedLessonId={selectedLessonId}
-              setSelectedLessonId={setSelectedLessonId}
-              selectedTopicId={selectedTopicId}
-              setSelectedTopicId={setSelectedTopicId}
-              editingTopicContent={editingTopicContent}
-              setEditingTopicContent={setEditingTopicContent}
-              activeRole={activeRole}
-              handleAddCourse={handleAddCourse}
-              handleAddLesson={handleAddLesson}
-              handleAddTopic={handleAddTopic}
-              handleSaveTopicContent={handleSaveTopicContent}
-              handleOrderSequence={handleOrderSequence}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-4 space-y-6">
+                <CourseManagement
+                  coursesData={coursesData}
+                  selectedCourseId={selectedCourseId}
+                  setSelectedCourseId={setSelectedCourseId}
+                  activeRole={activeRole}
+                  handleAddCourse={handleAddCourse}
+                  handleOrderSequence={(type, innerIdx, index, nextIndex) => {
+                    if (type === 'courses') {
+                      handleOrderSequence(selectedCourseId, null, null, index < nextIndex ? 'down' : 'up');
+                    }
+                  }}
+                />
+                {coursesData.find(c => c.id === selectedCourseId) && (
+                  <LessonManagement
+                    activeCourse={coursesData.find(c => c.id === selectedCourseId)}
+                    selectedLessonId={selectedLessonId}
+                    setSelectedLessonId={setSelectedLessonId}
+                    activeRole={activeRole}
+                    handleAddLesson={() => handleAddLesson(selectedCourseId)}
+                    handleOrderSequence={(type, index, nextIndex) => {
+                      handleOrderSequence(selectedCourseId, selectedLessonId, null, index < nextIndex ? 'down' : 'up');
+                    }}
+                  />
+                )}
+                {coursesData.find(c => c.id === selectedCourseId)?.lessons.find(l => l.id === selectedLessonId) && (
+                  <TopicManagement
+                    activeLesson={coursesData.find(c => c.id === selectedCourseId).lessons.find(l => l.id === selectedLessonId)}
+                    selectedTopicId={selectedTopicId}
+                    setSelectedTopicId={(topicId) => {
+                      setSelectedTopicId(topicId);
+                      const activeTopicObj = coursesData.find(c => c.id === selectedCourseId)?.lessons.find(l => l.id === selectedLessonId)?.topics.find(t => t.id === topicId);
+                      if (activeTopicObj) {
+                        setEditingTopicContent(activeTopicObj.content);
+                      }
+                    }}
+                    activeRole={activeRole}
+                    handleAddTopic={() => handleAddTopic(selectedCourseId, selectedLessonId)}
+                    handleOrderSequence={(type, index, nextIndex) => {
+                      handleOrderSequence(selectedCourseId, selectedLessonId, selectedTopicId, index < nextIndex ? 'down' : 'up');
+                    }}
+                  />
+                )}
+              </div>
+              <div className="lg:col-span-8">
+                <RichContentEditor
+                  activeTopic={coursesData.find(c => c.id === selectedCourseId)?.lessons.find(l => l.id === selectedLessonId)?.topics.find(t => t.id === selectedTopicId)}
+                  editingTopicContent={editingTopicContent}
+                  setEditingTopicContent={setEditingTopicContent}
+                  activeRole={activeRole}
+                  handleSaveTopicContent={handleSaveTopicContent}
+                />
+              </div>
+            </div>
           )}
 
           {activeTab === 'knowledge' && (
-            <KnowledgeBase
+            <KnowledgeRepository
               repoFiles={repoFiles}
               searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
               setSelectedFile={setSelectedFile}
               bookmarkedIds={bookmarkedIds}
               handleToggleBookmark={handleToggleBookmark}
@@ -823,7 +982,7 @@ export default function KmsHome() {
           )}
 
           {activeTab === 'forum' && (
-            <DiscussionForum
+            <DiscussionForums
               forumThreads={forumThreads}
               setForumThreads={setForumThreads}
               activeForumCategory={activeForumCategory}
@@ -845,26 +1004,42 @@ export default function KmsHome() {
               newReplyText={newReplyText}
               setNewReplyText={setNewReplyText}
               handleCreateThread={handleCreateThread}
-              handlePostReply={handlePostReply}
+              handlePostReply={() => handlePostReply(selectedThreadId)}
               replyQuoteText={replyQuoteText}
               setReplyQuoteText={setReplyQuoteText}
             />
           )}
 
           {activeTab === 'governance' && (
-            <GovernanceQueue
-              repoFiles={repoFiles}
-              handleQuarantineAction={handleQuarantineAction}
-              activeRole={activeRole}
-            />
+            <div className="space-y-6">
+              <Notifications
+                repoFiles={repoFiles}
+                forumThreads={forumThreads}
+                activeRole={activeRole}
+              />
+              <ApprovalWorkflow
+                repoFiles={repoFiles}
+                handleQuarantineAction={handleQuarantineAction}
+                activeRole={activeRole}
+              />
+            </div>
           )}
 
           {activeTab === 'analytics' && (
-            <ReportsAnalytics
-              auditLogs={auditLogs}
-              repoFiles={repoFiles}
-              forumThreads={forumThreads}
-            />
+            <div className="space-y-8">
+              <AnalyticsReporting
+                repoFiles={repoFiles}
+                coursesData={coursesData}
+                forumThreads={forumThreads}
+              />
+              <RolePermissionManagement
+                activeRole={activeRole}
+                setActiveRole={setActiveRole}
+              />
+              <AuditLogs
+                auditLogs={auditLogs}
+              />
+            </div>
           )}
 
         </main>

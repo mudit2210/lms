@@ -27,7 +27,7 @@ export default function DiscussionForum({
   setReplyQuoteText
 }) {
   const categories = ['All Topics', 'Sampling Methodology', 'IT Support', 'Administrative FAQ', 'Research Sharing'];
-  const canModerate = ['admin', 'coordinator', 'trainer'].includes(activeRole);
+  const canModerate = ['Super Admin', 'Content Manager', 'Trainer'].includes(activeRole);
 
   const filteredThreads = forumThreads.filter(t => {
     const matchesCategory = activeForumCategory === 'All Topics' || t.category === activeForumCategory;
