@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Import 17 Modular Components under MoSPI 3.1.3 Content & Knowledge Management specifications
@@ -27,6 +27,27 @@ import LearnerDashboard from './LearnerDashboard';
 
 export default function KmsHome() {
   const navigate = useNavigate();
+
+  // Dynamic theme state syncing across the ecosystem
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('admin-theme') || 'light';
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('admin-theme', nextTheme);
+    window.dispatchEvent(new Event('admin-theme-change'));
+  };
+
+  useEffect(() => {
+    const syncTheme = () => {
+      setTheme(localStorage.getItem('admin-theme') || 'light');
+    };
+    window.addEventListener('admin-theme-change', syncTheme);
+    return () => window.removeEventListener('admin-theme-change', syncTheme);
+  }, []);
+
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem('user');
@@ -738,21 +759,35 @@ export default function KmsHome() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-100 flex font-sans relative">
+    <div className={`w-full min-h-screen flex font-sans relative transition-colors duration-200 ${
+      theme === 'light' ? 'bg-slate-50/70' : 'bg-slate-100'
+    }`}>
       
       {/* 1. Left KMS Dashboard Sidebar Navigation */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-[#08493d] text-white flex flex-col select-none shrink-0 border-r border-[#053229] transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 h-screen lg:h-auto`}>
-        <div className="p-6 border-b border-[#053229]/60 flex justify-between items-center">
+      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 flex flex-col select-none shrink-0 border-r transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 h-screen lg:h-auto ${
+        theme === 'light'
+          ? 'bg-white text-slate-800 border-slate-200/80 shadow-xs'
+          : 'bg-[#08493d] text-white border-[#053229]'
+      }`}>
+        <div className={`p-6 border-b flex justify-between items-center ${
+          theme === 'light' ? 'border-slate-100' : 'border-[#053229]/60'
+        }`}>
           <div>
-            <h2 className="text-lg font-extrabold text-yellow-400 tracking-tight flex items-center gap-1.5">
-              <svg className="w-5 h-5 text-yellow-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <h2 className={`text-lg font-extrabold tracking-tight flex items-center gap-1.5 ${
+              theme === 'light' ? 'text-purple-600' : 'text-yellow-400'
+            }`}>
+              <svg className={`w-5 h-5 shrink-0 ${theme === 'light' ? 'text-purple-500' : 'text-yellow-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
               Knowledge System
             </h2>
-            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mt-0.5">LCMS + Central Repository</p>
+            <p className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${
+              theme === 'light' ? 'text-purple-400' : 'text-emerald-400'
+            }`}>LCMS + Central Repository</p>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-300 hover:text-white">
+          <button onClick={() => setIsSidebarOpen(false)} className={`lg:hidden hover:text-slate-900 ${
+            theme === 'light' ? 'text-slate-450' : 'text-slate-300'
+          }`}>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -760,23 +795,39 @@ export default function KmsHome() {
         </div>
 
         {/* User Account Profile Card embedded beautifully */}
-        <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 mx-4 my-3 rounded-xl border border-white/10 shadow-inner text-left">
+        <div className={`px-5 py-4 mx-4 my-3 rounded-xl border shadow-inner text-left ${
+          theme === 'light'
+            ? 'bg-slate-50 border-slate-200/80 text-slate-800 shadow-2xs'
+            : 'bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 border-white/10 text-white'
+        }`}>
           <div className="flex items-center gap-3">
             {/* Avatar block with HSL gradient border */}
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
-              <div className="w-full h-full bg-[#053229] rounded-[10px] flex items-center justify-center font-black text-sm text-white">
+            <div className={`w-10 h-10 rounded-xl p-0.5 shadow-md flex items-center justify-center shrink-0 bg-gradient-to-tr ${
+              theme === 'light' ? 'from-purple-500 to-indigo-500' : 'from-emerald-500 to-blue-500'
+            }`}>
+              <div className={`w-full h-full rounded-[10px] flex items-center justify-center font-black text-sm ${
+                theme === 'light' ? 'bg-white text-purple-600' : 'bg-[#053229] text-white'
+              }`}>
                 {user.name?.[0] || 'A'}
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-white font-extrabold text-xs truncate leading-tight">{user.name}</p>
-              <p className="text-emerald-400/80 text-[9px] font-bold truncate mt-0.5">{getRoleLabel(user.role)}</p>
+              <p className={`font-extrabold text-xs truncate leading-tight ${
+                theme === 'light' ? 'text-slate-800' : 'text-white'
+              }`}>{user.name}</p>
+              <p className={`text-[9px] font-bold truncate mt-0.5 ${
+                theme === 'light' ? 'text-purple-650' : 'text-emerald-400/80'
+              }`}>{getRoleLabel(user.role)}</p>
             </div>
           </div>
         </div>
 
         {/* Roles selector swapper simulation */}
-        <div className="mx-4 mt-1 p-3 bg-[#063b31] border border-emerald-800 rounded-xl space-y-1.5 text-xs text-emerald-100 text-left">
+        <div className={`mx-4 mt-1 p-3 border rounded-xl space-y-1.5 text-xs text-left ${
+          theme === 'light'
+            ? 'bg-slate-50 border-slate-200/80 text-slate-700 shadow-2xs'
+            : 'bg-[#063b31] border-emerald-800 text-emerald-100'
+        }`}>
           <label className="block font-bold">Scope Role Permissions:</label>
           <select 
             value={activeRole} 
@@ -788,7 +839,11 @@ export default function KmsHome() {
                 setActiveTab(links[0].id);
               }
             }}
-            className="w-full bg-[#053229] border border-emerald-800 text-white rounded px-2.5 py-1.5 font-bold focus:outline-none"
+            className={`w-full border rounded px-2.5 py-1.5 font-bold focus:outline-none transition-colors ${
+              theme === 'light'
+                ? 'bg-white border-slate-250 text-slate-800 focus:border-purple-400'
+                : 'bg-[#053229] border-emerald-800 text-white'
+            }`}
           >
             <option value="Super Admin">Super Admin (System Control)</option>
             <option value="Content Manager">Content Manager</option>
@@ -806,20 +861,36 @@ export default function KmsHome() {
                 key={link.id}
                 onClick={() => { setActiveTab(link.id); setIsSidebarOpen(false); }}
                 className={`w-full text-left px-4 py-3 rounded-lg font-bold transition-all duration-150 cursor-pointer ${
-                  isActive ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+                  isActive
+                    ? theme === 'light'
+                      ? 'bg-purple-600 text-white shadow-sm shadow-purple-100'
+                      : 'bg-blue-600 text-white shadow-sm'
+                    : theme === 'light'
+                      ? 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
                 }`}
               >
                 <p className="text-xs sm:text-sm leading-tight">{link.label}</p>
-                <p className={`text-[9px] font-normal leading-none mt-0.5 ${isActive ? 'text-blue-200' : 'text-slate-400'}`}>{link.desc}</p>
+                <p className={`text-[9px] font-normal leading-none mt-0.5 ${
+                  isActive
+                    ? theme === 'light' ? 'text-purple-200' : 'text-blue-200'
+                    : theme === 'light' ? 'text-slate-405' : 'text-slate-400'
+                }`}>{link.desc}</p>
               </button>
             );
           })}
 
-          <div className="border-t border-[#053229]/60 my-4 pt-4 space-y-2">
+          <div className={`border-t my-4 pt-4 space-y-2 ${
+            theme === 'light' ? 'border-slate-100' : 'border-[#053229]/60'
+          }`}>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4">Workspace Options</p>
             
-            <button onClick={() => navigate('/admin/dashboard')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
-              <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button onClick={() => navigate('/admin/dashboard')} className={`w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-left cursor-pointer transition-colors ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+            }`}>
+              <svg className={`w-4 h-4 shrink-0 ${theme === 'light' ? 'text-purple-500' : 'text-blue-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
                 <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
                 <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
@@ -828,28 +899,44 @@ export default function KmsHome() {
               <span>Back to Admin Dashboard</span>
             </button>
 
-            <button onClick={() => navigate('/')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button onClick={() => navigate('/')} className={`w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-left cursor-pointer transition-colors ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+            }`}>
+              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               <span>Back to Public Site</span>
             </button>
 
-            <button onClick={() => navigate('/admin/users')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button onClick={() => navigate('/admin/users')} className={`w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-left cursor-pointer transition-colors ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+            }`}>
+              <svg className={`w-4 h-4 shrink-0 ${theme === 'light' ? 'text-purple-500' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               <span>User Directory</span>
             </button>
 
-            <button onClick={() => navigate('/admin/e-hostel')} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white text-left cursor-pointer">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button onClick={() => navigate('/admin/e-hostel')} className={`w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-left cursor-pointer transition-colors ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+            }`}>
+              <svg className={`w-4 h-4 shrink-0 ${theme === 'light' ? 'text-purple-500' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
               </svg>
               <span>e-Hostel Logistics</span>
             </button>
 
-            <button onClick={handleLogout} className="w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-rose-300 hover:bg-rose-900/30 hover:text-white text-left cursor-pointer">
+            <button onClick={handleLogout} className={`w-full flex items-center gap-2.5 px-4 py-2 rounded-lg text-xs font-bold text-left cursor-pointer transition-colors ${
+              theme === 'light'
+                ? 'text-rose-600 hover:bg-rose-50'
+                : 'text-rose-300 hover:bg-rose-900/30 hover:text-white'
+            }`}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
@@ -858,7 +945,11 @@ export default function KmsHome() {
           </div>
         </nav>
 
-        <div className="p-4 border-t border-[#053229]/60 bg-[#04332b] text-center text-[10px] text-slate-400">
+        <div className={`p-4 border-t text-center text-[10px] ${
+          theme === 'light'
+            ? 'border-slate-100 bg-slate-50 text-slate-500'
+            : 'border-[#053229]/60 bg-[#04332b] text-slate-400'
+        }`}>
           <span>LMS Knowledge Drive</span>
           <span className="block text-[8px] text-slate-500 mt-0.5">Version 3.2.1 • Active</span>
         </div>
@@ -867,12 +958,12 @@ export default function KmsHome() {
       {/* Backdrop overlay for mobile drawer */}
       {isSidebarOpen && (
         <div onClick={() => setIsSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-30 lg:hidden" />
-      )}
-
-      {/* 2. Main Portal Panel Container on the Right */}
+      )}      {/* 2. Main Portal Panel Container on the Right */}
       <div className="flex-grow flex flex-col min-h-screen overflow-hidden w-full">
               {/* Header bar */}
-        <header className="bg-white border-b border-gray-200 py-3.5 px-6 sm:px-8 flex justify-between items-center select-none shadow-2xs z-30">
+        <header className={`border-b py-3.5 px-6 sm:px-8 flex justify-between items-center select-none shadow-2xs z-30 transition-all ${
+          theme === 'light' ? 'bg-white border-slate-200/80 shadow-3xs' : 'bg-white border-gray-200'
+        }`}>
           <div className="flex items-center gap-3">
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -882,7 +973,9 @@ export default function KmsHome() {
             <button
               onClick={() => navigate('/admin/dashboard')}
               title="Back to Admin Dashboard"
-              className="mr-1.5 p-1.5 rounded-full hover:bg-slate-100 text-slate-650 hover:text-[#08493d] transition-all cursor-pointer focus:outline-none inline-flex items-center justify-center shrink-0 border border-transparent hover:border-gray-200 shadow-3xs hover:shadow-xs"
+              className={`mr-1.5 p-1.5 rounded-full hover:bg-slate-100 transition-all cursor-pointer focus:outline-none inline-flex items-center justify-center shrink-0 border border-transparent hover:border-gray-200 shadow-3xs hover:shadow-xs ${
+                theme === 'light' ? 'text-slate-600 hover:text-purple-600' : 'text-slate-650 hover:text-[#08493d]'
+              }`}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -890,13 +983,44 @@ export default function KmsHome() {
             </button>
             <h1 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
               LMS Knowledge & Content Portal
-              <span className="hidden sm:inline-block text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full font-bold uppercase">
+              <span className={`hidden sm:inline-block text-[10px] border px-2 py-0.5 rounded-full font-bold uppercase ${
+                theme === 'light'
+                  ? 'bg-purple-50 text-purple-800 border-purple-200'
+                  : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+              }`}>
                 {activeRole} Scope
               </span>
             </h1>
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Dynamic Premium Theme Switcher Button */}
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-xl transition-all cursor-pointer focus:outline-none border shadow-3xs flex items-center gap-1.5 ${
+                theme === 'light'
+                  ? 'bg-white hover:bg-slate-50 border-slate-205 text-slate-650 hover:text-slate-900'
+                  : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-550 hover:text-slate-800'
+              }`}
+              title={`Switch to ${theme === 'light' ? 'Dark Green' : 'Light White'} Theme`}
+            >
+              {theme === 'light' ? (
+                <>
+                  <svg className="w-4.5 h-4.5 text-purple-600 transition-transform duration-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                  <span className="text-[9px] uppercase font-bold text-slate-700 tracking-wider hidden sm:inline">Dark Green</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4.5 h-4.5 text-amber-500 transition-transform duration-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                  </svg>
+                  <span className="text-[9px] uppercase font-bold text-slate-600 tracking-wider hidden sm:inline">Light White</span>
+                </>
+              )}
+            </button>
+
             {/* Notification Bell */}
             <div className="relative">
               <button 
@@ -915,18 +1039,18 @@ export default function KmsHome() {
                 <div className="absolute right-0 mt-2.5 w-80 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-40 text-xs text-slate-700 animate-fadeIn text-left">
                   <div className="px-4 py-2 border-b border-gray-100 font-extrabold text-slate-800 flex justify-between items-center">
                     <span>Recent Notifications</span>
-                    <span className="text-[10px] text-emerald-800 hover:underline cursor-pointer">Clear all</span>
+                    <span className={`text-[10px] hover:underline cursor-pointer ${theme === 'light' ? 'text-purple-800' : 'text-emerald-800'}`}>Clear all</span>
                   </div>
                   <ul className="divide-y divide-gray-50 max-h-64 overflow-y-auto font-medium">
                     <li className="px-4 py-2.5 hover:bg-slate-50 flex items-start gap-2.5">
-                      <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full mt-1.5"></div>
+                      <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${theme === 'light' ? 'bg-purple-650' : 'bg-emerald-600'}`}></div>
                       <div>
                         <p className="font-bold">New SOP Document Published</p>
                         <p className="text-[9px] text-slate-400">Just Now</p>
                       </div>
                     </li>
                     <li className="px-4 py-2.5 hover:bg-slate-50 flex items-start gap-2.5">
-                      <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full mt-1.5"></div>
+                      <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${theme === 'light' ? 'bg-purple-650' : 'bg-emerald-600'}`}></div>
                       <div>
                         <p className="font-bold">Priya Singh Uploaded training manual</p>
                         <p className="text-[9px] text-slate-400">10 mins ago</p>
@@ -943,8 +1067,12 @@ export default function KmsHome() {
                 onClick={() => { setProfileOpen(!profileOpen); setNotificationsOpen(false); }}
                 className="flex items-center gap-2.5 px-3 py-1.5 hover:bg-slate-50 border border-gray-200 rounded-xl transition-all cursor-pointer focus:outline-none select-none shadow-3xs"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-sm flex items-center justify-center shrink-0">
-                  <div className="w-full h-full bg-white rounded-full flex items-center justify-center font-black text-xs text-[#08493d]">
+                <div className={`w-8 h-8 rounded-full p-0.5 shadow-sm flex items-center justify-center shrink-0 bg-gradient-to-tr ${
+                  theme === 'light' ? 'from-purple-500 to-indigo-500' : 'from-emerald-500 to-blue-500'
+                }`}>
+                  <div className={`w-full h-full rounded-full flex items-center justify-center font-black text-xs ${
+                    theme === 'light' ? 'bg-white text-purple-650' : 'bg-white text-[#08493d]'
+                  }`}>
                     {user.name?.[0] || 'A'}
                   </div>
                 </div>
@@ -963,7 +1091,9 @@ export default function KmsHome() {
                     <p className="font-extrabold text-slate-855 truncate">{user.name}</p>
                     <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">{user.email}</p>
                   </div>
-                  <button onClick={() => navigate('/admin/dashboard')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors font-bold text-emerald-800 flex items-center gap-2">
+                  <button onClick={() => navigate('/admin/dashboard')} className={`w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors font-bold flex items-center gap-2 ${
+                    theme === 'light' ? 'text-purple-700' : 'text-emerald-800'
+                  }`}>
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
                       <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>

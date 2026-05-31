@@ -13,6 +13,26 @@ export default function AdminDashboard() {
     }
   });
 
+  // Dynamic theme state syncing across the ecosystem
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('admin-theme') || 'light';
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('admin-theme', nextTheme);
+    window.dispatchEvent(new Event('admin-theme-change'));
+  };
+
+  useEffect(() => {
+    const syncTheme = () => {
+      setTheme(localStorage.getItem('admin-theme') || 'light');
+    };
+    window.addEventListener('admin-theme-change', syncTheme);
+    return () => window.removeEventListener('admin-theme-change', syncTheme);
+  }, []);
+
   // Dynamic status states for simulated console activity
   const [cpuUsage, setCpuUsage] = useState(14);
   const [systemLogs, setSystemLogs] = useState([
@@ -21,6 +41,7 @@ export default function AdminDashboard() {
     { id: 'SYS-003', time: '1 hour ago', type: 'WARN', msg: 'Audit log exported: administrative summary generated.', operator: 'Priya Singh' },
     { id: 'SYS-004', time: '2 hours ago', type: 'INFO', msg: 'System checkpoint: daily database replication verified.', operator: 'Backup Daemon' }
   ]);
+
 
   // Simulate CPU usage variation for micro-animations
   useEffect(() => {
@@ -54,23 +75,41 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-100 flex font-sans text-slate-800 antialiased select-none">
-      
+    <div className={`w-full min-h-screen flex font-sans antialiased select-none transition-colors duration-200 ${
+      theme === 'light' ? 'bg-slate-50 text-slate-800' : 'bg-slate-100 text-slate-800'
+    }`}>
+
       {/* 1. Sidebar Navigation (Left Panel) */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-68 bg-[#053229] text-white flex flex-col border-r border-[#031b16] transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 h-screen shrink-0 shadow-xl`}>
-        
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-68 flex flex-col transform transition-all duration-300 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0 h-screen shrink-0 shadow-xl ${
+        theme === 'light'
+          ? 'bg-slate-50/90 backdrop-blur-md text-slate-700 border-r border-slate-200/70 shadow-sm'
+          : 'bg-[#053229] text-white border-r border-[#031b16]'
+      }`}>
+
         {/* Sidebar Header Title */}
-        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#03251e]">
+        <div className={`p-6 flex justify-between items-center ${
+          theme === 'light' ? 'border-b border-slate-200/60 bg-slate-100/50' : 'border-b border-white/10 bg-[#03251e]'
+        }`}>
           <div>
-            <h2 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
-              <span className="inline-block w-3.5 h-3.5 bg-yellow-400 rounded-xs animate-pulse"></span>
+            <h2 className={`text-xl font-extrabold tracking-tight flex items-center gap-2 ${
+              theme === 'light' ? 'text-slate-800' : 'text-white'
+            }`}>
+              <span className={`inline-block w-3.5 h-3.5 rounded-xs animate-pulse ${
+                theme === 'light' ? 'bg-emerald-500' : 'bg-yellow-400'
+              }`}></span>
               LMS Console
             </h2>
-            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mt-0.5">Admin Control Gate</p>
+            <p className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${
+              theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'
+            }`}>Admin Control Gate</p>
           </div>
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-slate-450 hover:text-white hover:bg-white/5 focus:outline-none"
+            className={`lg:hidden p-1.5 rounded-lg focus:outline-none ${
+              theme === 'light' ? 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' : 'text-slate-455 hover:text-white hover:bg-white/5'
+            }`}
             aria-label="Close Admin Menu"
           >
             <svg className="w-5.5 h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -79,24 +118,34 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* User Account Profile Card embedded beautifully */}
-        <div className="p-5 border-b border-white/5 bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 m-4 rounded-xl border border-white/10 shadow-inner">
+        {/* User Account Profile Card */}
+        <div className={`p-5 m-4 rounded-xl border shadow-sm ${
+          theme === 'light'
+            ? 'bg-white border-slate-200/80 shadow-xs'
+            : 'bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 border-white/10 shadow-inner'
+        }`}>
           <div className="flex items-center gap-3">
-            {/* Avatar block with HSL gradient border */}
+            {/* Avatar block */}
             <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
-              <div className="w-full h-full bg-[#053229] rounded-[10px] flex items-center justify-center font-black text-lg text-white">
+              <div className={`w-full h-full rounded-[10px] flex items-center justify-center font-black text-lg ${
+                theme === 'light' ? 'bg-slate-50 text-emerald-800' : 'bg-[#053229] text-white'
+              }`}>
                 {user.name?.[0] || 'A'}
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-white font-extrabold text-sm truncate leading-tight">{user.name}</p>
-              <p className="text-emerald-400/80 text-[10px] font-bold truncate mt-0.5">{user.email}</p>
+              <p className={`font-extrabold text-sm truncate leading-tight ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{user.name}</p>
+              <p className={`text-[10px] font-bold truncate mt-0.5 ${theme === 'light' ? 'text-slate-500' : 'text-emerald-400/80'}`}>{user.email}</p>
             </div>
           </div>
-          
+
           <div className="mt-3 flex items-center justify-between">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/65 border border-emerald-800/80 text-[9px] font-extrabold text-emerald-300 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-widest border ${
+              theme === 'light'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-emerald-955/65 border-emerald-800/80 text-emerald-300'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${theme === 'light' ? 'bg-emerald-550' : 'bg-emerald-400'}`}></span>
               {getRoleLabel(user.role)}
             </span>
           </div>
@@ -105,12 +154,16 @@ export default function AdminDashboard() {
         {/* Sidebar Menu Items */}
         <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Central Management</p>
-          
+
           <button
             onClick={() => { navigate('/admin/dashboard'); setIsSidebarOpen(false); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold bg-blue-600 text-white shadow-md hover:bg-blue-700 transition-all cursor-pointer text-left"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left border ${
+              theme === 'light'
+                ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 shadow-3xs font-extrabold'
+                : 'bg-blue-600 text-white border-transparent shadow-md hover:bg-blue-700'
+            }`}
           >
-            <svg className="w-4.5 h-4.5 text-blue-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-emerald-700' : 'text-blue-200'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
             <span>Command Dashboard</span>
@@ -118,7 +171,11 @@ export default function AdminDashboard() {
 
           <button
             onClick={() => { navigate('/admin/e-hostel'); setIsSidebarOpen(false); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
           >
             <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -128,7 +185,11 @@ export default function AdminDashboard() {
 
           <button
             onClick={() => { navigate('/admin/kms'); setIsSidebarOpen(false); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
           >
             <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -138,7 +199,11 @@ export default function AdminDashboard() {
 
           <button
             onClick={() => { navigate('/admin/users'); setIsSidebarOpen(false); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              theme === 'light'
+                ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
           >
             <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -146,25 +211,33 @@ export default function AdminDashboard() {
             <span>User Accounts</span>
           </button>
 
-          <div className="border-t border-white/5 my-4 pt-4 space-y-1.5">
+          <div className={`border-t my-4 pt-4 space-y-1.5 ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Workspace Navigation</p>
-            
+
             <button
               onClick={() => { navigate('/admin/dashboard'); setIsSidebarOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-350 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-350 hover:bg-white/5 hover:text-white'
+              }`}
             >
-              <svg className="w-4.5 h-4.5 text-blue-450 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
-                <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
-                <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
-                <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg className="w-4.5 h-4.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
+                <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
+                <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
+                <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span>Back to Admin Dashboard</span>
             </button>
 
             <button
               onClick={() => { navigate('/'); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              }`}
             >
               <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -174,7 +247,11 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => { navigate('/admin/users'); setIsSidebarOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              }`}
             >
               <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -183,18 +260,12 @@ export default function AdminDashboard() {
             </button>
 
             <button
-              onClick={() => { navigate('/admin/kms'); setIsSidebarOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer text-left"
-            >
-              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              <span>Knowledge Management</span>
-            </button>
-
-            <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-rose-350 hover:bg-rose-900/20 hover:text-rose-200 transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-rose-600 hover:bg-rose-50 hover:text-rose-800'
+                  : 'text-rose-350 hover:bg-rose-900/20 hover:text-rose-200'
+              }`}
             >
               <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -205,19 +276,21 @@ export default function AdminDashboard() {
         </nav>
 
         {/* Footer Support Helpbox */}
-        <div className="p-4 border-t border-white/5 bg-[#03211b] text-xs font-semibold">
-          <p className="text-slate-450 leading-normal">System Version 3.1.5</p>
-          <p className="text-emerald-400/70 text-[10px] mt-0.5">Gov-Secure Active Sandbox</p>
+        <div className={`p-4 text-xs font-semibold ${
+          theme === 'light' ? 'border-t border-slate-200 bg-slate-100/50 text-slate-500' : 'border-t border-white/5 bg-[#03211b] text-slate-450'
+        }`}>
+          <p className="leading-normal">System Version 3.1.5</p>
+          <p className={`${theme === 'light' ? 'text-emerald-700/70' : 'text-emerald-400/70'} text-[10px] mt-0.5`}>Gov-Secure Active Sandbox</p>
         </div>
       </aside>
 
       {/* 2. Main Dashboard Content deck */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-        
+
         {/* Top Header Panel */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-35 shadow-xs">
+        <header className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-35 shadow-xs">
           <div className="flex items-center gap-3.5">
-            <button 
+            <button
               onClick={() => setIsSidebarOpen(true)}
               className="lg:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer"
               aria-label="Open Admin Menu"
@@ -230,11 +303,34 @@ export default function AdminDashboard() {
               <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
                 👤 Admin Command Console
               </h1>
-              <p className="text-xs text-slate-400 font-semibold mt-0.5">National Statistical Training Academy (NSSTA) • Portal Management Hub</p>
+              <p className="text-xs text-slate-450 font-semibold mt-0.5">National Statistical Training Academy (NSSTA) • Portal Management Hub</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-bold text-slate-500">
+          <div className="flex items-center gap-3.5 text-xs font-bold text-slate-500">
+            {/* Dynamic Premium Theme Switcher Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl hover:bg-slate-100 text-slate-550 hover:text-slate-800 transition-all cursor-pointer focus:outline-none border border-slate-200/80 shadow-3xs flex items-center gap-2"
+              title={`Switch to ${theme === 'light' ? 'Dark Green' : 'Light White'} Theme`}
+            >
+              {theme === 'light' ? (
+                <>
+                  <svg className="w-4.5 h-4.5 text-emerald-600 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                  <span className="text-[10px] uppercase font-bold text-slate-700 tracking-wider">Dark Green</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4.5 h-4.5 text-amber-500 animate-spin-slow transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                  </svg>
+                  <span className="text-[10px] uppercase font-bold text-slate-600 tracking-wider">Light White</span>
+                </>
+              )}
+            </button>
+
             <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#eff7f5] text-[#08493d] border border-emerald-250 rounded-lg">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
               Live Sandbox Server
@@ -244,40 +340,42 @@ export default function AdminDashboard() {
 
         {/* Dashboard Main deck Grid */}
         <main className="flex-grow p-6 space-y-6">
-          
+
           {/* Welcome Dashboard Hero Header banner */}
-          <div className="bg-gradient-to-r from-[#08493d] to-[#0d6b5c] rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className={`rounded-2xl p-6 sm:p-8 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all duration-300 ${
+            theme === 'light'
+              ? 'bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 text-white border border-slate-800 shadow-lg'
+              : 'bg-gradient-to-r from-[#08493d] to-[#0d6b5c] text-white shadow-md'
+          }`}>
             <div className="space-y-2 relative z-10">
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Welcome, {user.name}!</h2>
-              <p className="text-emerald-100 text-xs sm:text-sm font-semibold max-w-xl leading-relaxed">
+              <p className={`text-xs sm:text-sm font-semibold max-w-xl leading-relaxed ${theme === 'light' ? 'text-slate-300' : 'text-emerald-100'}`}>
                 This is the LMS Administrative Command Portal. Manage logistics workflows for **e-Hostel Allotment**, **KMS central archives**, learning courses tree builders, and trainee database access control points.
               </p>
             </div>
             {/* Visual Glassmorphic Widget showing CPU and clock */}
             <div className="bg-white/10 border border-white/20 backdrop-blur-md rounded-xl p-4 shrink-0 w-full md:w-56 text-left select-none relative z-10">
-              <p className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest">Gateway Monitor</p>
+              <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'light' ? 'text-emerald-300' : 'text-emerald-300'}`}>Gateway Monitor</p>
               <div className="flex items-baseline justify-between mt-1">
                 <span className="text-3xl font-black tracking-tighter">99.9%</span>
-                <span className="text-xs text-emerald-200 font-extrabold uppercase">Uptime CDN</span>
+                <span className="text-xs text-emerald-255 font-extrabold uppercase">Uptime CDN</span>
               </div>
               <div className="mt-3 flex items-center justify-between text-[11px] text-emerald-100 font-bold border-t border-white/10 pt-2.5">
                 <span>CPU load: {cpuUsage}%</span>
                 <div className="w-16 h-1.5 bg-white/20 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-emerald-400 transition-all duration-500 rounded-full" 
+                  <div
+                    className="h-full bg-emerald-400 transition-all duration-500 rounded-full"
                     style={{ width: `${cpuUsage}%` }}
                   />
                 </div>
               </div>
             </div>
-            {/* Decorative background vectors */}
-            <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-radial from-white/10 to-transparent pointer-events-none rounded-r-2xl"></div>
           </div>
 
           {/* Quick Metrics Statistics Bar Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow">
+
+            <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow text-left">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Enrolled Users</p>
               <p className="text-2xl font-black text-slate-800 tracking-tight mt-1">1,248</p>
               <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 inline-block mt-2">
@@ -285,7 +383,7 @@ export default function AdminDashboard() {
               </span>
             </div>
 
-            <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow">
+            <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow text-left">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">KMS Central Drive Assets</p>
               <p className="text-2xl font-black text-slate-800 tracking-tight mt-1">142 Files</p>
               <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-100 inline-block mt-2">
@@ -293,15 +391,15 @@ export default function AdminDashboard() {
               </span>
             </div>
 
-            <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow">
+            <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow text-left">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">e-Hostel Room Allotments</p>
               <p className="text-2xl font-black text-slate-800 tracking-tight mt-1">78 / 100</p>
               <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-3.5">
-                <div className="h-full bg-emerald-600 rounded-full" style={{ width: '78%' }} />
+                <div className="h-full bg-emerald-650 rounded-full" style={{ width: '78%' }} />
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow">
+            <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs hover:shadow-md transition-shadow text-left">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Active Syllabi Modules</p>
               <p className="text-2xl font-black text-slate-800 tracking-tight mt-1">24 Modules</p>
               <span className="text-[10px] text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded border border-purple-100 inline-block mt-2">
@@ -313,12 +411,12 @@ export default function AdminDashboard() {
 
           {/* Primary Main Modules Cards Grid (The Core Requested Panels) */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            
+
             {/* Card 1: e-Hostel Logistics Dashboard Card */}
-            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col group text-left">
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col group text-left">
               {/* Premium Gradient Top Cap */}
               <div className="h-2 bg-gradient-to-r from-emerald-500 to-emerald-700"></div>
-              
+
               <div className="p-6 flex-grow space-y-4">
                 <div className="flex justify-between items-start">
                   <div className="w-12 h-12 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-800 group-hover:scale-105 transition-transform">
@@ -340,19 +438,19 @@ export default function AdminDashboard() {
 
                 {/* Module Metrics grid inside card */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Occupancy Register</p>
                     <p className="text-sm font-extrabold text-slate-700 mt-1">78 Allocated Rooms</p>
                   </div>
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Maintenance Desk</p>
                     <p className="text-sm font-extrabold text-rose-700 mt-1">3 Active Tickets</p>
                   </div>
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Payments Track</p>
                     <p className="text-sm font-extrabold text-emerald-700 mt-1">92% Collected</p>
                   </div>
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Fleet</p>
                     <p className="text-sm font-extrabold text-slate-700 mt-1">8 Transport Buses</p>
                   </div>
@@ -360,10 +458,12 @@ export default function AdminDashboard() {
               </div>
 
               {/* Enter Module trigger */}
-              <div className="px-6 py-4 bg-slate-50 border-t border-gray-150 flex justify-end">
+              <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex justify-end">
                 <button
                   onClick={() => navigate('/admin/e-hostel')}
-                  className="px-5 py-2.5 bg-[#08493d] hover:bg-[#063b31] text-white text-xs font-bold rounded-xl shadow-sm hover:shadow hover:translate-x-0.5 transition-all cursor-pointer flex items-center gap-1.5"
+                  className={`px-5 py-2.5 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow hover:translate-x-0.5 transition-all cursor-pointer flex items-center gap-1.5 ${
+                    theme === 'light' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-[#08493d] hover:bg-[#063b31]'
+                  }`}
                 >
                   Enter e-Hostel Portal
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -374,10 +474,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Card 2: Knowledge Management Portal (KMS) Card */}
-            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col group text-left">
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col group text-left">
               {/* Premium Gradient Top Cap */}
               <div className="h-2 bg-gradient-to-r from-blue-500 to-blue-700"></div>
-              
+
               <div className="p-6 flex-grow space-y-4">
                 <div className="flex justify-between items-start">
                   <div className="w-12 h-12 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-800 group-hover:scale-105 transition-transform">
@@ -399,19 +499,19 @@ export default function AdminDashboard() {
 
                 {/* Module Metrics grid inside card */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Central LCMS Drive</p>
                     <p className="text-sm font-extrabold text-slate-700 mt-1">142 Uploaded Assets</p>
                   </div>
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Governance Drafts</p>
                     <p className="text-sm font-extrabold text-yellow-750 mt-1">5 Pending Approvals</p>
                   </div>
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">P2P Forums</p>
-                    <p className="text-sm font-extrabold text-blue-850 mt-1">24 Active Threads</p>
+                    <p className="text-sm font-extrabold text-blue-855 mt-1">24 Active Threads</p>
                   </div>
-                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                  <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Curriculum Outline</p>
                     <p className="text-sm font-extrabold text-slate-700 mt-1">12 Syllabi Packages</p>
                   </div>
@@ -419,7 +519,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Enter Module trigger */}
-              <div className="px-6 py-4 bg-slate-50 border-t border-gray-150 flex justify-end">
+              <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex justify-end">
                 <button
                   onClick={() => navigate('/admin/kms')}
                   className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow hover:translate-x-0.5 transition-all cursor-pointer flex items-center gap-1.5"
@@ -435,13 +535,13 @@ export default function AdminDashboard() {
           </div>
 
           {/* User Directory quick console card (Whole Width block) */}
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col md:flex-row items-center p-6 gap-6 text-left group">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col md:flex-row items-center p-6 gap-6 text-left group">
             <div className="w-14 h-14 bg-purple-50 border border-purple-100 rounded-2xl flex items-center justify-center text-purple-700 shrink-0 group-hover:scale-105 transition-transform">
               <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            
+
             <div className="flex-grow space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base font-extrabold text-slate-800">MoSPI Trainees & Accounts Directory</h3>
@@ -461,7 +561,7 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => navigate('/admin/users')}
-              className="w-full md:w-auto px-5 py-3 bg-purple-650 hover:bg-purple-750 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow transition-colors shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full md:w-auto px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow transition-all shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
             >
               Manage Accounts Directory
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -472,11 +572,19 @@ export default function AdminDashboard() {
 
           {/* Simulated System Activity Terminal Log & Uptime widgets */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             {/* Terminal Activity Log table */}
-            <div className="lg:col-span-2 bg-[#021814] border border-[#043329] rounded-2xl p-6 text-left font-mono text-emerald-400 shadow-lg relative overflow-hidden">
-              <div className="flex justify-between items-center border-b border-[#043329] pb-3 mb-4 select-none">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+            <div className={`border rounded-2xl p-6 text-left shadow-lg relative overflow-hidden transition-colors duration-200 ${
+              theme === 'light'
+                ? 'bg-slate-50 border-slate-250 text-slate-700 font-mono shadow-md'
+                : 'bg-[#021814] border-[#043329] text-emerald-400 font-mono'
+            }`}>
+              <div className={`flex justify-between items-center border-b pb-3 mb-4 select-none ${
+                theme === 'light' ? 'border-slate-200' : 'border-[#043329]'
+              }`}>
+                <p className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${
+                  theme === 'light' ? 'text-slate-500' : 'text-slate-400'
+                }`}>
                   <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block animate-ping"></span>
                   Console Terminal Activity Stream
                 </p>
@@ -489,29 +597,35 @@ export default function AdminDashboard() {
 
               <div className="space-y-3.5 text-xs overflow-x-auto">
                 {systemLogs.map((log) => (
-                  <div key={log.id} className="flex items-start gap-3 hover:bg-[#03211b] p-1.5 rounded transition-colors">
+                  <div key={log.id} className={`flex items-start gap-3 p-1.5 rounded transition-colors ${
+                    theme === 'light' ? 'hover:bg-slate-200/50' : 'hover:bg-[#03211b]'
+                  }`}>
                     <span className="text-slate-500 shrink-0 font-bold select-none">{log.time}</span>
                     <span className={`px-1.5 py-0.2 rounded text-[9px] font-black tracking-wider uppercase select-none ${
-                      log.type === 'SUCCESS' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
-                      log.type === 'WARN' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-                      'bg-slate-900 text-slate-350 border border-slate-700'
+                      log.type === 'SUCCESS'
+                        ? theme === 'light' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                        : log.type === 'WARN'
+                        ? theme === 'light' ? 'bg-amber-50 text-amber-800 border border-amber-250' : 'bg-amber-950 text-amber-300 border border-amber-800'
+                        : theme === 'light' ? 'bg-indigo-50 text-indigo-800 border border-indigo-200' : 'bg-slate-900 text-slate-350 border border-slate-700'
                     }`}>
                       {log.type}
                     </span>
                     <span className="text-slate-450 shrink-0 font-bold font-sans">[{log.operator}]</span>
-                    <span className="text-emerald-100 font-sans font-semibold leading-normal">{log.msg}</span>
+                    <span className={`font-sans font-semibold leading-normal ${
+                      theme === 'light' ? 'text-slate-800' : 'text-emerald-105'
+                    }`}>{log.msg}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* System Health Indicators */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 text-left flex flex-col justify-between shadow-xs">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left flex flex-col justify-between shadow-xs">
               <div className="space-y-4">
                 <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Gateway Integrations Health</h4>
-                
+
                 <div className="space-y-3.5 pt-2">
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="text-xs font-extrabold text-slate-600 flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       Relational Database Server
@@ -521,7 +635,7 @@ export default function AdminDashboard() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="text-xs font-extrabold text-slate-600 flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                       Gov-Secure Firewall Shield
@@ -531,7 +645,7 @@ export default function AdminDashboard() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="text-xs font-extrabold text-slate-600 flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       Document Storage CDN
@@ -553,7 +667,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-gray-100 mt-4 select-none">
+              <div className="pt-6 border-t border-slate-100 mt-4 select-none">
                 <p className="text-[10px] font-bold text-slate-400 leading-normal">
                   All systems operating at peak performance levels under standard cryptographic safety policies.
                 </p>

@@ -304,6 +304,27 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
     }
   });
 
+  // Dynamic theme state syncing across the ecosystem
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('admin-theme') || 'light';
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('admin-theme', nextTheme);
+    window.dispatchEvent(new Event('admin-theme-change'));
+  };
+
+  useEffect(() => {
+    const syncTheme = () => {
+      setTheme(localStorage.getItem('admin-theme') || 'light');
+    };
+    window.addEventListener('admin-theme-change', syncTheme);
+    return () => window.removeEventListener('admin-theme-change', syncTheme);
+  }, []);
+
+
   const getRoleLabel = (role) => {
     switch (role) {
       case 'admin': return 'Administrator';
@@ -318,22 +339,40 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-100 flex font-sans relative select-none">
+    <div className={`w-full min-h-screen flex font-sans relative select-none transition-colors duration-200 ${
+      theme === 'light' ? 'bg-slate-50 text-slate-800' : 'bg-slate-100 text-slate-800'
+    }`}>
       
       {/* 1. Sidebar Component on the Left */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-[#053229] text-white flex flex-col select-none shrink-0 font-sans border-r border-[#031b16] transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 h-screen lg:h-auto shadow-xl`}>
+      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 flex flex-col select-none shrink-0 font-sans transform transition-all duration-300 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0 h-screen lg:h-auto shadow-xl ${
+        theme === 'light'
+          ? 'bg-slate-50/90 backdrop-blur-md text-slate-700 border-r border-slate-200/70 shadow-sm'
+          : 'bg-[#053229] text-white border-r border-[#031b16]'
+      }`}>
         {/* Title Header */}
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#03251e]">
+        <div className={`p-6 flex justify-between items-center ${
+          theme === 'light' ? 'border-b border-slate-200/60 bg-slate-100/50' : 'border-b border-white/5 bg-[#03251e]'
+        }`}>
           <div>
-            <h2 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
-              <span className="inline-block w-3.5 h-3.5 bg-yellow-400 rounded-xs animate-pulse"></span>
+            <h2 className={`text-xl font-extrabold tracking-tight flex items-center gap-2 ${
+              theme === 'light' ? 'text-slate-800' : 'text-white'
+            }`}>
+              <span className={`inline-block w-3.5 h-3.5 rounded-xs animate-pulse ${
+                theme === 'light' ? 'bg-emerald-500' : 'bg-yellow-400'
+              }`}></span>
               LMS Console
             </h2>
-            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mt-0.5">Admin Management</p>
+            <p className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${
+              theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'
+            }`}>Admin Management</p>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none"
+            className={`lg:hidden p-1.5 rounded-lg focus:outline-none ${
+              theme === 'light' ? 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
             aria-label="Close menu"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -343,28 +382,42 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
         </div>
 
         {/* User Account Profile Card embedded beautifully */}
-        <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 mx-3 my-2 rounded-xl border border-white/10 shadow-inner">
+        <div className={`px-5 py-4 mx-3 my-2 rounded-xl border shadow-sm ${
+          theme === 'light'
+            ? 'bg-white border-slate-200/80 shadow-xs text-slate-800'
+            : 'bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 border-white/10 shadow-inner'
+        }`}>
           <div className="flex items-center gap-3">
             {/* Avatar block with HSL gradient border */}
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
-              <div className="w-full h-full bg-[#053229] rounded-[10px] flex items-center justify-center font-black text-sm text-white">
+              <div className={`w-full h-full rounded-[10px] flex items-center justify-center font-black text-sm ${
+                theme === 'light' ? 'bg-slate-50 text-emerald-800' : 'bg-[#053229] text-white'
+              }`}>
                 {user.name?.[0] || 'A'}
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-white font-extrabold text-xs truncate leading-tight">{user.name}</p>
-              <p className="text-emerald-400/80 text-[9px] font-bold truncate mt-0.5">{getRoleLabel(user.role)}</p>
+              <p className={`font-extrabold text-xs truncate leading-tight ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{user.name}</p>
+              <p className={`text-[9px] font-bold truncate mt-0.5 ${theme === 'light' ? 'text-slate-550' : 'text-emerald-400/80'}`}>{getRoleLabel(user.role)}</p>
             </div>
           </div>
         </div>
 
         {/* Tenancy Scope Selector */}
-        <div className="mx-3 mb-2 p-3 bg-[#063b31] border border-emerald-800 rounded-xl space-y-1.5 text-xs text-emerald-100">
+        <div className={`mx-3 mb-2 p-3 border rounded-xl space-y-1.5 text-xs ${
+          theme === 'light'
+            ? 'bg-slate-100/60 border-slate-200/70 text-slate-700'
+            : 'bg-[#063b31] border-emerald-800 text-emerald-100'
+        }`}>
           <label className="block font-bold">Scope Tenancy View:</label>
           <select 
             value={selectedTenantScope}
             onChange={(e) => setSelectedTenantScope(e.target.value)}
-            className="w-full bg-[#053229] border border-emerald-800 text-white rounded px-2.5 py-1.5 font-bold focus:outline-none"
+            className={`w-full rounded px-2.5 py-1.5 font-bold focus:outline-none border ${
+              theme === 'light'
+                ? 'bg-white border-slate-300 text-slate-800'
+                : 'bg-[#053229] border-emerald-800 text-white'
+            }`}
           >
             <option value="All Organizations">All Organizations (Super)</option>
             {tenants.map(t => (
@@ -379,8 +432,10 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
           
           <button
             onClick={() => setActiveTab('directory')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'directory' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'directory'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <div className="flex items-center gap-2.5">
@@ -389,15 +444,21 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
               </svg>
               <span>User Directory</span>
             </div>
-            <span className={`px-1.5 py-0.2 rounded text-[9px] font-normal ${activeTab === 'directory' ? 'bg-blue-800 text-blue-200' : 'bg-slate-700 text-slate-300'}`}>
+            <span className={`px-1.5 py-0.2 rounded text-[9px] font-normal ${
+              activeTab === 'directory'
+                ? theme === 'light' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-800 text-blue-200'
+                : theme === 'light' ? 'bg-slate-200 text-slate-600' : 'bg-slate-700 text-slate-300'
+            }`}>
               {filteredUsers.length}
             </span>
           </button>
           
           <button
             onClick={() => setActiveTab('inbox')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'inbox' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'inbox'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <div className="flex items-center gap-2.5">
@@ -412,11 +473,13 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
               </span>
             )}
           </button>
-
+          
           <button
             onClick={() => setActiveTab('bulk')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'bulk' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'bulk'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -427,8 +490,10 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
           <button
             onClick={() => setActiveTab('groups')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'groups' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'groups'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -439,8 +504,10 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
           <button
             onClick={() => setActiveTab('roles')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'roles' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'roles'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -451,8 +518,10 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
           <button
             onClick={() => setActiveTab('enrolment')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'enrolment' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'enrolment'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -463,8 +532,10 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
           <button
             onClick={() => setActiveTab('tenancy')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'tenancy' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'tenancy'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-355 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -475,8 +546,10 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
           <button
             onClick={() => setActiveTab('security')}
-            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer ${
-              activeTab === 'security' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+            className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-2.5 font-bold transition-all text-xs cursor-pointer border ${
+              activeTab === 'security'
+                ? theme === 'light' ? 'bg-[#eff7f5] text-[#08493d] border-emerald-100 font-extrabold shadow-3xs' : 'bg-blue-600 text-white border-transparent shadow-sm'
+                : theme === 'light' ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 border-transparent' : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white border-transparent'
             }`}
           >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -487,14 +560,18 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
 
           {/* Symmetrical Workspace Navigation Quicklinks */}
-          <div className="border-t border-[#053d32]/45 my-4 pt-4 space-y-1.5">
+          <div className={`border-t my-4 pt-4 space-y-1.5 ${theme === 'light' ? 'border-slate-200' : 'border-[#053d32]/45'}`}>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-1.5">Workspace Navigation</p>
             
             <button
               onClick={() => { navigate('/admin/dashboard'); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-350 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-350 hover:bg-[#053d32]/60 hover:text-white'
+              }`}
             >
-              <svg className="w-4.5 h-4.5 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4.5 h-4.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
                 <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
                 <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
@@ -505,9 +582,13 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
             
             <button
               onClick={() => { navigate('/'); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+              }`}
             >
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               <span>Back to Public Site</span>
@@ -515,9 +596,13 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
             <button
               onClick={() => { navigate('/admin/e-hostel'); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+              }`}
             >
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
               </svg>
               <span>e-Hostel Logistics</span>
@@ -525,9 +610,13 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
             <button
               onClick={() => { navigate('/admin/kms'); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-[#053d32]/60 hover:text-white transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-[#053d32]/60 hover:text-white'
+              }`}
             >
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
               <span>Knowledge Management</span>
@@ -535,9 +624,13 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-rose-350 hover:bg-rose-950/20 hover:text-rose-105 transition-all cursor-pointer text-left"
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-rose-600 hover:bg-rose-50 hover:text-rose-800'
+                  : 'text-rose-350 hover:bg-rose-955/20 hover:text-rose-105'
+              }`}
             >
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4.5 h-4.5 text-rose-455 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               <span>Sign Out</span>
@@ -558,7 +651,7 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
       <div className="flex-grow flex flex-col min-h-screen overflow-hidden w-full">
         
         {/* Header bar */}
-        <header className="bg-white border-b border-gray-200 py-3.5 px-6 sm:px-8 flex justify-between items-center select-none shadow-2xs z-30">
+        <header className="bg-white border-b border-slate-200 py-3.5 px-6 sm:px-8 flex justify-between items-center select-none shadow-2xs z-30">
           <div className="flex items-center gap-3">
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -580,6 +673,29 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Dynamic Premium Theme Switcher Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl hover:bg-slate-100 text-slate-550 hover:text-slate-800 transition-all cursor-pointer focus:outline-none border border-slate-200/80 shadow-3xs flex items-center gap-2"
+              title={`Switch to ${theme === 'light' ? 'Dark Green' : 'Light White'} Theme`}
+            >
+              {theme === 'light' ? (
+                <>
+                  <svg className="w-4.5 h-4.5 text-emerald-600 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                  <span className="text-[10px] uppercase font-bold text-slate-700 tracking-wider">Dark Green</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4.5 h-4.5 text-amber-500 animate-spin-slow transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                  </svg>
+                  <span className="text-[10px] uppercase font-bold text-slate-600 tracking-wider">Light White</span>
+                </>
+              )}
+            </button>
+
             {/* Notification Bell */}
             <div className="relative">
               <button 
@@ -597,12 +713,12 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2.5 w-80 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-40 text-xs text-slate-700 animate-fadeIn text-left">
-                  <div className="px-4 py-2 border-b border-gray-100 font-extrabold text-slate-800 flex justify-between items-center">
+                <div className="absolute right-0 mt-2.5 w-80 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-40 text-xs text-slate-700 animate-fadeIn text-left">
+                  <div className="px-4 py-2 border-b border-slate-100 font-extrabold text-slate-800 flex justify-between items-center">
                     <span>Recent Notifications</span>
                     <span className="text-[10px] text-emerald-800 hover:underline cursor-pointer">Clear all</span>
                   </div>
-                  <ul className="divide-y divide-gray-50 max-h-64 overflow-y-auto font-medium">
+                  <ul className="divide-y divide-slate-50 max-h-64 overflow-y-auto font-medium">
                     {pendingRegs.map((reg) => (
                       <li key={reg.id} className="px-4 py-2.5 hover:bg-slate-50 flex items-start gap-2.5">
                         <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full mt-1.5"></div>
@@ -626,7 +742,7 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
             <div className="relative">
               <button 
                 onClick={() => { setProfileOpen(!profileOpen); setNotificationsOpen(false); }}
-                className="flex items-center gap-2.5 px-3 py-1.5 hover:bg-slate-50 border border-gray-200 rounded-xl transition-all cursor-pointer focus:outline-none select-none shadow-3xs"
+                className="flex items-center gap-2.5 px-3 py-1.5 hover:bg-slate-50 border border-slate-200 rounded-xl transition-all cursor-pointer focus:outline-none select-none shadow-3xs"
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-sm flex items-center justify-center shrink-0">
                   <div className="w-full h-full bg-white rounded-full flex items-center justify-center font-black text-xs text-[#08493d]">
@@ -643,8 +759,8 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-2.5 w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-1 z-40 text-xs text-slate-700 font-semibold animate-fadeIn overflow-hidden text-left">
-                  <div className="px-4 py-3 border-b border-gray-100 bg-slate-50/50">
+                <div className="absolute right-0 mt-2.5 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-40 text-xs text-slate-700 font-semibold animate-fadeIn overflow-hidden text-left">
+                  <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
                     <p className="font-extrabold text-slate-855 truncate">{user.name}</p>
                     <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">{user.email}</p>
                   </div>
@@ -657,7 +773,7 @@ const matchesCustomField = !customFieldFilter || u.customField.toLowerCase().inc
                     </svg>
                     Admin Dashboard
                   </button>
-                  <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 border-t border-gray-100 text-rose-700 hover:bg-rose-50 font-extrabold transition-colors cursor-pointer flex items-center gap-2">
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 border-t border-slate-100 text-rose-700 hover:bg-rose-50 font-extrabold transition-colors cursor-pointer flex items-center gap-2">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function SearchFiltering({
   searchQuery,
@@ -6,8 +6,19 @@ export default function SearchFiltering({
   filterType,
   setFilterType
 }) {
+  const [theme, setTheme] = useState(() => localStorage.getItem('admin-theme') || 'light');
+  useEffect(() => {
+    const syncTheme = () => setTheme(localStorage.getItem('admin-theme') || 'light');
+    window.addEventListener('admin-theme-change', syncTheme);
+    return () => window.removeEventListener('admin-theme-change', syncTheme);
+  }, []);
+
   return (
-    <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-2xs flex flex-col md:flex-row items-center gap-4 text-left font-semibold text-xs text-slate-700 select-none">
+    <div className={`p-5 rounded-2xl border transition-all flex flex-col md:flex-row items-center gap-4 text-left font-semibold text-xs text-slate-700 select-none ${
+      theme === 'light'
+        ? 'bg-white border-slate-200/80 shadow-2xs'
+        : 'bg-white p-5 rounded-2xl border border-gray-150 shadow-2xs'
+    }`}>
       
       {/* Search Input Box */}
       <div className="w-full md:flex-grow relative">
@@ -17,7 +28,11 @@ export default function SearchFiltering({
           placeholder="Search learning assets by tags, categories, title or owner..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 bg-white text-slate-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#08493d] focus:border-transparent transition-all font-semibold"
+          className={`w-full border rounded-lg pl-9 pr-3 py-2 bg-white text-slate-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-all font-semibold ${
+            theme === 'light'
+              ? 'border-slate-250 focus:ring-purple-500'
+              : 'border-gray-300 focus:ring-[#08493d]'
+          }`}
         />
         <span className="absolute left-3.5 top-7 text-slate-400 text-sm">🔍</span>
       </div>
@@ -28,7 +43,11 @@ export default function SearchFiltering({
         <select
           value={filterType}
           onChange={e => setFilterType(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-2.5 py-2 bg-white font-bold focus:outline-none"
+          className={`w-full border rounded-lg px-2.5 py-2 bg-white font-bold focus:outline-none transition-colors ${
+            theme === 'light'
+              ? 'border-slate-250 text-slate-850 focus:border-purple-400'
+              : 'border-gray-300 text-slate-800'
+          }`}
         >
           <option value="all">All Formats</option>
           <option value="pdf">Adobe PDF Documents</option>
