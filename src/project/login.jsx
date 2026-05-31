@@ -39,7 +39,14 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(userObj));
       window.dispatchEvent(new Event('auth-change'));
       console.log(`Log in as ${activeRole}:`, userObj);
-      navigate('/');
+      // Role-based redirect
+      if (activeRole === 'student') {
+        navigate('/trainee/dashboard');
+      } else if (activeRole === 'admin') {
+        navigate('/admin/users');
+      } else {
+        navigate('/');
+      }
     }, 1500);
   };
 
@@ -75,7 +82,14 @@ export default function Login() {
       window.dispatchEvent(new Event('auth-change'));
       setShowSsoModal(false);
       alert(`Successfully logged in via Janparichay SSO as ${activeRole.toUpperCase()}!`);
-      navigate('/');
+      // Role-based redirect
+      if (activeRole === 'student') {
+        navigate('/trainee/dashboard');
+      } else if (activeRole === 'admin') {
+        navigate('/admin/users');
+      } else {
+        navigate('/');
+      }
     }, 1500);
   };
 
