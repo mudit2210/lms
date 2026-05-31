@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import heroImg from '../assets/hero.png';
+import heroImg from '../../assets/hero.png';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('news');
@@ -8,7 +8,7 @@ export default function Home() {
     news: [
       { id: 1, date: 'May 28, 2026', tag: 'General', title: 'Admissions open for the 46th Batch of Indian Statistical Service (ISS) Training Program.' },
       { id: 2, date: 'May 20, 2026', tag: 'Events', title: 'National Seminar on "Official Statistics for Sustainable Development Goals" to be held on June 29, 2026.' },
-      { id: 3, date: 'May 12, 2026', tag: 'News', title: 'NSSTA signs Memorandum of Understanding with Indian Statistical Institute (ISI) for advanced research.' }
+      { id: 3, date: 'May 12, 2026', tag: 'News', title: 'LMS signs Memorandum of Understanding with Indian Statistical Institute (ISI) for advanced research.' }
     ],
     trainings: [
       { id: 1, date: 'Jun 10, 2026', tag: 'Upcoming', title: 'Two-week Training Programme on "Time Series Analysis and Forecasting" for State Govt. Officers.' },
@@ -44,7 +44,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl">
-              Empowering official statisticians across India and the globe. NSSTA coordinates and conducts training, promotes statistical research, and maintains the primary Knowledge Portal for official statistics in India.
+              Empowering official statisticians across India and the globe. LMS coordinates and conducts training, promotes statistical research, and maintains the primary Knowledge Portal for official statistics in India.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <button className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-[#08493d] font-bold text-sm rounded shadow transition-all duration-200 transform hover:-translate-y-0.5">
@@ -66,7 +66,7 @@ export default function Home() {
               {heroImg ? (
                 <img 
                   src={heroImg} 
-                  alt="NSSTA Training Campus" 
+                  alt="LMS Training Campus" 
                   className="rounded-lg shadow-xl max-h-72 w-auto object-cover border border-emerald-800/40 relative"
                   onError={(e) => {
                     // Fallback to placeholder if image fails to load
@@ -83,7 +83,7 @@ export default function Home() {
               >
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
-                    <h4 className="text-yellow-400 font-bold text-xs uppercase tracking-wider">NSSTA CAMPUS</h4>
+                    <h4 className="text-yellow-400 font-bold text-xs uppercase tracking-wider">LMS CAMPUS</h4>
                     <p className="text-white font-extrabold text-lg">Greater Noida, UP</p>
                   </div>
                   <div className="p-2 bg-emerald-900/50 rounded-lg border border-emerald-800 text-yellow-300">
@@ -372,7 +372,7 @@ export default function Home() {
               Academy Highlights
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-              NSSTA remains committed to providing state-of-the-art training in Official Statistics, Survey Methodologies, and Data Science.
+              LMS remains committed to providing state-of-the-art training in Official Statistics, Survey Methodologies, and Data Science.
             </p>
             
             {/* Stats list */}

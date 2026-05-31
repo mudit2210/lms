@@ -113,12 +113,12 @@ export default function Head() {
               Ministry of Statistics and<br className="hidden sm:inline" /> Programme Implementation
             </h2>
             <h3 className="text-[#1E40AF] font-bold text-[8px] sm:text-[9px] md:text-[10px] tracking-wider uppercase leading-tight mt-1">
-              National Statistical Systems<br className="hidden sm:inline" /> Training Academy
+              Learning Management<br className="hidden sm:inline" /> System
             </h3>
           </div>
 
-          {/* NSSTA Helix Logo */}
-          <div className="flex items-center" title="NSSTA Logo">
+          {/* LMS Helix Logo */}
+          <div className="flex items-center" title="LMS Logo">
             <svg 
               viewBox="0 0 100 120" 
               className="h-12 sm:h-16 w-auto object-contain" 
@@ -167,8 +167,8 @@ export default function Head() {
                 {/* Helix outer curve highlight */}
                 <path d="M 20 86 C 20 71, 80 71, 80 57 C 80 43, 20 43, 20 29 C 20 15, 80 15, 80 9" stroke="url(#helixGradient)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.95"/>
               </g>
-              {/* NSSTA Text at base */}
-              <text x="50" y="112" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="13" fill="#D97706" textAnchor="middle" letterSpacing="0.5">NSSTA</text>
+              {/* LMS Text at base */}
+              <text x="50" y="112" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="13" fill="#D97706" textAnchor="middle" letterSpacing="0.5">LMS</text>
             </svg>
           </div>
         </div>

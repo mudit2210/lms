@@ -84,7 +84,7 @@ export default function Login() {
       case 'student':
         return {
           idLabel: 'Enrollment Number / Email',
-          idPlaceholder: 'e.g. NSSTA/2026/041',
+          idPlaceholder: 'e.g. LMS/2026/041',
           bgAccent: 'from-emerald-600 to-teal-800',
           ringAccent: 'focus:ring-emerald-600',
           btnBg: 'bg-[#08493d] hover:bg-[#063b31]'
@@ -146,7 +146,7 @@ export default function Login() {
           </div>
           
           <h3 className="text-xl font-extrabold text-[#08493d] mt-4 font-sans tracking-tight">
-            NSSTA Academy Portal
+            LMS Academy Portal
           </h3>
           <p className="text-xs text-slate-500 font-medium">
             Sign in to access your classroom, learning repository, or administrative tools.
@@ -376,7 +376,7 @@ export default function Login() {
             <div className="p-6 sm:p-8 space-y-5 text-xs sm:text-sm">
               <div className="text-center">
                 <h3 className="text-[#0b352e] font-extrabold text-base">National Single Sign-On (NSSO)</h3>
-                <p className="text-[11px] text-slate-500 font-medium">Verify your government credentials to login securely to NSSTA.</p>
+                <p className="text-[11px] text-slate-500 font-medium">Verify your credentials to login securely to LMS.</p>
               </div>
 
               {ssoStep === 1 ? (

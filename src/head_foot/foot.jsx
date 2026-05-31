@@ -8,10 +8,10 @@ export default function Foot() {
         {/* About Ministry & Academy */}
         <div className="space-y-3">
           <h4 className="text-yellow-400 font-bold uppercase tracking-wider text-sm border-b border-[#0f4e43] pb-1.5">
-            About NSSTA
+            About LMS
           </h4>
           <p className="text-slate-300 leading-relaxed text-xs">
-            The National Statistical Systems Training Academy (NSSTA) is the premier Central Training Institute of the Ministry of Statistics & Programme Implementation (MoSPI). It serves as the national hub for training in official statistics, survey methods, and data science.
+            The Learning Management System (LMS) Academy is a premier learning and statistical training platform. It serves as the national hub for training in official statistics, survey methods, and data science.
           </p>
         </div>
 
@@ -37,7 +37,7 @@ export default function Foot() {
           </h4>
           <p className="text-slate-300 text-xs leading-relaxed">
             <strong>Address:</strong> Plot No. 22, Knowledge Park-II, Greater Noida, Gautam Buddh Nagar, Uttar Pradesh - 201310<br />
-            <strong>Email:</strong> nssta@mospi.gov.in<br />
+            <strong>Email:</strong> lms@example.com<br />
             <strong>Phone:</strong> +91-120-2320462
           </p>
         </div>
@@ -47,8 +47,8 @@ export default function Foot() {
       <div className="w-full bg-[#052620] py-4 px-6 sm:px-12 lg:px-20 text-[10px] sm:text-xs text-slate-400 text-center border-t border-[#041d18]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="space-y-1 text-slate-300 font-medium text-left">
-            <p>© 2026 National Statistical Systems Training Academy (NSSTA). All Rights Reserved.</p>
-            <p className="text-[10px] text-slate-400 font-normal">Content owned, updated and maintained by the National Statistical Systems Training Academy, MoSPI, Government of India.</p>
+            <p>© 2026 Learning Management System (LMS) Academy. All Rights Reserved.</p>
+            <p className="text-[10px] text-slate-400 font-normal">Content owned, updated and maintained by the Learning Management System (LMS) Academy.</p>
           </div>
           
           <div className="flex items-center space-x-3 text-slate-400 select-none">
