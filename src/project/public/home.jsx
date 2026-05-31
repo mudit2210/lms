@@ -1,8 +1,138 @@
 import React, { useState } from 'react';
 import heroImg from '../../assets/hero.png';
 
+const partnerCourses = [
+  {
+    id: 1,
+    partner: "Red Hat",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg",
+    title: "Red Hat Certified System Administrator (RHCSA) RH124",
+    duration: "80 Hrs",
+    image: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=500&auto=format&fit=crop&q=60",
+    category: "scholarship",
+    partnerKey: "Red Hat"
+  },
+  {
+    id: 2,
+    partner: "PHYTEC",
+    partnerLogo: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60",
+    title: "Embedded Full Stack IIOT Analyst",
+    duration: "1200 Hrs",
+    image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=500&auto=format&fit=crop&q=60",
+    category: "certifications",
+    partnerKey: "PHYTEC"
+  },
+  {
+    id: 3,
+    partner: "EC-Council",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/e/ec/EC-Council_Logo.png",
+    title: "Certified Ethical Hacker - CEH",
+    duration: "68 Hrs",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=60",
+    category: "certifications",
+    partnerKey: "EC- COUNCIL"
+  },
+  {
+    id: 4,
+    partner: "Adobe",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Adobe_Corporate_Logo.svg",
+    title: "Digital Application Designing",
+    duration: "130 Hrs",
+    image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=500&auto=format&fit=crop&q=60",
+    category: "scholarship",
+    partnerKey: "ADOBE"
+  },
+  {
+    id: 5,
+    partner: "Red Hat",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg",
+    title: "Red Hat Certified Engineer in Linux Automation (RHCE) RH294",
+    duration: "40 Hrs",
+    image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=500&auto=format&fit=crop&q=60",
+    category: "scholarship",
+    partnerKey: "Red Hat"
+  },
+  {
+    id: 6,
+    partner: "PHYTEC",
+    partnerLogo: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60",
+    title: "Basic Embedded Full Stack IIOT Analyst",
+    duration: "600 Hrs",
+    image: "https://images.unsplash.com/photo-1517059224940-d4af9eec41b7?w=500&auto=format&fit=crop&q=60",
+    category: "certifications",
+    partnerKey: "PHYTEC"
+  },
+  {
+    id: 7,
+    partner: "EC-Council",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/e/ec/EC-Council_Logo.png",
+    title: "Certified SOC Analyst",
+    duration: "80 Hrs",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500&auto=format&fit=crop&q=60",
+    category: "certifications",
+    partnerKey: "EC- COUNCIL"
+  },
+  {
+    id: 8,
+    partner: "Adobe",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Adobe_Corporate_Logo.svg",
+    title: "Graphics Designing",
+    duration: "130 Hrs",
+    image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=500&auto=format&fit=crop&q=60",
+    category: "scholarship",
+    partnerKey: "ADOBE"
+  },
+  {
+    id: 9,
+    partner: "AWS",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+    title: "AWS Certified Solutions Architect - Associate",
+    duration: "120 Hrs",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60",
+    category: "certifications",
+    partnerKey: "AWS"
+  },
+  {
+    id: 10,
+    partner: "AWS",
+    partnerLogo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+    title: "AWS Certified Cloud Practitioner Basics",
+    duration: "60 Hrs",
+    image: "https://images.unsplash.com/photo-1484417894907-623942c8ea29?w=500&auto=format&fit=crop&q=60",
+    category: "scholarship",
+    partnerKey: "AWS"
+  },
+  {
+    id: 11,
+    partner: "Autofina",
+    partnerLogo: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500&auto=format&fit=crop&q=60",
+    title: "Industrial Robotics & Automation Design Specialist",
+    duration: "240 Hrs",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop&q=60",
+    category: "certifications",
+    partnerKey: "AUTOFINA ROBOTICS"
+  }
+];
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('news');
+  const [activePartnerTab, setActivePartnerTab] = useState('ALL');
+  const [selectedCourseType, setSelectedCourseType] = useState('all'); 
+  const [currentCoursePage, setCurrentCoursePage] = useState(0);
+
+  const handlePartnerTabChange = (tab) => {
+    setActivePartnerTab(tab);
+    setCurrentCoursePage(0);
+  };
+
+  const handleCourseTypeChange = (type) => {
+    if (selectedCourseType === type) {
+      setSelectedCourseType('all');
+    } else {
+      setSelectedCourseType(type);
+    }
+    setCurrentCoursePage(0);
+  };
 
   const notices = {
     news: [
@@ -20,6 +150,25 @@ export default function Home() {
       { id: 2, date: 'Apr 30, 2026', tag: 'Manual', title: 'Updated Handbook on National Indicator Framework (NIF) for Sustainable Development Goals.' },
       { id: 3, date: 'Apr 18, 2026', tag: 'Journal', title: 'Indian Journal of Official Statistics - Volume XII, Issue 1 now available.' }
     ]
+  };
+
+  const filteredCourses = partnerCourses.filter(course => {
+    const matchesPartner = activePartnerTab === 'ALL' || course.partnerKey === activePartnerTab;
+    const matchesType = selectedCourseType === 'all' || course.category === selectedCourseType;
+    return matchesPartner && matchesType;
+  });
+
+  const cardsPerPage = 8;
+  const totalPages = Math.ceil(filteredCourses.length / cardsPerPage) || 1;
+  const pageIndex = Math.min(currentCoursePage, totalPages - 1);
+  const displayedCourses = filteredCourses.slice(pageIndex * cardsPerPage, (pageIndex + 1) * cardsPerPage);
+
+  const handlePrevPage = () => {
+    setCurrentCoursePage(prev => (prev > 0 ? prev - 1 : totalPages - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentCoursePage(prev => (prev < totalPages - 1 ? prev + 1 : 0));
   };
 
   return (
@@ -245,7 +394,241 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Core Gateways (LMS, KMS, Officers Desktop) */}
+
+      {/* 5. Industry Partners Courses Showcase Section */}
+      <section className="max-w-7xl mx-auto py-12 px-6 sm:px-12 lg:px-20 select-none animate-fadeIn font-sans">
+        <div className="flex flex-col lg:flex-row gap-10">
+          
+          {/* Left Column: Heading, Filter buttons & Slide Navigation */}
+          <div className="lg:w-1/4 flex flex-col justify-between space-y-8">
+            <div className="space-y-6">
+              {/* Partner Heading label with pink underline decorator */}
+              <div className="space-y-1 text-left">
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    Industry Partners
+                  </span>
+                  <span className="h-0.5 bg-rose-500 w-10 rounded"></span>
+                </div>
+                <h3 className="text-3xl sm:text-4xl font-extrabold text-[#0B4F9C] tracking-tight">
+                  COURSES
+                </h3>
+              </div>
+
+              {/* Red-pink scholarship filter buttons */}
+              <div className="flex flex-col gap-3.5">
+                <button
+                  onClick={() => handleCourseTypeChange('scholarship')}
+                  className={`w-full text-center px-4 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider border transition-all duration-200 cursor-pointer shadow-2xs ${
+                    selectedCourseType === 'scholarship'
+                      ? 'bg-rose-600 border-rose-600 text-white shadow-sm'
+                      : 'bg-white border-slate-200 text-rose-600 hover:bg-rose-50'
+                  }`}
+                >
+                  Scholarship Courses
+                </button>
+                <button
+                  onClick={() => handleCourseTypeChange('certifications')}
+                  className={`w-full text-center px-4 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider border transition-all duration-200 cursor-pointer shadow-2xs ${
+                    selectedCourseType === 'certifications'
+                      ? 'bg-rose-600 border-rose-600 text-white shadow-sm'
+                      : 'bg-white border-slate-200 text-rose-600 hover:bg-rose-50'
+                  }`}
+                >
+                  Certifications Courses
+                </button>
+              </div>
+            </div>
+
+            {/* Slider arrows navigation - Pinned to bottom left exactly like mockup */}
+            <div className="flex items-center gap-3.5 pt-4 lg:pt-0">
+              <button
+                onClick={handlePrevPage}
+                className="w-12 h-12 rounded-xl border-2 border-black bg-white flex items-center justify-center text-black font-extrabold hover:bg-slate-50 transition-all cursor-pointer shadow-2xs active:scale-95"
+                title="Previous page"
+              >
+                <svg className="w-5 h-5 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+              <button
+                onClick={handleNextPage}
+                className="w-12 h-12 rounded-xl border-2 border-black bg-white flex items-center justify-center text-black font-extrabold hover:bg-slate-50 transition-all cursor-pointer shadow-2xs active:scale-95"
+                title="Next page"
+              >
+                <svg className="w-5 h-5 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column: Tab Bar & Course Card Carousel Grid */}
+          <div className="lg:w-3/4 flex flex-col space-y-4">
+            
+            {/* Horizontal tab navigator bar for Industry Partners */}
+            <div className="flex flex-wrap items-center gap-2">
+              {['ALL', 'AWS', 'ADOBE', 'AUTOFINA ROBOTICS', 'EC- COUNCIL', 'PHYTEC'].map((partner) => (
+                <button
+                  key={partner}
+                  onClick={() => handlePartnerTabChange(partner)}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-all duration-150 cursor-pointer border ${
+                    activePartnerTab === partner
+                      ? 'bg-[#0B4F9C] text-white border-[#0B4F9C] shadow-sm'
+                      : 'bg-white text-slate-650 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
+                  }`}
+                >
+                  {partner}
+                </button>
+              ))}
+            </div>
+
+            {/* Horizontal Divider Line */}
+            <div className="border-b border-slate-200 w-full my-1"></div>
+
+            {/* Slide Pagination Indicator bar */}
+            <div className="flex items-center gap-1.5 py-1">
+              {Array.from({ length: totalPages }).map((_, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setCurrentCoursePage(idx)}
+                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    pageIndex === idx ? 'bg-[#0B4F9C] w-8' : 'bg-slate-200 w-3 hover:bg-slate-350'
+                  }`}
+                  title={`Go to page ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Dynamic Card Grid (4 columns wide, 2 rows deep) */}
+            {displayedCourses.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 animate-scaleUp">
+                {displayedCourses.map((course) => {
+                  // Local helper to render logos inside mapping scope
+                  const renderLocalLogo = (partner) => {
+                    const p = partner.toUpperCase();
+                    if (p.includes('RED HAT')) {
+                      return (
+                        <span className="text-[#C90000] shrink-0 flex items-center">
+                          <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.06 14.54c-.31.33-.76.46-1.18.35-.42-.11-.75-.44-.86-.86l-.68-2.61c-.08-.31.02-.63.26-.84.23-.21.56-.26.84-.13l2.42 1.08c.41.18.66.61.61 1.06-.05.45-.39.81-.83.91l-.58.04z" />
+                          </svg>
+                        </span>
+                      );
+                    }
+                    if (p.includes('PHYTEC')) {
+                      return (
+                        <span className="text-slate-800 shrink-0 flex items-center">
+                          <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z" />
+                          </svg>
+                        </span>
+                      );
+                    }
+                    if (p.includes('EC- COUNCIL') || p.includes('EC-COUNCIL')) {
+                      return (
+                        <span className="text-blue-700 shrink-0 flex items-center text-[10px] font-black font-sans">
+                          E
+                        </span>
+                      );
+                    }
+                    if (p.includes('ADOBE')) {
+                      return (
+                        <span className="text-red-600 shrink-0 flex items-center">
+                          <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 2L2 22h4l3-7h6l3 7h4L12 2zm-1.5 10l1.5-3.5 1.5 3.5h-3z" />
+                          </svg>
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className="text-slate-600 shrink-0 flex items-center text-[10px] font-black font-sans">
+                        {partner[0].toUpperCase()}
+                      </span>
+                    );
+                  };
+
+                  return (
+                    <div
+                      key={course.id}
+                      className="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-1.5 duration-250 transition-all flex flex-col justify-between group"
+                    >
+                      {/* Top graphic part with Duration tag */}
+                      <div className="relative h-36 w-full overflow-hidden bg-slate-100 shrink-0 border-b border-slate-150">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-105 duration-300 transition-transform"
+                        />
+                        
+                        {/* Vertical Duration Badge Tag (Matches layout exactly - pinned to absolute right-0) */}
+                        <div className="absolute right-0 top-0 bottom-0 bg-white border-l border-slate-200 px-2 flex items-center justify-center shadow-2xs">
+                          <span 
+                            className="text-[9px] font-black uppercase text-slate-800 tracking-wider text-center whitespace-nowrap"
+                            style={{ writingMode: 'vertical-rl' }}
+                          >
+                            {course.duration.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Bottom body text & brand logo */}
+                      <div className="p-4 flex-grow flex flex-col justify-between space-y-4 text-left bg-gradient-to-b from-white to-slate-50/20">
+                        
+                        {/* Partner Identity row */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* Mini visual logo/icon representation */}
+                          <div className="w-5 h-5 rounded bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-150 p-0.5">
+                            {renderLocalLogo(course.partner)}
+                          </div>
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                            {course.partner.toUpperCase()}
+                          </span>
+                        </div>
+
+                        {/* Course title in blue typography - Top aligned! */}
+                        <h4 className="text-xs font-bold text-[#0B4F9C] leading-snug hover:underline min-h-[3rem] text-left flex items-start">
+                          {course.title}
+                        </h4>
+
+                        {/* Tag pill indicating Scholarship/Cert status */}
+                        <div className="pt-3.5 shrink-0 flex items-center justify-between border-t border-slate-100">
+                          <span className={`text-[8.5px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${
+                            course.category === 'scholarship'
+                              ? 'bg-rose-100/70 text-rose-700'
+                              : 'bg-emerald-100/70 text-emerald-700'
+                          }`}>
+                            {course.category.toUpperCase()}
+                          </span>
+                          <span className="text-[10px] font-bold text-[#0B4F9C] opacity-0 group-hover:opacity-100 transition-opacity">
+                            View details ➔
+                          </span>
+                        </div>
+
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="py-20 text-center border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-3">
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-slate-800 font-extrabold text-sm">No courses currently found</p>
+                  <p className="text-slate-450 font-medium text-xs">Try selecting another partner tab or resetting the scholarship filters.</p>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </section>
+
+            {/* Core Gateways (LMS, KMS, Officers Desktop) */}
       <section className="max-w-7xl mx-auto py-12 px-6 sm:px-12 lg:px-20 grid grid-cols-1 md:grid-cols-3 gap-8">
         
         {/* Gateway 1: LMS */}
@@ -303,6 +686,7 @@ export default function Home() {
         </div>
 
       </section>
+
 
       {/* Notice Board and Statistics section */}
       <section className="max-w-7xl mx-auto pb-16 px-6 sm:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
