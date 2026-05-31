@@ -14,7 +14,8 @@ export default function ReportAnalyticsDashboard() {
 
   // Filters state
   const [financialYear, setFinancialYear] = useState('2024-25');
-  const [dateRange, setDateRange] = useState('01 Apr 2024 - 31 Mar 2025');
+  const [startDate, setStartDate] = useState('2024-04-01');
+  const [endDate, setEndDate] = useState('2025-03-31');
   const [selectedState, setSelectedState] = useState('All States');
   const [selectedMinistry, setSelectedMinistry] = useState('All Ministries');
   const [selectedCadre, setSelectedCadre] = useState('All Cadres');
@@ -29,7 +30,8 @@ export default function ReportAnalyticsDashboard() {
   const [rcDesignation, setRcDesignation] = useState('All Designations');
   const [rcTrainingType, setRcTrainingType] = useState('All Types');
   const [rcCourse, setRcCourse] = useState('All Courses');
-  const [rcDateRange, setRcDateRange] = useState('01 Apr 2024 - 31 Mar 2025');
+  const [rcStartDate, setRcStartDate] = useState('2024-04-01');
+  const [rcEndDate, setRcEndDate] = useState('2025-03-31');
 
   // KPI metrics (filter-responsive)
   const [kpiData, setKpiData] = useState({
@@ -39,18 +41,38 @@ export default function ReportAnalyticsDashboard() {
 
   // Update KPI when global filters change
   useEffect(() => {
-    const stateMultiplier = selectedState === 'All States' ? 1 : 0.15 + Math.random() * 0.2;
-    const ministryMultiplier = selectedMinistry === 'All Ministries' ? 1 : 0.25 + Math.random() * 0.15;
-    const m = stateMultiplier * ministryMultiplier;
+    // 1. Calculate date multiplier based on selected date range relative to 365 days
+    let dateMultiplier = 1;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = Math.abs(end - start);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+      dateMultiplier = Math.min(1.2, Math.max(0.05, diffDays / 365));
+    }
+
+    // 2. Calculate categorical filter factors
+    const stateFactor = selectedState === 'All States' ? 1 : 0.22;
+    const ministryFactor = selectedMinistry === 'All Ministries' ? 1 : 0.35;
+    const cadreFactor = selectedCadre === 'All Cadres' ? 1 : 0.5;
+    const designationFactor = selectedDesignation === 'All Designations' ? 1 : 0.45;
+    const trainingTypeFactor = selectedTrainingType === 'All Types' ? 1 : 0.4;
+
+    // 3. Composite multiplier
+    const m = stateFactor * ministryFactor * cadreFactor * designationFactor * trainingTypeFactor * dateMultiplier;
+
+    // Deterministic seed value from filter lengths so state updates are stable
+    const seed = selectedState.length + selectedMinistry.length + selectedCadre.length + selectedTrainingType.length + (startDate?.length || 0);
+
     setKpiData({
-      learners: Math.floor(245860 * m),
-      courses: Math.floor(1250 * m),
-      completionRate: Number((85 + Math.random() * 5).toFixed(1)),
-      dropoutRate: Number((6 + Math.random() * 4).toFixed(1)),
-      certifications: Math.floor(195420 * m),
-      avgHours: Number((14 + Math.random() * 5).toFixed(1))
+      learners: Math.max(10, Math.floor(245860 * m)),
+      courses: Math.max(1, Math.floor(1250 * m)),
+      completionRate: Number((82 + (seed % 10) + (dateMultiplier * 5)).toFixed(1)),
+      dropoutRate: Number((5 + (seed % 6) + (2 - dateMultiplier * 2)).toFixed(1)),
+      certifications: Math.max(5, Math.floor(195420 * m)),
+      avgHours: Number((12 + (seed % 8)).toFixed(1))
     });
-  }, [selectedState, selectedMinistry, selectedCadre, financialYear]);
+  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, financialYear, startDate, endDate]);
 
   // Dynamic state distribution data based on filters
   const stateData = React.useMemo(() => {
@@ -61,7 +83,20 @@ export default function ReportAnalyticsDashboard() {
       { name: 'Karnataka', count: 18600, percent: 7.6 },
       { name: 'Madhya Pradesh', count: 16300, percent: 6.6 }
     ];
-    let multiplier = 1;
+    
+    let dateMultiplier = 1;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = Math.abs(end - start);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+      dateMultiplier = Math.min(1.2, Math.max(0.05, diffDays / 365));
+    }
+
+    const trainingTypeFactor = selectedTrainingType === 'All Types' ? 1 : 0.4;
+    const designationFactor = selectedDesignation === 'All Designations' ? 1 : 0.45;
+
+    let multiplier = dateMultiplier * trainingTypeFactor * designationFactor;
     if (selectedMinistry !== 'All Ministries') multiplier *= 0.6;
     if (selectedCadre !== 'All Cadres') multiplier *= 0.45;
     
@@ -73,7 +108,7 @@ export default function ReportAnalyticsDashboard() {
       return { ...item, count };
     });
     return res.sort((a, b) => b.count - a.count);
-  }, [selectedState, selectedMinistry, selectedCadre]);
+  }, [selectedState, selectedMinistry, selectedCadre, selectedDesignation, selectedTrainingType, startDate, endDate]);
 
   // Training Type Distribution donut metrics
   const trainingTypeData = React.useMemo(() => {
@@ -108,10 +143,12 @@ export default function ReportAnalyticsDashboard() {
   // Cadre Distribution metrics
   const cadreData = React.useMemo(() => {
     let cRatio = 40.1, sRatio = 30.2, rRatio = 17.8;
-    if (selectedCadre === 'Central Statistics') {
+    if (selectedCadre.includes('ISS') || selectedCadre.includes('SSS')) {
       cRatio = 80; sRatio = 10; rRatio = 10;
-    } else if (selectedCadre === 'State Statistics') {
+    } else if (selectedCadre === 'State Statistical Service') {
       cRatio = 10; sRatio = 80; rRatio = 10;
+    } else if (selectedCadre === 'Planning Service') {
+      cRatio = 15; sRatio = 15; rRatio = 70;
     }
     return { central: cRatio, state: sRatio, research: rRatio };
   }, [selectedCadre]);
@@ -234,7 +271,7 @@ export default function ReportAnalyticsDashboard() {
       completionRate: Number((84 + Math.random() * 8).toFixed(1)),
       certifications: Math.floor(38920 * m)
     });
-  }, [rcState, rcMinistry, rcCourse, reportType]);
+  }, [rcState, rcMinistry, rcCourse, reportType, rcStartDate, rcEndDate]);
 
   const handleGenerateReport = () => {
     const seed = Math.random();
@@ -307,15 +344,21 @@ export default function ReportAnalyticsDashboard() {
       </div>
 
       {/* 2. Horizontal Filters Panel */}
-      <div className="bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 items-end">
-        {[{l:'Financial Year',v:financialYear,s:setFinancialYear,o:['2024-25','2023-24']},{l:'Date Range',v:dateRange,isInput:true,s:setDateRange},{l:'State',v:selectedState,s:setSelectedState,o:['All States','Uttar Pradesh','Rajasthan','Maharashtra','Karnataka','Madhya Pradesh']},{l:'Ministry',v:selectedMinistry,s:setSelectedMinistry,o:['All Ministries','MoSPI','Rural Development','Agriculture']},{l:'Cadre',v:selectedCadre,s:setSelectedCadre,o:['All Cadres','Central Statistics','State Statistics']},{l:'Designation',v:selectedDesignation,s:setSelectedDesignation,o:['All Designations','Director','Statistical Officer']},{l:'Training Type',v:selectedTrainingType,s:setSelectedTrainingType,o:['All Types','Foundation Training','Refresher Training']}].map((f,i) => (
+      <div className="bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 items-end">
+        {[
+          {l:'Financial Year',v:financialYear,s:setFinancialYear,o:['2024-25','2023-24']},
+          {l:'Start Date',v:startDate,s:setStartDate,isDate:true},
+          {l:'End Date',v:endDate,s:setEndDate,isDate:true},
+          {l:'State',v:selectedState,s:setSelectedState,o:['All States','Uttar Pradesh','Rajasthan','Maharashtra','Karnataka','Madhya Pradesh']},
+          {l:'Ministry',v:selectedMinistry,s:setSelectedMinistry,o:['All Ministries','MoSPI','Rural Development','Agriculture']},
+          {l:'Cadre',v:selectedCadre,s:setSelectedCadre,o:['All Cadres','Indian Statistical Service (ISS)','Subordinate Statistical Service (SSS)','State Statistical Service','Administrative Service','Revenue Service','Accounts & Audit Service','Planning Service','Technical Cadre','Ministerial Cadre','Field Staff Cadre']},
+          {l:'Designation',v:selectedDesignation,s:setSelectedDesignation,o:['All Designations','Additional Director General','Director','Joint Director','Deputy Director','Senior Statistical Officer','Junior Statistical Officer']},
+          {l:'Training Type',v:selectedTrainingType,s:setSelectedTrainingType,o:['All Types','Foundation Training','Refresher Training']}
+        ].map((f,i) => (
           <div key={i} className="space-y-0.5">
             <label className="text-[8.5px] text-slate-400 font-black uppercase tracking-wider block">{f.l}</label>
-            {f.isInput ? (
-              <div className="relative">
-                <input type="text" value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none" />
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]">📅</span>
-              </div>
+            {f.isDate ? (
+              <input type="date" value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none cursor-pointer" />
             ) : (
               <select value={f.v} onChange={e => f.s(e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-[10.5px] font-bold cursor-pointer focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none appearance-none">
                 {f.o.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -502,6 +545,14 @@ export default function ReportAnalyticsDashboard() {
                     <option value="Advanced Statistical Methods">Advanced Stats</option>
                     <option value="Database Systems Basics">DB Basics</option>
                   </select>
+                </div>
+                <div>
+                  <label className="text-[8.5px] text-slate-400 font-bold block">Start Date:</label>
+                  <input type="date" value={rcStartDate} onChange={e => setRcStartDate(e.target.value)} className="w-full border border-gray-200 rounded text-[9.5px] py-0.5 bg-slate-50 cursor-pointer focus:ring-1 focus:ring-blue-400 outline-none" />
+                </div>
+                <div>
+                  <label className="text-[8.5px] text-slate-400 font-bold block">End Date:</label>
+                  <input type="date" value={rcEndDate} onChange={e => setRcEndDate(e.target.value)} className="w-full border border-gray-200 rounded text-[9.5px] py-0.5 bg-slate-50 cursor-pointer focus:ring-1 focus:ring-blue-400 outline-none" />
                 </div>
               </div>
             </div>
