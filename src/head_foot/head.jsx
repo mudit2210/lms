@@ -424,6 +424,17 @@ export default function Head() {
                       <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-wider mt-0.5">{user.role} Portal</p>
                       <p className="text-[10px] text-slate-400 font-normal truncate mt-0.5">{user.email}</p>
                     </li>
+                    {user.role === 'admin' && (
+                      <li>
+                        <NavLink 
+                          to="/admin/e-hostel" 
+                          onClick={() => setProfileOpen(false)}
+                          className="block px-4 py-2 hover:bg-slate-50 hover:text-[#08493d] transition-colors"
+                        >
+                          e-Hostel Dashboard
+                        </NavLink>
+                      </li>
+                    )}
                     <li>
                       <button
                         onClick={handleLogout}

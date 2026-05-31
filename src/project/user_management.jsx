@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserManagement() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.dispatchEvent(new Event('auth-change'));
+    navigate('/login');
+  };
+
   const [activeTab, setActiveTab] = useState('directory'); // directory, bulk, groups, roles, enrolment, tenancy, security, inbox
   
   // Data State with LocalStorage sync
@@ -309,6 +317,37 @@ export default function UserManagement() {
                 <option key={t.id} value={t.name}>{t.name} - Tenant</option>
               ))}
             </select>
+          </div>
+
+          {/* Quick Links */}
+          <div className="mt-3.5 pt-3.5 border-t border-emerald-800/60 flex flex-col gap-2.5 text-xs font-bold text-emerald-100">
+            <button 
+              onClick={() => navigate('/')} 
+              className="w-full text-left hover:text-yellow-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Public Site</span>
+            </button>
+            <button 
+              onClick={() => navigate('/admin/e-hostel')} 
+              className="w-full text-left hover:text-yellow-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+              </svg>
+              <span>e-Hostel Dashboard</span>
+            </button>
+            <button 
+              onClick={handleLogout} 
+              className="w-full text-left text-rose-300 hover:text-rose-100 transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Sign Out</span>
+            </button>
           </div>
         </div>
 

@@ -27,6 +27,16 @@ export default function Login() {
     
     setError('');
     setIsLoading(true);
+
+    // Validate admin credentials specifically
+    if (activeRole === 'admin') {
+      const normalizedEmail = email.toLowerCase().trim();
+      if (normalizedEmail !== 'admin' || password !== '123') {
+        setIsLoading(false);
+        setError("Invalid Admin credentials. Use username 'admin' and password '123'.");
+        return;
+      }
+    }
     
     // Simulate login API call
     setTimeout(() => {
@@ -34,12 +44,17 @@ export default function Login() {
       const userObj = {
         email: email,
         role: activeRole,
-        name: activeRole.charAt(0).toUpperCase() + activeRole.slice(1) + ' User'
+        name: activeRole === 'admin' ? 'Admin User' : (activeRole.charAt(0).toUpperCase() + activeRole.slice(1) + ' User')
       };
       localStorage.setItem('user', JSON.stringify(userObj));
       window.dispatchEvent(new Event('auth-change'));
       console.log(`Log in as ${activeRole}:`, userObj);
-      navigate('/');
+      
+      if (activeRole === 'admin') {
+        navigate('/admin/e-hostel');
+      } else {
+        navigate('/');
+      }
     }, 1500);
   };
 
