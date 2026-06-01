@@ -75,12 +75,10 @@ export default function Contact() {
                 </svg>
               </div>
               <div className="space-y-1">
-                <h4 className="font-bold text-slate-700">Location Address</h4>
+                <h4 className="font-bold text-slate-700">HEAD OFFICE</h4>
                 <p className="text-slate-500 leading-relaxed">
-                  Learning Management System (LMS) Academy,<br />
-                  Plot No. 22, Knowledge Park-II,<br />
-                  Greater Noida, Gautam Buddha Nagar,<br />
-                  Uttar Pradesh - 201310
+                  Plot no. 36, Zone-1, MP Nagar Bhopal – 11,<br />
+                  Madhya Pradesh, India
                 </p>
               </div>
             </div>
@@ -129,12 +127,12 @@ export default function Contact() {
               {/* Mock road layers */}
               <div className="absolute w-full h-4 bg-white/80 top-1/3 border-y border-slate-200 rotate-6 shadow-2xs"></div>
               <div className="absolute h-full w-4 bg-white/80 left-1/3 border-x border-slate-200 -rotate-12 shadow-2xs"></div>
-              <div className="absolute w-full h-6 bg-[#08493d]/5 top-1/2 flex items-center justify-center text-[8px] font-bold text-emerald-800 tracking-widest uppercase">Knowledge Park II Road</div>
+              <div className="absolute w-full h-6 bg-[#08493d]/5 top-1/2 flex items-center justify-center text-[8px] font-bold text-emerald-800 tracking-widest uppercase">Zone-1, MP Nagar</div>
               
               {/* LMS Pin */}
               <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group cursor-pointer">
                 <div className="bg-emerald-800 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-md border border-emerald-700 animate-bounce whitespace-nowrap mb-1">
-                  LMS Campus
+                  LMS Head Office
                 </div>
                 <div className="w-3.5 h-3.5 bg-rose-600 rounded-full border-2 border-white shadow-md flex items-center justify-center animate-pulse">
                   <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
@@ -143,9 +141,9 @@ export default function Contact() {
 
               {/* Coordinates / Map Card info */}
               <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center text-[10px]">
-                <span className="font-semibold text-slate-600">Lat: 28.4632° N, Lon: 77.5028° E</span>
+                <span className="font-semibold text-slate-600">Lat: 23.2313° N, Lon: 77.4326° E</span>
                 <a 
-                  href="https://maps.google.com/?q=LMS+Greater+Noida" 
+                  href="https://maps.google.com/?q=MP+Nagar+Zone+1+Bhopal" 
                   target="_blank" 
                   rel="noreferrer"
                   className="text-emerald-700 font-bold hover:underline"

@@ -36,7 +36,7 @@ export default function Foot() {
             Contact Academy
           </h4>
           <p className="text-slate-300 text-xs leading-relaxed">
-            <strong>Address:</strong> Plot No. 22, Knowledge Park-II, Greater Noida, Gautam Buddh Nagar, Uttar Pradesh - 201310<br />
+            <strong>HEAD OFFICE:</strong> Plot no. 36, Zone-1, MP Nagar Bhopal – 11, Madhya Pradesh, India<br />
             <strong>Email:</strong> lms@example.com<br />
             <strong>Phone:</strong> +91-120-2320462
           </p>
