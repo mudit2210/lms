@@ -146,12 +146,87 @@ const searchDatabase = [
   }
 ];
 
+const headTranslations = {
+  en: {
+    skip: "Skip to main content",
+    screen_reader: "Screen Reader Access",
+    gov_india: "GOVERNMENT OF INDIA",
+    ministry: "Ministry of Statistics and Programme Implementation",
+    lms: "Learning Management System",
+    search_placeholder: "Search lessons, courses, events...",
+    home: "Home",
+    about: "About us",
+    overview: "Overview",
+    mission: "Mission & Vision",
+    admin: "Administration",
+    documents: "Documents",
+    trainings: "Trainings",
+    announcements: "Announcements",
+    admin_console: "Admin Console",
+    register_course: "Register Course",
+    contact: "Contact",
+    login: "Login",
+    sign_out: "Sign Out",
+    search_prompt: "Type to search ISS trainings, SNA principles, events, essays...",
+    tip: "Tip: Search filters like Lessons, Courses, or Topics update instantly as you type.",
+    esc_exit: "Press ESC anytime to exit.",
+    rec_searches: "Recommended Quick Searches",
+    explore_sub: "Explore standard curriculums and events in high demand:",
+    all_resources: "All Resources"
+  },
+  hi: {
+    skip: "मुख्य सामग्री पर जाएं",
+    screen_reader: "स्क्रीन रीडर एक्सेस",
+    gov_india: "भारत सरकार",
+    ministry: "सांख्यिकी और कार्यक्रम कार्यान्वयन मंत्रालय",
+    lms: "अधिगम प्रबंधन प्रणाली",
+    search_placeholder: "पाठ, पाठ्यक्रम, घटनाओं को खोजें...",
+    home: "मुख्य पृष्ठ",
+    about: "हमारे बारे में",
+    overview: "अवलोकन",
+    mission: "ध्येय और दृष्टिकोण",
+    admin: "प्रशासन",
+    documents: "दस्तावेज़",
+    trainings: "प्रशिक्षण",
+    announcements: "घोषणाएँ",
+    admin_console: "प्रशासनिक कंसोल",
+    register_course: "पंजीकरण पाठ्यक्रम",
+    contact: "संपर्क करें",
+    login: "लॉगिन",
+    sign_out: "साइन आउट",
+    search_prompt: "आईएसएस प्रशिक्षण, एसएनए सिद्धांतों, घटनाओं, निबंधों को खोजने के लिए टाइप करें...",
+    tip: "सुझाव: खोज फ़िल्टर जैसे पाठ, पाठ्यक्रम, या विषय आपके टाइप करते ही अपडेट हो जाते हैं।",
+    esc_exit: "बाहर निकलने के लिए कभी भी ESC दबाएं।",
+    rec_searches: "अनुशंसित त्वरित खोजें",
+    explore_sub: "उच्च मांग में मानक पाठ्यक्रमों और घटनाओं का अन्वेषण करें:",
+    all_resources: "सभी संसाधन"
+  }
+};
+
 export default function Head() {
   const [searchQuery, setSearchQuery] = useState('');
   const [aboutOpen, setAboutOpen] = useState(false);
   const [selectedSearchItem, setSelectedSearchItem] = useState(null);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [enrollMsg, setEnrollMsg] = useState('');
+
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem('trainee_lang') || 'en';
+  });
+
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('trainee_lang') || 'en');
+    };
+    window.addEventListener('lang-change', handleLangChange);
+    window.addEventListener('storage', handleLangChange);
+    return () => {
+      window.removeEventListener('lang-change', handleLangChange);
+      window.removeEventListener('storage', handleLangChange);
+    };
+  }, []);
+
+  const t = (key) => headTranslations[lang]?.[key] || headTranslations['en']?.[key] || key;
 
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -646,14 +721,41 @@ export default function Head() {
       <div className="w-full bg-[#08493d] text-white text-[10px] sm:text-xs font-semibold py-1.5 px-4 sm:px-8 flex justify-between items-center select-none border-b border-[#053229]">
         <div className="flex items-center space-x-3 tracking-wider">
           <a href="#main-content" className="hover:text-yellow-300 transition-colors uppercase">
-            Skip to main content
+            {t('skip')}
           </a>
           <span className="text-[#053229]">|</span>
           <a href="#accessibility" className="hover:text-yellow-300 transition-colors uppercase">
-            Screen Reader Access
+            {t('screen_reader')}
           </a>
         </div>
         <div className="flex items-center space-x-4">
+          {/* Universal Language Switcher */}
+          <div className="flex items-center space-x-1.5 mr-2">
+            <button
+              onClick={() => {
+                localStorage.setItem('trainee_lang', 'en');
+                window.dispatchEvent(new Event('lang-change'));
+              }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              className={`hover:text-yellow-300 transition-colors uppercase font-bold text-[10px] ${lang === 'en' ? 'text-yellow-400 font-extrabold underline' : 'text-white'}`}
+            >
+              English
+            </button>
+            <span className="text-white/40">|</span>
+            <button
+              onClick={() => {
+                localStorage.setItem('trainee_lang', 'hi');
+                window.dispatchEvent(new Event('lang-change'));
+              }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              className={`hover:text-yellow-350 transition-colors uppercase font-bold text-[10px] ${lang === 'hi' ? 'text-yellow-450 font-extrabold underline' : 'text-white'}`}
+            >
+              हिन्दी
+            </button>
+          </div>
+
+          <span className="text-[#053229]">|</span>
+
           {/* Accessibility Icon */}
           <button 
             title="Accessibility Options" 
@@ -702,13 +804,13 @@ export default function Head() {
           {/* Department Titles */}
           <div className="flex flex-col justify-center border-r border-gray-200 pr-3 sm:pr-4 py-0.5">
             <h1 className="text-gray-900 font-extrabold text-xs sm:text-sm md:text-base tracking-wide leading-tight">
-              GOVERNMENT OF INDIA
+              {t('gov_india')}
             </h1>
             <h2 className="text-[#8B2635] font-bold text-[9px] sm:text-[10px] md:text-xs tracking-tight uppercase leading-tight mt-0.5">
-              Ministry of Statistics and<br className="hidden sm:inline" /> Programme Implementation
+              {t('ministry')}
             </h2>
             <h3 className="text-[#1E40AF] font-bold text-[8px] sm:text-[9px] md:text-[10px] tracking-wider uppercase leading-tight mt-1">
-              Learning Management<br className="hidden sm:inline" /> System
+              {t('lms')}
             </h3>
           </div>
 
@@ -781,7 +883,7 @@ export default function Head() {
             className="flex items-center flex-grow max-w-md xl:max-w-xs relative cursor-pointer group select-none"
           >
             <div className="w-full border-2 border-[#08493d] rounded-md px-3.5 py-1.5 pr-14 text-xs font-semibold text-slate-400 bg-[#eff7f5]/40 group-hover:bg-white group-hover:border-emerald-600 transition-all flex items-center justify-between shadow-inner">
-              <span className="truncate">Search lessons, courses, events...</span>
+              <span className="truncate">{t('search_placeholder')}</span>
               <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-bold bg-white text-slate-400 rounded border border-slate-200 shadow-xs">
                 Ctrl K
               </kbd>
@@ -879,7 +981,7 @@ export default function Head() {
                   }`
                 }
               >
-                Home
+                {t('home')}
               </NavLink>
             </li>
             
@@ -895,7 +997,7 @@ export default function Head() {
                 aria-expanded={aboutOpen}
                 aria-haspopup="true"
               >
-                <span>About us</span>
+                <span>{t('about')}</span>
                 <svg 
                   className={`h-3.5 w-3.5 ml-1 transform transition-transform ${aboutOpen ? 'rotate-180' : ''}`}
                   fill="none" 
@@ -912,17 +1014,17 @@ export default function Head() {
                 <ul className="xl:absolute xl:left-0 xl:mt-2 xl:before:content-[''] xl:before:absolute xl:before:-top-2 xl:before:left-0 xl:before:right-0 xl:before:h-2 w-full xl:w-48 bg-white border border-gray-100 rounded-md xl:shadow-lg py-1 z-50 text-xs sm:text-sm font-medium text-slate-700 animate-fadeIn">
                   <li>
                     <NavLink to="/about/overview" className="block px-4 py-2 hover:bg-emerald-50 hover:text-[#08493d] transition-colors">
-                      Overview
+                      {t('overview')}
                     </NavLink>
                   </li>
                   <li>
                     <NavLink to="/about/mission" className="block px-4 py-2 hover:bg-emerald-50 hover:text-[#08493d] transition-colors">
-                      Mission & Vision
+                      {t('mission')}
                     </NavLink>
                   </li>
                   <li>
                     <NavLink to="/about/administration" className="block px-4 py-2 hover:bg-emerald-50 hover:text-[#08493d] transition-colors">
-                      Administration
+                      {t('admin')}
                     </NavLink>
                   </li>
                 </ul>
@@ -941,7 +1043,7 @@ export default function Head() {
                   }`
                 }
               >
-                Documents
+                {t('documents')}
               </NavLink>
             </li>
 
@@ -957,7 +1059,7 @@ export default function Head() {
                   }`
                 }
               >
-                Trainings
+                {t('trainings')}
               </NavLink>
             </li>
 
@@ -973,7 +1075,7 @@ export default function Head() {
                   }`
                 }
               >
-                Announcements
+                {t('announcements')}
               </NavLink>
             </li>
 
@@ -990,7 +1092,7 @@ export default function Head() {
                     }`
                   }
                 >
-                  Admin Console
+                  {t('admin_console')}
                 </NavLink>
               </li>
             )}
@@ -1007,7 +1109,7 @@ export default function Head() {
                   }`
                 }
               >
-                Register Course
+                {t('register_course')}
               </NavLink>
             </li>
 
@@ -1023,7 +1125,7 @@ export default function Head() {
                   }`
                 }
               >
-                Contact
+                {t('contact')}
               </NavLink>
             </li>
 
@@ -1130,7 +1232,7 @@ export default function Head() {
                         <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        Sign Out
+                        {t('sign_out')}
                       </button>
                     </li>
                   </ul>
@@ -1148,7 +1250,7 @@ export default function Head() {
                     }`
                   }
                 >
-                  Login
+                  {t('login')}
                 </NavLink>
               </li>
             )}
@@ -1175,7 +1277,7 @@ export default function Head() {
               <input
                 ref={spotlightInputRef}
                 type="text"
-                placeholder="Type to search ISS trainings, SNA principles, events, essays..."
+                placeholder={t('search_prompt')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white border-2 border-[#08493d] rounded-xl py-3 pl-12 pr-32 text-sm sm:text-base font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-emerald-700/20 focus:border-[#08493d] transition-all shadow-inner"
@@ -1220,7 +1322,11 @@ export default function Head() {
                       : 'bg-white text-slate-650 border-gray-200 hover:bg-gray-100 hover:text-slate-800'
                   }`}
                 >
-                  {cat === 'All' ? 'All Resources' : cat + 's'}
+                  {cat === 'All' ? t('all_resources') : 
+                   lang === 'hi' && cat === 'Course' ? 'पाठ्यक्रम' :
+                   lang === 'hi' && cat === 'Lesson' ? 'पाठ' :
+                   lang === 'hi' && cat === 'Topic' ? 'विषय' :
+                   lang === 'hi' && cat === 'Event' ? 'कार्यक्रम' : cat + 's'}
                 </button>
               ))}
             </div>
@@ -1233,13 +1339,20 @@ export default function Head() {
                   <div>
                     {activeCategory === 'All' ? (
                       <>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Recommended Quick Searches</h4>
-                        <p className="text-xs text-slate-500 mt-0.5 font-medium">Explore standard curriculums and events in high demand:</p>
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('rec_searches')}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5 font-medium">{t('explore_sub')}</p>
                       </>
                     ) : (
                       <>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{activeCategory} Resources Catalog</h4>
-                        <p className="text-xs text-slate-550 mt-0.5 font-medium">Browse our full listing of statistical {activeCategory.toLowerCase()}s:</p>
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                          {lang === 'hi' && activeCategory === 'Course' ? 'पाठ्यक्रम' :
+                           lang === 'hi' && activeCategory === 'Lesson' ? 'पाठ' :
+                           lang === 'hi' && activeCategory === 'Topic' ? 'विषय' :
+                           lang === 'hi' && activeCategory === 'Event' ? 'कार्यक्रम' : activeCategory} {lang === 'hi' ? 'संसाधन सूची' : 'Resources Catalog'}
+                        </h4>
+                        <p className="text-xs text-slate-550 mt-0.5 font-medium">
+                          {lang === 'hi' ? 'हमारे सांख्यिकीय संसाधनों की पूरी सूची ब्राउज़ करें:' : `Browse our full listing of statistical ${activeCategory.toLowerCase()}s:`}
+                        </p>
                       </>
                     )}
                   </div>
@@ -1266,17 +1379,21 @@ export default function Head() {
                       <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                       </svg>
-                      Tip: Search filters like Lessons, Courses, or Topics update instantly as you type.
+                      {t('tip')}
                     </span>
-                    <span className="hidden sm:inline-block">Press ESC anytime to exit.</span>
+                    <span className="hidden sm:inline-block">{t('esc_exit')}</span>
                   </div>
                 </div>
               ) : (
                 // 2. Real-time Search Results Grid
                 <div className="space-y-3.5 animate-fadeIn">
                   <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-gray-100 pb-2">
-                    <span>Search Results ({filteredSpotlightResults.length})</span>
-                    <span>Filtering by {activeCategory === 'All' ? 'All Types' : activeCategory + 's'}</span>
+                    <span>{lang === 'hi' ? 'खोज परिणाम' : 'Search Results'} ({filteredSpotlightResults.length})</span>
+                    <span>{lang === 'hi' ? 'फ़िल्टर प्रकार' : 'Filtering by'} {activeCategory === 'All' ? t('all_resources') : 
+                            lang === 'hi' && activeCategory === 'Course' ? 'पाठ्यक्रम' :
+                            lang === 'hi' && activeCategory === 'Lesson' ? 'पाठ' :
+                            lang === 'hi' && activeCategory === 'Topic' ? 'विषय' :
+                            lang === 'hi' && activeCategory === 'Event' ? 'कार्यक्रम' : activeCategory + 's'}</span>
                   </div>
 
                   {filteredSpotlightResults.length > 0 ? (
@@ -1297,8 +1414,8 @@ export default function Head() {
                         </svg>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-slate-800 font-extrabold text-sm">No results match your criteria</p>
-                        <p className="text-slate-400 font-medium text-xs">Try selecting a different filter above or typing something else.</p>
+                        <p className="text-slate-800 font-extrabold text-sm">{lang === 'hi' ? 'आपके मापदंड से मेल खाने वाला कोई परिणाम नहीं मिला' : 'No results match your criteria'}</p>
+                        <p className="text-slate-400 font-medium text-xs">{lang === 'hi' ? 'ऊपर एक अलग फ़िल्टर चुनने या कुछ और टाइप करने का प्रयास करें।' : 'Try selecting a different filter above or typing something else.'}</p>
                       </div>
                     </div>
                   )}

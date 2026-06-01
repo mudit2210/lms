@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { t } from '../locales';
 
 const attendanceData = [
   { course: 'Statistical Methods & Theory', total: 32, present: 29, percent: 90.6, color: '#059669' },
@@ -19,18 +20,18 @@ const recentRecords = [
   { date: 'May 28, Thu', subject: 'Data Analysis with R', status: 'present' },
 ];
 
-const STATUS_ICON = {
-  present: { label: 'Present', color: '#059669', bg: '#ecfdf5', icon: '✓' },
-  absent:  { label: 'Absent', color: '#dc2626', bg: '#fef2f2', icon: '✕' },
-  holiday: { label: 'Holiday', color: '#6b7280', bg: '#f9fafb', icon: '—' },
-};
-
-export default function MyAttendance() {
+export default function MyAttendance({ lang = 'en' }) {
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState(null);
   const [checkOutTime, setCheckOutTime] = useState(null);
   const [attendanceAlert, setAttendanceAlert] = useState('');
   const [records, setRecords] = useState(recentRecords);
+
+  const STATUS_ICON = {
+    present: { label: t('present', lang), color: '#059669', bg: '#ecfdf5', icon: '✓' },
+    absent:  { label: t('absent', lang), color: '#dc2626', bg: '#fef2f2', icon: '✕' },
+    holiday: { label: t('holiday', lang), color: '#6b7280', bg: '#f9fafb', icon: '—' },
+  };
 
   const handleCheckIn = () => {
     const now = new Date();
@@ -38,14 +39,19 @@ export default function MyAttendance() {
     setIsCheckedIn(true);
     setCheckInTime(timeStr);
     setCheckOutTime(null);
-    setAttendanceAlert(`Checked-In successfully at ${timeStr}! Have a productive training day.`);
+    
+    const alertMsg = lang === 'hi'
+      ? `उपस्थिति दर्ज (चेक-इन) सफलतापूर्वक ${timeStr} पर की गई! आपका प्रशिक्षण दिन शुभ हो।`
+      : `Checked-In successfully at ${timeStr}! Have a productive training day.`;
+    setAttendanceAlert(alertMsg);
     
     // Add today's record dynamically
     const dayName = now.toLocaleDateString('en-US', { weekday: 'short' });
     const monthDay = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    
     const newRecord = {
       date: `${monthDay}, ${dayName}`,
-      subject: 'Digital Biometric check',
+      subject: lang === 'hi' ? 'डिजिटल बायोमेट्रिक जांच' : 'Digital Biometric check',
       status: 'present'
     };
     setRecords(prev => [newRecord, ...prev]);
@@ -58,7 +64,11 @@ export default function MyAttendance() {
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     setIsCheckedIn(false);
     setCheckOutTime(timeStr);
-    setAttendanceAlert(`Checked-Out successfully at ${timeStr}! Daily attendance log compiled.`);
+
+    const alertMsg = lang === 'hi'
+      ? `चेक-आउट सफलतापूर्वक ${timeStr} पर किया गया! दैनिक उपस्थिति लॉग संकलित है।`
+      : `Checked-Out successfully at ${timeStr}! Daily attendance log compiled.`;
+    setAttendanceAlert(alertMsg);
     setTimeout(() => setAttendanceAlert(''), 4000);
   };
 
@@ -102,11 +112,11 @@ export default function MyAttendance() {
                 transition: 'all 0.3s'
               }} />
               <span style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', color: isCheckedIn ? '#059669' : '#d97706', letterSpacing: '0.04em' }}>
-                {isCheckedIn ? 'Status: Checked-In (Active)' : 'Status: Checked-Out (Inactive)'}
+                {isCheckedIn ? t('status_active', lang) : t('status_inactive', lang)}
               </span>
             </div>
-            <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#064e3b', margin: '4px 0 2px' }}>Biometric & Digital Attendance Desk</h3>
-            <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>46th ISS Batch Officer daily session check-in desk</p>
+            <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#064e3b', margin: '4px 0 2px' }}>{t('biometric_desk', lang)}</h3>
+            <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>{t('biometric_sub', lang)}</p>
           </div>
 
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -129,7 +139,7 @@ export default function MyAttendance() {
                 gap: '6px'
               }}
             >
-              📥 Check-In Attendance
+              📥 {t('checkin', lang)}
             </button>
 
             <button
@@ -151,7 +161,7 @@ export default function MyAttendance() {
                 gap: '6px'
               }}
             >
-              📤 Check-Out Attendance
+              📤 {t('checkout', lang)}
             </button>
           </div>
         </div>
@@ -166,21 +176,21 @@ export default function MyAttendance() {
           borderTop: '1px solid #eef2f1'
         }}>
           <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '12px', border: '1px solid #eef2f1' }}>
-            <p style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 650, margin: '0 0 4px', textTransform: 'uppercase' }}>Today's Date</p>
+            <p style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 650, margin: '0 0 4px', textTransform: 'uppercase' }}>{t('todays_date', lang)}</p>
             <p style={{ fontSize: '13px', fontWeight: 800, color: '#1e293b', margin: 0 }}>
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+              {new Date().toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
 
           <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '12px', border: '1px solid #eef2f1' }}>
-            <p style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 650, margin: '0 0 4px', textTransform: 'uppercase' }}>Check-In Timestamp</p>
+            <p style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 650, margin: '0 0 4px', textTransform: 'uppercase' }}>{t('checkin_timestamp', lang)}</p>
             <p style={{ fontSize: '13px', fontWeight: 800, color: checkInTime ? '#059669' : '#94a3b8', margin: 0 }}>
               {checkInTime ? `🕒 ${checkInTime}` : '—'}
             </p>
           </div>
 
           <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '12px', border: '1px solid #eef2f1' }}>
-            <p style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 650, margin: '0 0 4px', textTransform: 'uppercase' }}>Check-Out Timestamp</p>
+            <p style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 650, margin: '0 0 4px', textTransform: 'uppercase' }}>{t('checkout_timestamp', lang)}</p>
             <p style={{ fontSize: '13px', fontWeight: 800, color: checkOutTime ? '#dc2626' : '#94a3b8', margin: 0 }}>
               {checkOutTime ? `🕒 ${checkOutTime}` : '—'}
             </p>
@@ -191,17 +201,17 @@ export default function MyAttendance() {
       {/* Overall Summary */}
       <div className="trainee-attendance-summary" style={{ marginBottom: '24px' }}>
         <div className="trainee-attendance-overall" style={{ borderColor: overallColor }}>
-          <p className="trainee-attendance-overall-label">Overall Attendance</p>
+          <p className="trainee-attendance-overall-label">{t('overall_attendance', lang)}</p>
           <p className="trainee-attendance-overall-value" style={{ color: overallColor }}>{overall}%</p>
           <p className="trainee-attendance-overall-sub">
-            {overall >= 85 ? '✓ Above required 85% threshold' : overall >= 75 ? '⚠ Below required 85% threshold' : '✕ Critical – below 75%'}
+            {overall >= 85 ? `✓ ${t('above_threshold', lang)}` : overall >= 75 ? `⚠ ${t('below_threshold', lang)}` : `✕ ${t('critical_attendance', lang)}`}
           </p>
         </div>
         <div className="trainee-attendance-stats-row">
           {[
-            { label: 'Classes Attended', value: attendanceData.reduce((s, d) => s + d.present, 0), color: '#059669' },
-            { label: 'Classes Missed', value: attendanceData.reduce((s, d) => s + (d.total - d.present), 0), color: '#dc2626' },
-            { label: 'Total Classes', value: attendanceData.reduce((s, d) => s + d.total, 0), color: '#2563eb' },
+            { label: t('classes_attended', lang), value: attendanceData.reduce((s, d) => s + d.present, 0), color: '#059669' },
+            { label: t('classes_missed', lang), value: attendanceData.reduce((s, d) => s + (d.total - d.present), 0), color: '#dc2626' },
+            { label: t('total_classes', lang), value: attendanceData.reduce((s, d) => s + d.total, 0), color: '#2563eb' },
           ].map(s => (
             <div key={s.label} className="trainee-stat-card" style={{ borderColor: s.color + '40', background: s.color + '08' }}>
               <p className="trainee-stat-label">{s.label}</p>
@@ -215,14 +225,20 @@ export default function MyAttendance() {
         {/* Course-wise */}
         <div className="trainee-card">
           <div className="trainee-card-header">
-            <h3 className="trainee-card-title">Course-wise Attendance</h3>
+            <h3 className="trainee-card-title">{t('course_wise_attendance', lang)}</h3>
           </div>
           <div className="trainee-attendance-courses">
             {attendanceData.map((d, i) => (
               <div key={i} className="trainee-attendance-row">
                 <div className="trainee-attendance-course-info">
-                  <p className="trainee-attendance-course-name">{d.course}</p>
-                  <p className="trainee-attendance-course-meta">{d.present} / {d.total} classes</p>
+                  <p className="trainee-attendance-course-name">
+                    {lang === 'hi' && d.course.includes('Statistical Methods') ? 'सांख्यिकीय तरीके और सिद्धांत' :
+                     lang === 'hi' && d.course.includes('Survey Design') ? 'सर्वेक्षण डिजाइन और कार्यप्रणाली' :
+                     lang === 'hi' && d.course.includes('Data Analysis') ? 'आर के साथ डेटा विश्लेषण' :
+                     lang === 'hi' && d.course.includes('Economic Statistics') ? 'आर्थिक सांख्यिकी' :
+                     lang === 'hi' && d.course.includes('Official Statistics') ? 'आधिकारिक सांख्यिकी और नीति' : d.course}
+                  </p>
+                  <p className="trainee-attendance-course-meta">{d.present} / {d.total} {lang === 'hi' ? 'कक्षाएं' : 'classes'}</p>
                 </div>
                 <div className="trainee-attendance-bar-col">
                   <div className="trainee-progress-track">
@@ -238,16 +254,26 @@ export default function MyAttendance() {
         {/* Recent Records */}
         <div className="trainee-card">
           <div className="trainee-card-header">
-            <h3 className="trainee-card-title">Recent Records</h3>
+            <h3 className="trainee-card-title">{t('recent_records', lang)}</h3>
           </div>
           <div className="trainee-recent-records">
             {records.map((r, i) => {
-              const s = STATUS_ICON[r.status];
+              const s = STATUS_ICON[r.status] || STATUS_ICON.present;
               return (
                 <div key={i} className="trainee-record-row" style={{ transition: 'all 0.2s' }}>
                   <div>
-                    <p className="trainee-record-subject">{r.subject}</p>
-                    <p className="trainee-record-date">{r.date}</p>
+                    <p className="trainee-record-subject">
+                      {lang === 'hi' && r.subject === 'Statistical Methods' ? 'सांख्यिकीय तरीके' :
+                       lang === 'hi' && r.subject === 'Data Analysis with R' ? 'आर के साथ डेटा विश्लेषण' :
+                       lang === 'hi' && r.subject === 'Weekend Session' ? 'सप्ताहांत सत्र' :
+                       lang === 'hi' && r.subject === 'Weekend' ? 'सप्ताहांत' :
+                       lang === 'hi' && r.subject === 'Official Statistics' ? 'आधिकारिक सांख्यिकी' :
+                       lang === 'hi' && r.subject === 'Economic Statistics' ? 'आर्थिक सांख्यिकी' :
+                       lang === 'hi' && r.subject.includes('Biometric') ? 'डिजिटल बायोमेट्रिक जांच' : r.subject}
+                    </p>
+                    <p className="trainee-record-date">
+                      {lang === 'hi' ? r.date.replace('Jun', 'जून').replace('May', 'मई').replace('Mon', 'सोमवार').replace('Sun', 'रविवार').replace('Sat', 'शनिवार').replace('Fri', 'शुक्रवार').replace('Thu', 'गुरुवार') : r.date}
+                    </p>
                   </div>
                   <span className="trainee-status-pill" style={{ color: s.color, background: s.bg }}>
                     {s.icon} {s.label}

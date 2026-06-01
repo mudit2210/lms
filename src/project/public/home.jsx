@@ -115,7 +115,163 @@ const partnerCourses = [
   }
 ];
 
-const renderImageFallback = (course) => {
+const homeTranslations = {
+  en: {
+    // Hero
+    central_institute: "Central Training Institute of MoSPI",
+    national_statistical_system: "National Statistical System",
+    national_statistical_system_hi: "राष्ट्रीय सांख्यिकीय प्रणाली",
+    hero_desc: "Empowering official statisticians across India and the globe. LMS coordinates and conducts training, promotes statistical research, and maintains the primary Knowledge Portal for official statistics in India.",
+    go_to_dashboard: "Go to Trainee Dashboard",
+    go_to_classroom: "Go to Classroom",
+    browse_repository: "Browse Repository",
+    
+    // Fallback Hero
+    lms_campus: "LMS CAMPUS",
+    greater_noida: "Greater Noida, UP",
+    capacity_officers: "Capacity: 500+ Officers",
+    established_date: "Established: 2009",
+    
+    // Stats Banner
+    conf_hall_capacity: "Conference Hall Capacity",
+    sukhatme_library: "Sukhatme Library",
+    hostel_rooms: "Hostel Rooms",
+    cbc_accredited: "Accredited",
+    sports_courts: "Sports Courts",
+    training_participants: "Training Participants",
+
+    // Industry Partners Section
+    industry_partners: "Industry Partners",
+    courses_title: "COURSES",
+    scholarship_courses: "Scholarship Courses",
+    certifications_courses: "Certifications Courses",
+    prev_page: "Previous page",
+    next_page: "Next page",
+    all_partners: "ALL",
+    view_details: "View details ➔",
+    no_courses_found: "No courses currently found",
+    no_courses_found_sub: "Try selecting another partner tab or resetting the scholarship filters.",
+    go_to_page: "Go to page",
+    
+    // Gateways
+    lms_title: "Learning Management System",
+    lms_desc: "Virtual classroom portal for trainee officers. Register for online modules, download reference slides, complete statistics quizzes, and obtain graduation certificates.",
+    enter_classroom: "Enter Classroom",
+    kms_title: "Knowledge Repository",
+    kms_desc: "The official reference vault for national surveys. Access Census documents, Consumer Expenditure statistics, manuals, indices methodologies (CPI/IIP), and NAF guidelines.",
+    search_repository: "Search Repository",
+    iss_title: "ISS Officers Desktop",
+    iss_desc: "Specialized administration login for Indian Statistical Service probationers, international delegates, and resource speakers. Manage schedules, reports, and grading.",
+    officer_login: "Officer Login",
+    
+    // Notice Board & Highlights
+    notice_board_title: "Notice Board & Announcements",
+    whats_new: "What's New",
+    training_calendar: "Training Calendar",
+    publications: "Publications",
+    academy_highlights: "Academy Highlights",
+    academy_highlights_desc: "LMS remains committed to providing state-of-the-art training in Official Statistics, Survey Methodologies, and Data Science.",
+    trained_officers: "Trained Officers",
+    courses_completed: "Courses Completed",
+    international_delegates: "International Delegates",
+    gov_initiative: "Government of India Initiative",
+
+    // Dynamic Course Categories
+    category_scholarship: "SCHOLARSHIP",
+    category_certifications: "CERTIFICATION",
+    course_hour: "Hrs"
+  },
+  hi: {
+    // Hero
+    central_institute: "एमओएसपीआई का केंद्रीय प्रशिक्षण संस्थान",
+    national_statistical_system: "National Statistical System",
+    national_statistical_system_hi: "राष्ट्रीय सांख्यिकीय प्रणाली",
+    hero_desc: "भारत और दुनिया भर के आधिकारिक सांख्यिकीविदों को सशक्त बनाना। एलएमएस प्रशिक्षण का समन्वय और संचालन करता है, सांख्यिकीय अनुसंधान को बढ़ावा देता है, और भारत में आधिकारिक सांख्यिकी के लिए प्राथमिक ज्ञान पोर्टल का रखरखाव करता है।",
+    go_to_dashboard: "प्रशिक्षु डैशबोर्ड पर जाएं",
+    go_to_classroom: "कक्षा में जाएँ",
+    browse_repository: "भंडार ब्राउज़ करें",
+    
+    // Fallback Hero
+    lms_campus: "एलएमएस परिसर",
+    greater_noida: "ग्रेटर नोएडा, यूपी",
+    capacity_officers: "क्षमता: 500+ अधिकारी",
+    established_date: "स्थापना: 2009",
+    
+    // Stats Banner
+    conf_hall_capacity: "सम्मेलन कक्ष क्षमता",
+    sukhatme_library: "सुखात्मे पुस्तकालय",
+    hostel_rooms: "हॉस्टल के कमरे",
+    cbc_accredited: "मान्यता प्राप्त",
+    sports_courts: "खेल के मैदान",
+    training_participants: "प्रशिक्षण प्रतिभागी",
+
+    // Industry Partners Section
+    industry_partners: "उद्योग भागीदार",
+    courses_title: "पाठ्यक्रम",
+    scholarship_courses: "छात्रवृत्ति पाठ्यक्रम",
+    certifications_courses: "प्रमाणन पाठ्यक्रम",
+    prev_page: "पिछला पृष्ठ",
+    next_page: "अगला पृष्ठ",
+    all_partners: "सभी",
+    view_details: "विवरण देखें ➔",
+    no_courses_found: "वर्तमान में कोई पाठ्यक्रम नहीं मिला",
+    no_courses_found_sub: "कृपया अन्य भागीदार टैब चुनने या छात्रवृत्ति फ़िल्टर को रीसेट करने का प्रयास करें।",
+    go_to_page: "पृष्ठ पर जाएं",
+    
+    // Gateways
+    lms_title: "अधिगम प्रबंधन प्रणाली",
+    lms_desc: "प्रशिक्षु अधिकारियों के लिए वर्चुअल क्लासरूम पोर्टल। ऑनलाइन मॉड्यूल के लिए पंजीकरण करें, संदर्भ स्लाइड डाउनलोड करें, सांख्यिकी क्विज़ पूरा करें और स्नातक प्रमाणपत्र प्राप्त करें।",
+    enter_classroom: "कक्षा में प्रवेश करें",
+    kms_title: "ज्ञान भंडार",
+    kms_desc: "राष्ट्रीय सर्वेक्षणों के लिए आधिकारिक संदर्भ भंडार। जनगणना दस्तावेजों, उपभोक्ता व्यय सांख्यिकी, नियमावली, सूचकांक पद्धतियों (सीपीआई/आईआईपी), और एनएएफ दिशानिर्देशों तक पहुंचें।",
+    search_repository: "भंडार में खोजें",
+    iss_title: "आईएसएस अधिकारी डेस्कटॉप",
+    iss_desc: "भारतीय सांख्यिकी सेवा (आईएसएस) परिवीक्षाधीनों, अंतर्राष्ट्रीय प्रतिनिधियों और संसाधन वक्ताओं के लिए विशेष प्रशासन लॉगिन। शेड्यूल, रिपोर्ट और ग्रेडिंग प्रबंधित करें।",
+    officer_login: "अधिकारी लॉगिन",
+    
+    // Notice Board & Highlights
+    notice_board_title: "सूचना पट्ट और घोषणाएँ",
+    whats_new: "नया क्या है",
+    training_calendar: "प्रशिक्षण कैलेंडर",
+    publications: "प्रकाशन",
+    academy_highlights: "अकादमी की मुख्य विशेषताएं",
+    academy_highlights_desc: "एलएमएस आधिकारिक सांख्यिकी, सर्वेक्षण पद्धतियों और डेटा विज्ञान में अत्याधुनिक प्रशिक्षण प्रदान करने के लिए प्रतिबद्ध है।",
+    trained_officers: "प्रशिक्षित अधिकारी",
+    courses_completed: "पूरे किए गए पाठ्यक्रम",
+    international_delegates: "अंतर्राष्ट्रीय प्रतिनिधि",
+    gov_initiative: "भारत सरकार की पहल",
+
+    // Dynamic Course Categories
+    category_scholarship: "छात्रवृत्ति",
+    category_certifications: "प्रमाणन",
+    course_hour: "घंटे"
+  }
+};
+
+const courseTitleTranslations = {
+  hi: {
+    "Red Hat Certified System Administrator (RHCSA) RH124": "रेड हैट प्रमाणित सिस्टम प्रशासक (RHCSA) RH124",
+    "Embedded Full Stack IIOT Analyst": "एम्बेडेड फुल स्टैक IIOT विश्लेषक",
+    "Certified Ethical Hacker - CEH": "प्रमाणित एथिकल हैकर - CEH",
+    "Digital Application Designing": "डिजिटल एप्लीकेशन डिजाइनिंग",
+    "Red Hat Certified Engineer in Linux Automation (RHCE) RH294": "लिनक्स ऑटोमेशन में रेड हैट प्रमाणित इंजीनियर (RHCE) RH294",
+    "Basic Embedded Full Stack IIOT Analyst": "बुनियादी एम्बेडेड फुल स्टैक IIOT विश्लेषक",
+    "Certified SOC Analyst": "प्रमाणित एसओसी (SOC) विश्लेषक",
+    "Graphics Designing": "ग्राफिक्स डिजाइनिंग",
+    "AWS Certified Solutions Architect - Associate": "एडब्ल्यूएस प्रमाणित समाधान आर्किटेक्ट - एसोसिएट",
+    "AWS Certified Cloud Practitioner Basics": "एडब्ल्यूएस प्रमाणित क्लाउड प्रैक्टिशनर बुनियादी बातें",
+    "Industrial Robotics & Automation Design Specialist": "औद्योगिक रोबोटिक्स और स्वचालन डिजाइन विशेषज्ञ"
+  }
+};
+
+const formatDuration = (duration, lang) => {
+  if (lang === 'hi') {
+    return duration.replace('Hrs', 'घंटे');
+  }
+  return duration;
+};
+
+const renderImageFallback = (course, lang = 'en') => {
   const isScholarship = course.category === 'scholarship';
   const fromColor = isScholarship ? 'from-rose-500' : 'from-[#0B4F9C]';
   const toColor = isScholarship ? 'to-pink-600' : 'to-blue-700';
@@ -194,6 +350,10 @@ export default function Home() {
     }
   });
 
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem('trainee_lang') || 'en';
+  });
+
   useEffect(() => {
     const handleAuthChange = () => {
       try {
@@ -203,13 +363,20 @@ export default function Home() {
         setUser(null);
       }
     };
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('trainee_lang') || 'en');
+    };
     window.addEventListener('auth-change', handleAuthChange);
-    window.addEventListener('storage', handleAuthChange);
+    window.addEventListener('lang-change', handleLangChange);
+    window.addEventListener('storage', handleLangChange);
     return () => {
       window.removeEventListener('auth-change', handleAuthChange);
-      window.removeEventListener('storage', handleAuthChange);
+      window.removeEventListener('lang-change', handleLangChange);
+      window.removeEventListener('storage', handleLangChange);
     };
   }, []);
+
+  const t = (key) => homeTranslations[lang]?.[key] || homeTranslations['en']?.[key] || key;
 
   const [activeTab, setActiveTab] = useState('news');
   const [activePartnerTab, setActivePartnerTab] = useState('ALL');
@@ -236,21 +403,40 @@ export default function Home() {
   };
 
   const notices = {
-    news: [
-      { id: 1, date: 'May 28, 2026', tag: 'General', title: 'Admissions open for the 46th Batch of Indian Statistical Service (ISS) Training Program.' },
-      { id: 2, date: 'May 20, 2026', tag: 'Events', title: 'National Seminar on "Official Statistics for Sustainable Development Goals" to be held on June 29, 2026.' },
-      { id: 3, date: 'May 12, 2026', tag: 'News', title: 'LMS signs Memorandum of Understanding with Indian Statistical Institute (ISI) for advanced research.' }
-    ],
-    trainings: [
-      { id: 1, date: 'Jun 10, 2026', tag: 'Upcoming', title: 'Two-week Training Programme on "Time Series Analysis and Forecasting" for State Govt. Officers.' },
-      { id: 2, date: 'Jun 22, 2026', tag: 'Ongoing', title: 'Workshop on "Big Data Analytics and Machine Learning in Official Statistics".' },
-      { id: 3, date: 'Jul 05, 2026', tag: 'Upcoming', title: 'International Training Programme on "Agricultural Statistics and Food Security Indicators".' }
-    ],
-    publications: [
-      { id: 1, date: 'May 15, 2026', tag: 'Report', title: 'Annual Statistical Capacity Indicators Report 2025-26 released by MoSPI.' },
-      { id: 2, date: 'Apr 30, 2026', tag: 'Manual', title: 'Updated Handbook on National Indicator Framework (NIF) for Sustainable Development Goals.' },
-      { id: 3, date: 'Apr 18, 2026', tag: 'Journal', title: 'Indian Journal of Official Statistics - Volume XII, Issue 1 now available.' }
-    ]
+    en: {
+      news: [
+        { id: 1, date: 'May 28, 2026', tag: 'General', title: 'Admissions open for the 46th Batch of Indian Statistical Service (ISS) Training Program.' },
+        { id: 2, date: 'May 20, 2026', tag: 'Events', title: 'National Seminar on "Official Statistics for Sustainable Development Goals" to be held on June 29, 2026.' },
+        { id: 3, date: 'May 12, 2026', tag: 'News', title: 'LMS signs Memorandum of Understanding with Indian Statistical Institute (ISI) for advanced research.' }
+      ],
+      trainings: [
+        { id: 1, date: 'Jun 10, 2026', tag: 'Upcoming', title: 'Two-week Training Programme on "Time Series Analysis and Forecasting" for State Govt. Officers.' },
+        { id: 2, date: 'Jun 22, 2026', tag: 'Ongoing', title: 'Workshop on "Big Data Analytics and Machine Learning in Official Statistics".' },
+        { id: 3, date: 'Jul 05, 2026', tag: 'Upcoming', title: 'International Training Programme on "Agricultural Statistics and Food Security Indicators".' }
+      ],
+      publications: [
+        { id: 1, date: 'May 15, 2026', tag: 'Report', title: 'Annual Statistical Capacity Indicators Report 2025-26 released by MoSPI.' },
+        { id: 2, date: 'Apr 30, 2026', tag: 'Manual', title: 'Updated Handbook on National Indicator Framework (NIF) for Sustainable Development Goals.' },
+        { id: 3, date: 'Apr 18, 2026', tag: 'Journal', title: 'Indian Journal of Official Statistics - Volume XII, Issue 1 now available.' }
+      ]
+    },
+    hi: {
+      news: [
+        { id: 1, date: '28 मई, 2026', tag: 'सामान्य', title: 'भारतीय सांख्यिकी सेवा (आईएसएस) प्रशिक्षण कार्यक्रम के 46वें बैच के लिए प्रवेश खुले हैं।' },
+        { id: 2, date: '20 मई, 2026', tag: 'आयोजन', title: '29 जून, 2026 को आयोजित होने वाले "सतत विकास लक्ष्यों के लिए आधिकारिक सांख्यिकी" पर राष्ट्रीय संगोष्ठी।' },
+        { id: 3, date: '12 मई, 2026', tag: 'समाचार', title: 'उन्नत अनुसंधान के लिए एलएमएस ने भारतीय सांख्यिकी संस्थान (आईएसआई) के साथ समझौता ज्ञापन पर हस्ताक्षर किए।' }
+      ],
+      trainings: [
+        { id: 1, date: '10 जून, 2026', tag: 'आगामी', title: 'राज्य सरकार के अधिकारियों के लिए "समय श्रृंखला विश्लेषण और पूर्वानुमान" पर दो सप्ताह का प्रशिक्षण कार्यक्रम।' },
+        { id: 2, date: '22 जून, 2026', tag: 'सक्रिय', title: '"आधिकारिक सांख्यिकी में बिग डेटा एनालिटिक्स और मशीन लर्निंग" पर कार्यशाला।' },
+        { id: 3, date: '05 जुलाई, 2026', tag: 'आगामी', title: '"कृषि सांख्यिकी और खाद्य सुरक्षा संकेतक" पर अंतर्राष्ट्रीय प्रशिक्षण कार्यक्रम।' }
+      ],
+      publications: [
+        { id: 1, date: '15 मई, 2026', tag: 'रिपोर्ट', title: 'MoSPI द्वारा जारी वार्षिक सांख्यिकीय क्षमता संकेतक रिपोर्ट 2025-26।' },
+        { id: 2, date: '30 अप्रैल, 2026', tag: 'मैनुअल', title: 'सतत विकास लक्ष्यों के लिए राष्ट्रीय संकेतक फ्रेमवर्क (एनआईएफ) पर अद्यतन पुस्तिका।' },
+        { id: 3, date: '18 अप्रैल, 2026', tag: 'जर्नल', title: 'भारतीय आधिकारिक सांख्यिकी जर्नल - खंड XII, अंक 1 अब उपलब्ध है।' }
+      ]
+    }
   };
 
   const filteredCourses = partnerCourses.filter(course => {
@@ -285,16 +471,16 @@ export default function Home() {
           <div className="lg:w-3/5 space-y-6">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              Central Training Institute of MoSPI
+              {t('central_institute')}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-              राष्ट्रीय सांख्यिकीय प्रणाली
+              {t('national_statistical_system_hi')}
               <span className="block mt-2 text-yellow-300 text-2xl sm:text-3xl lg:text-4xl font-bold font-sans">
-                National Statistical System
+                {t('national_statistical_system')}
               </span>
             </h2>
             <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl">
-              Empowering official statisticians across India and the globe. LMS coordinates and conducts training, promotes statistical research, and maintains the primary Knowledge Portal for official statistics in India.
+              {t('hero_desc')}
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               {user && user.role === 'student' && (
@@ -305,14 +491,14 @@ export default function Home() {
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
                   </svg>
-                  Go to Trainee Dashboard
+                  {t('go_to_dashboard')}
                 </Link>
               )}
               <button className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-[#08493d] font-bold text-sm rounded shadow transition-all duration-200 transform hover:-translate-y-0.5">
-                Go to Classroom
+                {t('go_to_classroom')}
               </button>
               <button className="px-5 py-2.5 border border-emerald-300/40 hover:bg-white/10 text-white font-semibold text-sm rounded transition-all duration-200">
-                Browse Repository
+                {t('browse_repository')}
               </button>
             </div>
           </div>
@@ -344,8 +530,8 @@ export default function Home() {
               >
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
-                    <h4 className="text-yellow-400 font-bold text-xs uppercase tracking-wider">LMS CAMPUS</h4>
-                    <p className="text-white font-extrabold text-lg">Greater Noida, UP</p>
+                    <h4 className="text-yellow-400 font-bold text-xs uppercase tracking-wider">{t('lms_campus')}</h4>
+                    <p className="text-white font-extrabold text-lg">{t('greater_noida')}</p>
                   </div>
                   <div className="p-2 bg-emerald-900/50 rounded-lg border border-emerald-800 text-yellow-300">
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -358,8 +544,8 @@ export default function Home() {
                     <div className="h-full w-3/4 bg-yellow-400"></div>
                   </div>
                   <div className="flex justify-between text-[10px] text-emerald-300 font-semibold">
-                    <span>Capacity: 500+ Officers</span>
-                    <span>Established: 2009</span>
+                    <span>{t('capacity_officers')}</span>
+                    <span>{t('established_date')}</span>
                   </div>
                 </div>
               </div>
@@ -390,7 +576,7 @@ export default function Home() {
             <div className="space-y-1">
               <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">150</div>
               <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
-                Conference Hall Capacity
+                {t('conf_hall_capacity')}
               </div>
             </div>
           </div>
@@ -412,7 +598,7 @@ export default function Home() {
             <div className="space-y-1">
               <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">32348+</div>
               <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
-                Sukhatme Library
+                {t('sukhatme_library')}
               </div>
             </div>
           </div>
@@ -433,7 +619,7 @@ export default function Home() {
             <div className="space-y-1">
               <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">76+</div>
               <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
-                Hostel Rooms
+                {t('hostel_rooms')}
               </div>
             </div>
           </div>
@@ -454,7 +640,7 @@ export default function Home() {
             <div className="space-y-1">
               <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">CBC</div>
               <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
-                Accredited
+                {t('cbc_accredited')}
               </div>
             </div>
           </div>
@@ -473,7 +659,7 @@ export default function Home() {
             <div className="space-y-1">
               <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">7</div>
               <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
-                Sports Courts
+                {t('sports_courts')}
               </div>
             </div>
           </div>
@@ -498,7 +684,7 @@ export default function Home() {
             <div className="space-y-1">
               <div className="text-xl sm:text-2xl font-extrabold text-[#032e26]">4960+</div>
               <div className="text-[9px] sm:text-[10px] font-bold text-[#08493d] tracking-wider uppercase">
-                Training Participants
+                {t('training_participants')}
               </div>
             </div>
           </div>
@@ -518,12 +704,12 @@ export default function Home() {
               <div className="space-y-1 text-left">
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    Industry Partners
+                    {t('industry_partners')}
                   </span>
                   <span className="h-0.5 bg-rose-500 w-10 rounded"></span>
                 </div>
                 <h3 className="text-3xl sm:text-4xl font-extrabold text-[#0B4F9C] tracking-tight">
-                  COURSES
+                  {t('courses_title')}
                 </h3>
               </div>
 
@@ -537,7 +723,7 @@ export default function Home() {
                       : 'bg-white border-slate-200 text-rose-600 hover:bg-rose-50'
                   }`}
                 >
-                  Scholarship Courses
+                  {t('scholarship_courses')}
                 </button>
                 <button
                   onClick={() => handleCourseTypeChange('certifications')}
@@ -547,7 +733,7 @@ export default function Home() {
                       : 'bg-white border-slate-200 text-rose-600 hover:bg-rose-50'
                   }`}
                 >
-                  Certifications Courses
+                  {t('certifications_courses')}
                 </button>
               </div>
             </div>
@@ -557,7 +743,7 @@ export default function Home() {
               <button
                 onClick={handlePrevPage}
                 className="w-12 h-12 rounded-xl border-2 border-black bg-white flex items-center justify-center text-black font-extrabold hover:bg-slate-50 transition-all cursor-pointer shadow-2xs active:scale-95"
-                title="Previous page"
+                title={t('prev_page')}
               >
                 <svg className="w-5 h-5 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -566,7 +752,7 @@ export default function Home() {
               <button
                 onClick={handleNextPage}
                 className="w-12 h-12 rounded-xl border-2 border-black bg-white flex items-center justify-center text-black font-extrabold hover:bg-slate-50 transition-all cursor-pointer shadow-2xs active:scale-95"
-                title="Next page"
+                title={t('next_page')}
               >
                 <svg className="w-5 h-5 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -590,7 +776,7 @@ export default function Home() {
                       : 'bg-white text-slate-650 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
                   }`}
                 >
-                  {partner}
+                  {partner === 'ALL' ? t('all_partners') : partner}
                 </button>
               ))}
             </div>
@@ -607,7 +793,7 @@ export default function Home() {
                   className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                     pageIndex === idx ? 'bg-[#0B4F9C] w-8' : 'bg-slate-200 w-3 hover:bg-slate-350'
                   }`}
-                  title={`Go to page ${idx + 1}`}
+                  title={`${t('go_to_page')} ${idx + 1}`}
                 />
               ))}
             </div>
@@ -675,7 +861,7 @@ export default function Home() {
                             onError={() => handleImageError(course.id)}
                           />
                         ) : (
-                          renderImageFallback(course)
+                          renderImageFallback(course, lang)
                         )}
                         
                         {/* Vertical Duration Badge Tag (Matches layout exactly - pinned to absolute right-0) */}
@@ -684,7 +870,7 @@ export default function Home() {
                             className="text-[9px] font-black uppercase text-slate-800 tracking-wider text-center whitespace-nowrap"
                             style={{ writingMode: 'vertical-rl' }}
                           >
-                            {course.duration.toUpperCase()}
+                            {formatDuration(course.duration, lang).toUpperCase()}
                           </span>
                         </div>
                       </div>
@@ -705,7 +891,7 @@ export default function Home() {
 
                         {/* Course title in blue typography - Top aligned! */}
                         <h4 className="text-xs font-bold text-[#0B4F9C] leading-snug hover:underline min-h-[3rem] text-left flex items-start">
-                          {course.title}
+                          {courseTitleTranslations[lang]?.[course.title] || course.title}
                         </h4>
 
                         {/* Tag pill indicating Scholarship/Cert status */}
@@ -715,10 +901,10 @@ export default function Home() {
                               ? 'bg-rose-100/70 text-rose-700'
                               : 'bg-emerald-100/70 text-emerald-700'
                           }`}>
-                            {course.category.toUpperCase()}
+                            {course.category === 'scholarship' ? t('category_scholarship') : t('category_certifications')}
                           </span>
                           <span className="text-[10px] font-bold text-[#0B4F9C] opacity-0 group-hover:opacity-100 transition-opacity">
-                            View details ➔
+                            {t('view_details')}
                           </span>
                         </div>
 
@@ -735,8 +921,8 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-slate-800 font-extrabold text-sm">No courses currently found</p>
-                  <p className="text-slate-450 font-medium text-xs">Try selecting another partner tab or resetting the scholarship filters.</p>
+                  <p className="text-slate-800 font-extrabold text-sm">{t('no_courses_found')}</p>
+                  <p className="text-slate-450 font-medium text-xs">{t('no_courses_found_sub')}</p>
                 </div>
               </div>
             )}
@@ -745,7 +931,7 @@ export default function Home() {
         </div>
       </section>
 
-            {/* Core Gateways (LMS, KMS, Officers Desktop) */}
+      {/* Core Gateways (LMS, KMS, Officers Desktop) */}
       <section className="max-w-7xl mx-auto py-12 px-6 sm:px-12 lg:px-20 grid grid-cols-1 md:grid-cols-3 gap-8">
         
         {/* Gateway 1: LMS */}
@@ -756,13 +942,13 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-800">Learning Management System</h3>
+            <h3 className="text-xl font-bold text-slate-800">{t('lms_title')}</h3>
             <p className="text-slate-500 text-sm leading-relaxed">
-              Virtual classroom portal for trainee officers. Register for online modules, download reference slides, complete statistics quizzes, and obtain graduation certificates.
+              {t('lms_desc')}
             </p>
           </div>
           <button className="mt-6 w-full py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs rounded transition-colors uppercase tracking-wider">
-            Enter Classroom
+            {t('enter_classroom')}
           </button>
         </div>
 
@@ -774,13 +960,13 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-800">Knowledge Repository</h3>
+            <h3 className="text-xl font-bold text-slate-800">{t('kms_title')}</h3>
             <p className="text-slate-500 text-sm leading-relaxed">
-              The official reference vault for national surveys. Access Census documents, Consumer Expenditure statistics, manuals, indices methodologies (CPI/IIP), and NAF guidelines.
+              {t('kms_desc')}
             </p>
           </div>
           <button className="mt-6 w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold text-xs rounded transition-colors uppercase tracking-wider">
-            Search Repository
+            {t('search_repository')}
           </button>
         </div>
 
@@ -792,13 +978,13 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-800">ISS Officers Desktop</h3>
+            <h3 className="text-xl font-bold text-slate-800">{t('iss_title')}</h3>
             <p className="text-slate-500 text-sm leading-relaxed">
-              Specialized administration login for Indian Statistical Service probationers, international delegates, and resource speakers. Manage schedules, reports, and grading.
+              {t('iss_desc')}
             </p>
           </div>
           <button className="mt-6 w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs rounded transition-colors uppercase tracking-wider">
-            Officer Login
+            {t('officer_login')}
           </button>
         </div>
 
@@ -813,7 +999,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-3 mb-4 gap-2">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block animate-ping"></span>
-              Notice Board & Announcements
+              {t('notice_board_title')}
             </h3>
             
             {/* Tabs */}
@@ -822,26 +1008,26 @@ export default function Home() {
                 onClick={() => setActiveTab('news')}
                 className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'news' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'}`}
               >
-                What's New
+                {t('whats_new')}
               </button>
               <button 
                 onClick={() => setActiveTab('trainings')}
                 className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'trainings' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'}`}
               >
-                Training Calendar
+                {t('training_calendar')}
               </button>
               <button 
                 onClick={() => setActiveTab('publications')}
                 className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'publications' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'}`}
               >
-                Publications
+                {t('publications')}
               </button>
             </div>
           </div>
 
           {/* List items */}
           <div className="divide-y divide-gray-100 max-h-80 overflow-y-auto pr-1">
-            {notices[activeTab].map((item) => (
+            {notices[lang][activeTab].map((item) => (
               <div key={item.id} className="py-3 flex items-start gap-3 hover:bg-slate-50/50 rounded-md px-1.5 transition-colors group">
                 <div className="flex flex-col items-center">
                   <span className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-100 px-1.5 py-0.5 rounded">
@@ -850,9 +1036,9 @@ export default function Home() {
                 </div>
                 <div className="space-y-1">
                   <span className={`inline-block text-[9px] font-bold uppercase px-1.5 py-0.2 rounded border ${
-                    item.tag === 'Upcoming' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' :
-                    item.tag === 'Ongoing' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
-                    item.tag === 'Report' || item.tag === 'Manual' ? 'bg-amber-50 border-amber-200 text-amber-700' :
+                    item.tag === 'Upcoming' || item.tag === 'आगामी' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' :
+                    item.tag === 'Ongoing' || item.tag === 'सक्रिय' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
+                    item.tag === 'Report' || item.tag === 'Manual' || item.tag === 'रिपोर्ट' || item.tag === 'मैनुअल' ? 'bg-amber-50 border-amber-200 text-amber-700' :
                     'bg-slate-50 border-slate-200 text-slate-600'
                   }`}>
                     {item.tag}
@@ -870,24 +1056,24 @@ export default function Home() {
         <div className="bg-[#08493d]/5 rounded-xl border border-[#08493d]/10 p-6 flex flex-col justify-between">
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-slate-800 border-b border-gray-200 pb-2">
-              Academy Highlights
+              {t('academy_highlights')}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-              LMS remains committed to providing state-of-the-art training in Official Statistics, Survey Methodologies, and Data Science.
+              {t('academy_highlights_desc')}
             </p>
             
             {/* Stats list */}
             <div className="space-y-3 pt-2">
               <div className="flex justify-between items-center p-2.5 bg-white rounded-lg shadow-2xs">
-                <span className="text-xs font-semibold text-slate-500">Trained Officers</span>
+                <span className="text-xs font-semibold text-slate-500">{t('trained_officers')}</span>
                 <span className="text-sm font-extrabold text-[#08493d]">15,400+</span>
               </div>
               <div className="flex justify-between items-center p-2.5 bg-white rounded-lg shadow-2xs">
-                <span className="text-xs font-semibold text-slate-500">Courses Completed</span>
+                <span className="text-xs font-semibold text-slate-500">{t('courses_completed')}</span>
                 <span className="text-sm font-extrabold text-[#08493d]">480+</span>
               </div>
               <div className="flex justify-between items-center p-2.5 bg-white rounded-lg shadow-2xs">
-                <span className="text-xs font-semibold text-slate-500">International Delegates</span>
+                <span className="text-xs font-semibold text-slate-500">{t('international_delegates')}</span>
                 <span className="text-sm font-extrabold text-[#08493d]">1,250+</span>
               </div>
             </div>
@@ -895,7 +1081,7 @@ export default function Home() {
           
           <div className="mt-6 pt-4 border-t border-gray-200/50 text-center">
             <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">
-              Government of India Initiative
+              {t('gov_initiative')}
             </span>
           </div>
         </div>

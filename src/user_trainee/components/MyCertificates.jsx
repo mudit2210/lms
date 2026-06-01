@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { t } from '../locales';
 
 const COMPLETED_COURSES = [
   { id: 'cert-1', title: 'Refresher Course on Advanced Statistics & Official Data Auditing', issueDate: 'May 12, 2026', authority: 'LMS Central Training Institute', verifyHash: 'MOSPI-ISS-2026-X83A7', grade: 'Outstanding (A)', type: 'Course' },
@@ -11,7 +12,7 @@ const COMPLETED_TRAININGS = [
   { id: 'cert-5', title: 'National Accounts Methodology Workshop', issueDate: 'April 10, 2026', authority: 'Central Statistics Office (CSO)', verifyHash: 'MOSPI-TRN-46-M38B2', grade: 'Pass (Very Good)', type: 'Training' },
 ];
 
-export default function MyCertificates() {
+export default function MyCertificates({ lang = 'en' }) {
   const [downloadingId, setDownloadingId] = useState(null);
   const [viewingCertId, setViewingCertId] = useState(null);
   const [downloadSuccess, setDownloadSuccess] = useState('');
@@ -22,9 +23,41 @@ export default function MyCertificates() {
     setDownloadingId(certId);
     setTimeout(() => {
       setDownloadingId(null);
-      setDownloadSuccess(`Downloaded certificate: "${title}" PDF document successfully!`);
+      
+      const successMsg = lang === 'hi'
+        ? `प्रमाणपत्र सफलतापूर्वक डाउनलोड किया गया: "${lang === 'hi' ? translateTitle(title) : title}"`
+        : `Downloaded certificate: "${title}" PDF document successfully!`;
+      setDownloadSuccess(successMsg);
       setTimeout(() => setDownloadSuccess(''), 3500);
     }, 1800);
+  };
+
+  const translateTitle = (title) => {
+    if (lang !== 'hi') return title;
+    if (title.includes('Refresher Course')) return 'उन्नत सांख्यिकी और आधिकारिक डेटा ऑडिटिंग पर रिफ्रेशर कोर्स';
+    if (title.includes('Data Analysis with R')) return 'आर और प्रोग्रामिंग फ्रेमवर्क के साथ डेटा विश्लेषण';
+    if (title.includes('Python Application')) return 'मैक्रोइकॉनॉमिक डेटा में पायथन अनुप्रयोग';
+    if (title.includes('46th ISS')) return '46वीं आईएसएस परिवीक्षाधीन प्रेरण प्रशिक्षण (चरण 1)';
+    if (title.includes('National Accounts')) return 'राष्ट्रीय लेखा पद्धति कार्यशाला';
+    return title;
+  };
+
+  const translateAuth = (auth) => {
+    if (lang !== 'hi') return auth;
+    if (auth.includes('Central Training Institute')) return 'एलएमएस केंद्रीय प्रशिक्षण संस्थान';
+    if (auth.includes('Academic Senate')) return 'एलएमएस शैक्षणिक सीनेट';
+    if (auth.includes('Central Training Division')) return 'केंद्रीय प्रशिक्षण प्रभाग, एमओएसपीआई';
+    if (auth.includes('Central Statistics Office')) return 'केंद्रीय सांख्यिकी कार्यालय (सीएसओ)';
+    return auth;
+  };
+
+  const translateGrade = (grade) => {
+    if (lang !== 'hi') return grade;
+    if (grade.includes('Outstanding')) return 'उत्कृष्ट (ए)';
+    if (grade.includes('Very Good')) return 'बहुत अच्छा (ए-)';
+    if (grade.includes('Pass (Excellent)')) return 'उत्तीर्ण (उत्कृष्ट)';
+    if (grade.includes('Pass (Very Good)')) return 'उत्तीर्ण (बहुत अच्छा)';
+    return grade;
   };
 
   const renderCertDrawer = (cert) => {
@@ -58,32 +91,42 @@ export default function MyCertificates() {
             alt="Emblem of India" 
             style={{ height: '42px', margin: '0 auto 10px', display: 'block' }}
           />
-          <h5 style={{ fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 4px' }}>Government of India</h5>
-          <h6 style={{ fontSize: '9px', fontWeight: 750, color: '#8b2635', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 16px' }}>Ministry of Statistics & Programme Implementation</h6>
+          <h5 style={{ fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 4px' }}>{t('government_of_india', lang)}</h5>
+          <h6 style={{ fontSize: '9px', fontWeight: 750, color: '#8b2635', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 16px' }}>{t('ministry_name', lang)}</h6>
 
-          <h3 style={{ fontFamily: 'Georgia, serif', fontSize: '20px', fontWeight: 700, color: '#064e3b', margin: '0 0 10px' }}>E-Certificate of Achievement</h3>
-          <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>This is to proudly certify that</p>
+          <h3 style={{ fontFamily: 'Georgia, serif', fontSize: '20px', fontWeight: 700, color: '#064e3b', margin: '0 0 10px' }}>{t('achievement_title', lang)}</h3>
+          <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>{t('certify_sub', lang)}</p>
 
           <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '22px', fontWeight: 900, color: '#1e293b', borderBottom: '1px solid #cbd5e1', paddingBottom: '6px', maxWidth: '320px', margin: '0 auto 16px' }}>
-            Trainee Officer User
+            {lang === 'hi' ? 'परिवीक्षाधीन अधिकारी' : 'Trainee Officer User'}
           </h2>
 
-          <p style={{ fontSize: '11.5px', color: '#475569', lineHeight: 1.6, maxWidth: '460px', margin: '0 auto 20px' }}>
-            has successfully completed the official statistical program titled <br />
-            <strong style={{ color: '#064e3b', fontSize: '12px' }}>"{cert.title}"</strong> <br />
-            conducted by the learning management system division, achieving an evaluation grade of <strong style={{ color: '#059669' }}>{cert.grade}</strong>.
+          <p style={{ fontSize: '11.5px', color: '#475569', lineHeight: 1.6, maxWidth: '480px', margin: '0 auto 20px' }}>
+            {lang === 'hi' ? (
+              <>
+                ने अधिगम प्रबंधन प्रणाली विभाग द्वारा आयोजित शीर्षक वाले आधिकारिक सांख्यिकीय कार्यक्रम <br />
+                <strong style={{ color: '#064e3b', fontSize: '12px' }}>"{translateTitle(cert.title)}"</strong> <br />
+                को सफलतापूर्वक पूरा कर लिया है, जिसमें प्राप्त ग्रेड <strong style={{ color: '#059669' }}>{translateGrade(cert.grade)}</strong> है।
+              </>
+            ) : (
+              <>
+                has successfully completed the official statistical program titled <br />
+                <strong style={{ color: '#064e3b', fontSize: '12px' }}>"{cert.title}"</strong> <br />
+                conducted by the learning management system division, achieving an evaluation grade of <strong style={{ color: '#059669' }}>{cert.grade}</strong>.
+              </>
+            )}
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', padding: '0 20px' }}>
             <div style={{ textAlign: 'left', fontSize: '10px', color: '#64748b' }}>
-              <div>Date of Issue: <strong style={{ color: '#475569' }}>{cert.issueDate}</strong></div>
-              <div style={{ marginTop: '2px' }}>Verify ID: {cert.verifyHash}</div>
+              <div>{lang === 'hi' ? 'जारी तिथि' : 'Date of Issue'}: <strong style={{ color: '#475569' }}>{lang === 'hi' ? cert.issueDate.replace('May', 'मई').replace('April', 'अप्रैल').replace('March', 'मार्च') : cert.issueDate}</strong></div>
+              <div style={{ marginTop: '2px' }}>{lang === 'hi' ? 'सत्यापन कोड' : 'Verify ID'}: {cert.verifyHash}</div>
             </div>
             
             <div style={{ textAlign: 'right' }}>
               <div style={{ borderBottom: '1px solid #cbd5e1', width: '100px', margin: '0 0 4px auto' }} />
-              <div style={{ fontSize: '9px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Director Academic</div>
-              <div style={{ fontSize: '8px', color: '#94a3b8' }}>MoSPI Central Institute</div>
+              <div style={{ fontSize: '9px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>{t('director_academic', lang)}</div>
+              <div style={{ fontSize: '8px', color: '#94a3b8' }}>{t('mospi_central', lang)}</div>
             </div>
           </div>
         </div>
@@ -121,15 +164,15 @@ export default function MyCertificates() {
               </svg>
             </div>
             <div>
-              <span style={{ fontSize: '8.5px', fontWeight: 900, background: '#f1f5f9', color: '#64748b', padding: '3px 8px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Official Credential</span>
-              <h4 style={{ fontSize: '13px', fontWeight: 900, color: '#064e3b', margin: '4px 0 2px', lineHeight: 1.3 }}>{cert.title}</h4>
-              <p style={{ fontSize: '10.5px', color: '#64748b', margin: 0 }}>Grade: <strong style={{ color: '#059669' }}>{cert.grade}</strong></p>
+              <span style={{ fontSize: '8.5px', fontWeight: 900, background: '#f1f5f9', color: '#64748b', padding: '3px 8px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{t('official_credential', lang)}</span>
+              <h4 style={{ fontSize: '13px', fontWeight: 900, color: '#064e3b', margin: '4px 0 2px', lineHeight: 1.3 }}>{translateTitle(cert.title)}</h4>
+              <p style={{ fontSize: '10.5px', color: '#64748b', margin: 0 }}>{lang === 'hi' ? 'ग्रेड' : 'Grade'}: <strong style={{ color: '#059669' }}>{translateGrade(cert.grade)}</strong></p>
             </div>
           </div>
 
           <div style={{ textAlign: 'right', fontSize: '10.5px', color: '#64748b', fontWeight: 650 }}>
-            <div>Issued: <strong style={{ color: '#475569' }}>{cert.issueDate}</strong></div>
-            <div style={{ marginTop: '2px', fontSize: '9px' }}>{cert.authority}</div>
+            <div>{lang === 'hi' ? 'जारी' : 'Issued'}: <strong style={{ color: '#475569' }}>{lang === 'hi' ? cert.issueDate.replace('May', 'मई').replace('April', 'अप्रैल').replace('March', 'मार्च') : cert.issueDate}</strong></div>
+            <div style={{ marginTop: '2px', fontSize: '9px' }}>{translateAuth(cert.authority)}</div>
           </div>
         </div>
 
@@ -145,7 +188,7 @@ export default function MyCertificates() {
           gap: '12px'
         }}>
           <div style={{ fontSize: '10.5px', color: '#94a3b8', fontWeight: 600 }}>
-            Hash: <span style={{ color: '#64748b', fontFamily: 'monospace', fontWeight: 750, background: '#f8fafc', padding: '2px 8px', borderRadius: '6px', border: '1px solid #eef2f1' }}>{cert.verifyHash}</span>
+            {lang === 'hi' ? 'सत्यापन हैश' : 'Hash'}: <span style={{ color: '#64748b', fontFamily: 'monospace', fontWeight: 750, background: '#f8fafc', padding: '2px 8px', borderRadius: '6px', border: '1px solid #eef2f1' }}>{cert.verifyHash}</span>
           </div>
           
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -163,7 +206,7 @@ export default function MyCertificates() {
                 transition: 'all 0.2s'
               }}
             >
-              {isViewing ? 'Hide Certificate' : '👁 View E-Certificate'}
+              {isViewing ? t('hide_cert', lang) : `👁 ${t('view_ecert', lang)}`}
             </button>
 
             <button
@@ -186,9 +229,9 @@ export default function MyCertificates() {
               }}
             >
               {downloadingId === cert.id ? (
-                <>⏳ Generating...</>
+                <>{t('generating', lang)}</>
               ) : (
-                <>💾 Download PDF</>
+                <>💾 {t('download_pdf', lang)}</>
               )}
             </button>
           </div>
@@ -255,7 +298,7 @@ export default function MyCertificates() {
           <div style={{ position: 'relative', width: '100%' }}>
             <input
               type="text"
-              placeholder="Search certificates by title, grade, or verification hash..."
+              placeholder={t('search_placeholder', lang)}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -299,7 +342,7 @@ export default function MyCertificates() {
             <svg style={{ width: '13px', height: '13px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
-            Grid View
+            {t('grid_view', lang)}
           </button>
           
           <button
@@ -323,7 +366,7 @@ export default function MyCertificates() {
             <svg style={{ width: '13px', height: '13px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            List View
+            {t('list_view', lang)}
           </button>
         </div>
       </div>
@@ -332,8 +375,8 @@ export default function MyCertificates() {
         <>
           {/* 1. COMPLETED COURSES SECTION */}
           <div className="trainee-card" style={{ padding: '24px', marginBottom: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#064e3b', margin: '0 0 4px' }}>Completed Courses (e-Certificates)</h3>
-            <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>Digital credentials earned for successfully completing online modules and coursework</p>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#064e3b', margin: '0 0 4px' }}>{t('completed_courses_title', lang)}</h3>
+            <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>{t('completed_courses_sub', lang)}</p>
             
             {filteredCourses.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -341,15 +384,15 @@ export default function MyCertificates() {
               </div>
             ) : (
               <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8', fontSize: '12px' }}>
-                No completed courses match your search criteria.
+                {lang === 'hi' ? 'आपकी खोज से मेल खाने वाला कोई प्रमाणपत्र नहीं मिला।' : 'No completed courses match your search criteria.'}
               </div>
             )}
           </div>
 
           {/* 2. COMPLETED TRAININGS SECTION */}
           <div className="trainee-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#064e3b', margin: '0 0 4px' }}>Completed Training Programs</h3>
-            <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>Ministry-level certificates issued upon completion of probationary and induction tracks</p>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#064e3b', margin: '0 0 4px' }}>{t('completed_trainings_title', lang)}</h3>
+            <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>{t('completed_trainings_sub', lang)}</p>
             
             {filteredTrainings.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -357,7 +400,7 @@ export default function MyCertificates() {
               </div>
             ) : (
               <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8', fontSize: '12px' }}>
-                No completed training programs match your search criteria.
+                {lang === 'hi' ? 'आपकी खोज से मेल खाने वाला कोई प्रशिक्षण प्रमाणपत्र नहीं मिला।' : 'No completed training programs match your search criteria.'}
               </div>
             )}
           </div>
@@ -365,20 +408,20 @@ export default function MyCertificates() {
       ) : (
         /* TABLE LIST VIEW */
         <div className="trainee-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#064e3b', margin: '0 0 4px' }}>Official Certificate Ledger</h3>
-          <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>Interactive checklist and registry displaying courses, trainee credentials, and verified e-certificates</p>
+          <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#064e3b', margin: '0 0 4px' }}>{t('cert_ledger_title', lang)}</h3>
+          <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 20px' }}>{t('cert_ledger_sub', lang)}</p>
 
           {combinedCerts.length > 0 ? (
             <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid #eef2f1' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '12px' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', color: '#475569' }}>
-                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>Certificate Title & Authority</th>
-                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>Category</th>
-                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>Grade Achieved</th>
-                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>Issue Date</th>
-                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>e-Certificate Check</th>
-                    <th style={{ padding: '16px 20px', fontWeight: 800, textAlign: 'right' }}>Actions</th>
+                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>{t('cert_title_auth', lang)}</th>
+                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>{t('category', lang)}</th>
+                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>{t('grade_achieved', lang)}</th>
+                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>{t('issue_date', lang)}</th>
+                    <th style={{ padding: '16px 20px', fontWeight: 800 }}>{t('ecert_check', lang)}</th>
+                    <th style={{ padding: '16px 20px', fontWeight: 800, textAlign: 'right' }}>{t('actions', lang)}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -397,8 +440,8 @@ export default function MyCertificates() {
                           className="cert-list-row"
                         >
                           <td style={{ padding: '16px 20px' }}>
-                            <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '12.5px' }}>{cert.title}</div>
-                            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>{cert.authority}</div>
+                            <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '12.5px' }}>{translateTitle(cert.title)}</div>
+                            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>{translateAuth(cert.authority)}</div>
                           </td>
                           <td style={{ padding: '16px 20px' }}>
                             <span style={{ 
@@ -410,14 +453,14 @@ export default function MyCertificates() {
                               color: cert.type === 'Training' ? '#2563eb' : '#059669',
                               border: cert.type === 'Training' ? '1px solid #bfdbfe' : '1px solid #a7f3d0'
                             }}>
-                              {cert.type}
+                              {lang === 'hi' && cert.type === 'Course' ? 'पाठ्यक्रम' : lang === 'hi' && cert.type === 'Training' ? 'प्रशिक्षण' : cert.type}
                             </span>
                           </td>
                           <td style={{ padding: '16px 20px', fontWeight: 750, color: '#334155' }}>
-                            {cert.grade}
+                            {translateGrade(cert.grade)}
                           </td>
                           <td style={{ padding: '16px 20px', color: '#64748b', fontWeight: 500 }}>
-                            {cert.issueDate}
+                            {lang === 'hi' ? cert.issueDate.replace('May', 'मई').replace('April', 'अप्रैल').replace('March', 'मार्च') : cert.issueDate}
                           </td>
                           <td style={{ padding: '16px 20px' }}>
                             <button
@@ -448,7 +491,7 @@ export default function MyCertificates() {
                                 background: '#10b981',
                                 display: 'inline-block'
                               }} />
-                              ✓ e-Cert Verified
+                              ✓ {t('verified_check', lang)}
                             </button>
                           </td>
                           <td style={{ padding: '16px 20px', textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
@@ -467,7 +510,7 @@ export default function MyCertificates() {
                                   transition: 'all 0.2s'
                                 }}
                               >
-                                {isViewing ? 'Hide' : '👁 View'}
+                                {isViewing ? t('hide_cert', lang) : t('view_ecert', lang)}
                               </button>
                               <button
                                 onClick={() => triggerDownload(cert.id, cert.title)}
@@ -484,7 +527,7 @@ export default function MyCertificates() {
                                   transition: 'all 0.2s'
                                 }}
                               >
-                                {downloadingId === cert.id ? '⏳' : '💾 PDF'}
+                                {downloadingId === cert.id ? '⏳' : `💾 ${t('download_pdf', lang)}`}
                               </button>
                             </div>
                           </td>
@@ -504,7 +547,7 @@ export default function MyCertificates() {
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '48px', color: '#94a3b8', fontSize: '13px' }}>
-              No completed certificates match your search query in the ledger.
+              {lang === 'hi' ? 'बही में आपकी खोज से मेल खाने वाला कोई प्रमाणपत्र नहीं मिला।' : 'No completed certificates match your search query in the ledger.'}
             </div>
           )}
         </div>

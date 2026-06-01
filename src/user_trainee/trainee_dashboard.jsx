@@ -19,28 +19,40 @@ import MyCertificates from './components/MyCertificates';
 import MyTrainings from './components/MyTrainings';
 import ScheduledEvents from './components/ScheduledEvents';
 
-const TAB_DISPLAY_NAMES = {
-  home: 'Home Portal',
-  courses: 'My Courses Workspace',
-  trainings: 'My Training Tracks',
-  newcourses: 'Self Enrollment Portal',
-  schedule: 'My Schedule Calendar',
-  eventscheduled: 'Scheduled Expert Events',
-  calendar: 'Event Calendar View',
-  classroom: 'Virtual Classroom Portal',
-  group: 'Study Circle & Peer Groups',
-  assignments: 'Assignments Dashboard',
-  attendance: 'My Attendance Ledger',
-  certificates: 'My Training Certificates',
-  hostel: 'e-Hostel Facilities',
-  grades: 'My Grades & Academic Results',
-  profile: 'My Account Settings',
+const getTabDisplayName = (tab, lang) => {
+  const titles = {
+    home: { en: 'Home Portal', hi: 'मुख्य पोर्टल' },
+    courses: { en: 'My Courses Workspace', hi: 'मेरे पाठ्यक्रम कार्यक्षेत्र' },
+    trainings: { en: 'My Training Tracks', hi: 'मेरे प्रशिक्षण ट्रैक' },
+    newcourses: { en: 'Self Enrollment Portal', hi: 'स्व-नामांकन पोर्टल' },
+    schedule: { en: 'My Schedule Calendar', hi: 'मेरी अनुसूची कैलेंडर' },
+    eventscheduled: { en: 'Scheduled Expert Events', hi: 'अनुसूचित विशेषज्ञ कार्यक्रम' },
+    calendar: { en: 'Event Calendar View', hi: 'कैलेंडर दृश्य' },
+    classroom: { en: 'Virtual Classroom Portal', hi: 'आभासी कक्षा पोर्टल' },
+    group: { en: 'Study Circle & Peer Groups', hi: 'अध्ययन समूह और सहकर्मी समूह' },
+    assignments: { en: 'Assignments Dashboard', hi: 'असाइनमेंट डैशबोर्ड' },
+    attendance: { en: 'My Attendance Ledger', hi: 'मेरी उपस्थिति बही' },
+    certificates: { en: 'My Training Certificates', hi: 'मेरे प्रशिक्षण प्रमाणपत्र' },
+    hostel: { en: 'e-Hostel Facilities', hi: 'ई-हॉस्टल सुविधाएं' },
+    grades: { en: 'My Grades & Academic Results', hi: 'मेरे ग्रेड और शैक्षणिक परिणाम' },
+    profile: { en: 'My Account Settings', hi: 'मेरे खाता सेटिंग्स' },
+  };
+  return titles[tab]?.[lang] || titles[tab]?.en || 'Officer Workspace';
 };
 
 export default function TraineeDashboard() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem('trainee_lang') || 'en';
+  });
+
+  const handleLangToggle = (newLang) => {
+    setLang(newLang);
+    localStorage.setItem('trainee_lang', newLang);
+    window.dispatchEvent(new Event('lang-change'));
+  };
 
   const [user, setUser] = useState(() => {
     try {
@@ -83,22 +95,22 @@ export default function TraineeDashboard() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'home':        return <TraineeHome user={user} setActiveTab={setActiveTab} />;
-      case 'courses':     return <MyCourses />;
-      case 'trainings':   return <MyTrainings />;
-      case 'newcourses':  return <NewCoursesList />;
-      case 'schedule':    return <MySchedule />;
-      case 'eventscheduled': return <ScheduledEvents />;
-      case 'calendar':    return <CalendarView />;
-      case 'classroom':   return <Classroom />;
-      case 'group':       return <GroupJoin />;
-      case 'assignments': return <MyAssignments />;
-      case 'attendance':  return <MyAttendance />;
-      case 'certificates': return <MyCertificates />;
-      case 'hostel':      return <MyHostel user={user} />;
-      case 'grades':      return <MyGrades />;
-      case 'profile':     return <TraineeProfile user={user} />;
-      default:            return <TraineeHome user={user} setActiveTab={setActiveTab} />;
+      case 'home':        return <TraineeHome user={user} setActiveTab={setActiveTab} lang={lang} />;
+      case 'courses':     return <MyCourses lang={lang} />;
+      case 'trainings':   return <MyTrainings lang={lang} />;
+      case 'newcourses':  return <NewCoursesList lang={lang} />;
+      case 'schedule':    return <MySchedule lang={lang} />;
+      case 'eventscheduled': return <ScheduledEvents lang={lang} />;
+      case 'calendar':    return <CalendarView lang={lang} />;
+      case 'classroom':   return <Classroom lang={lang} />;
+      case 'group':       return <GroupJoin lang={lang} />;
+      case 'assignments': return <MyAssignments lang={lang} />;
+      case 'attendance':  return <MyAttendance lang={lang} />;
+      case 'certificates': return <MyCertificates lang={lang} />;
+      case 'hostel':      return <MyHostel user={user} lang={lang} />;
+      case 'grades':      return <MyGrades lang={lang} />;
+      case 'profile':     return <TraineeProfile user={user} lang={lang} />;
+      default:            return <TraineeHome user={user} setActiveTab={setActiveTab} lang={lang} />;
     }
   };
 
@@ -127,6 +139,7 @@ export default function TraineeDashboard() {
           setIsSidebarOpen={setIsSidebarOpen}
           user={user}
           handleLogout={handleLogout}
+          lang={lang}
         />
 
         {/* Main Content Pane */}
@@ -144,8 +157,48 @@ export default function TraineeDashboard() {
             </button>
             
             <div className="trainee-control-title">
-              <h2>{TAB_DISPLAY_NAMES[activeTab] || 'Officer Workspace'}</h2>
-              <p>46th ISS Batch Officer Portal</p>
+              <h2>{getTabDisplayName(activeTab, lang)}</h2>
+              <p>{lang === 'hi' ? '46वां आईएसएस बैच अधिकारी पोर्टल' : '46th ISS Batch Officer Portal'}</p>
+            </div>
+
+            <div style={{ flex: 1 }} />
+
+            {/* Bilingual Switcher Widget */}
+            <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '3px', borderRadius: '10px', marginRight: '8px' }}>
+              <button
+                onClick={() => handleLangToggle('en')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '7px',
+                  fontSize: '11px',
+                  fontWeight: 900,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: lang === 'en' ? '#059669' : 'transparent',
+                  color: lang === 'en' ? '#ffffff' : '#64748b',
+                  boxShadow: lang === 'en' ? '0 2px 6px rgba(5,150,105,0.2)' : 'none',
+                  transition: 'all 0.2s'
+                }}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => handleLangToggle('hi')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '7px',
+                  fontSize: '11px',
+                  fontWeight: 900,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: lang === 'hi' ? '#059669' : 'transparent',
+                  color: lang === 'hi' ? '#ffffff' : '#64748b',
+                  boxShadow: lang === 'hi' ? '0 2px 6px rgba(5,150,105,0.2)' : 'none',
+                  transition: 'all 0.2s'
+                }}
+              >
+                हिन्दी
+              </button>
             </div>
           </div>
 
@@ -157,4 +210,3 @@ export default function TraineeDashboard() {
     </div>
   );
 }
-
