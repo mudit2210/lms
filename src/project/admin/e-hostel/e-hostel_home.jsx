@@ -16,6 +16,9 @@ import HostelReportsTab from './components/HostelReportsTab';
 import LogisticsReportsTab from './components/LogisticsReportsTab';
 import MasterDataTab from './components/MasterDataTab';
 import SystemSettingsTab from './components/SystemSettingsTab';
+import MessTab from './components/MessTab';
+import VisitorTab from './components/VisitorTab';
+import AlertsTab from './components/AlertsTab';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -485,6 +488,7 @@ export default function Home() {
           {activeSidebarTab === 'room_allotment' && (
             <RoomAllotmentTab 
               allotments={allotments}
+              setAllotments={setAllotments}
               deleteAllotment={deleteAllotment}
               setShowAllotModal={setShowAllotModal}
             />
@@ -503,6 +507,18 @@ export default function Home() {
               tickets={tickets}
               setShowTicketModal={setShowTicketModal}
             />
+          )}
+
+          {activeSidebarTab === 'mess_management' && (
+            <MessTab />
+          )}
+
+          {activeSidebarTab === 'visitor_management' && (
+            <VisitorTab />
+          )}
+
+          {activeSidebarTab === 'emergency_alerts' && (
+            <AlertsTab />
           )}
 
           {activeSidebarTab === 'venue_scheduling' && (
