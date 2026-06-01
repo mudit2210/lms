@@ -302,36 +302,46 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* User Account Profile Card */}
-        <div className={`p-5 m-4 rounded-xl border shadow-sm ${
+        {/* User Account Profile Card (Official Gov-grade Design) */}
+        <div className={`p-4 m-4 rounded-xl border ${
           theme === 'light'
-            ? 'bg-white border-slate-200/80 shadow-xs'
-            : 'bg-gradient-to-br from-[#063f33]/90 to-[#042d25]/90 border-white/10 shadow-inner'
+            ? 'bg-slate-50 border-slate-200 shadow-3xs'
+            : 'bg-[#03221b] border-emerald-900/60 shadow-inner'
         }`}>
-          <div className="flex items-center gap-3">
-            {/* Avatar block */}
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
-              <div className={`w-full h-full rounded-[10px] flex items-center justify-center font-black text-lg ${
-                theme === 'light' ? 'bg-slate-50 text-emerald-800' : 'bg-[#053229] text-white'
-              }`}>
-                {user.name?.[0] || 'A'}
-              </div>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className={`font-extrabold text-sm truncate leading-tight ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{user.name}</p>
-              <p className={`text-[10px] font-bold truncate mt-0.5 ${theme === 'light' ? 'text-slate-500' : 'text-emerald-400/80'}`}>{user.email}</p>
-            </div>
+          {/* Top official banner */}
+          <div className="flex items-center gap-1.5 pb-2.5 mb-2.5 border-b border-gray-150/40 select-none">
+            <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span className={`text-[8px] font-bold tracking-widest uppercase ${theme === 'light' ? 'text-slate-450' : 'text-emerald-400/70'}`}>
+              SECURE GOVT. PORTAL
+            </span>
           </div>
 
-          <div className="mt-3 flex items-center justify-between">
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-widest border ${
-              theme === 'light'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                : 'bg-emerald-955/65 border-emerald-800/80 text-emerald-300'
+          <div className="flex items-center gap-3">
+            {/* Professional solid circular avatar */}
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${
+              theme === 'light' 
+                ? 'bg-[#08493d] text-white border-emerald-700 shadow-3xs' 
+                : 'bg-[#042d25] text-emerald-350 border-emerald-800'
             }`}>
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${theme === 'light' ? 'bg-emerald-550' : 'bg-emerald-400'}`}></span>
-              {getRoleLabel(user.role)}
-            </span>
+              <span className="font-extrabold text-sm uppercase tracking-wider">
+                {user.name?.[0] || 'A'}
+              </span>
+            </div>
+            
+            <div className="min-w-0 flex-1">
+              <p className={`font-extrabold text-xs truncate leading-tight tracking-tight ${
+                theme === 'light' ? 'text-slate-800' : 'text-white'
+              }`}>
+                {user.name}
+              </p>
+              <p className={`text-[9px] font-mono font-medium truncate mt-0.5 ${
+                theme === 'light' ? 'text-slate-455' : 'text-slate-400'
+              }`}>
+                {user.email}
+              </p>
+            </div>
           </div>
         </div>
 
