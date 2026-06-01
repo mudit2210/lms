@@ -9,6 +9,7 @@ import CourseRegistration from './project/course_registration'
 import EHostel from './project/admin/e-hostel/e-hostel_home'
 import KmsHome from './project/admin/Kms/kms_home'
 import AdminDashboard from './project/admin/admin_dashboard'
+import TraineeDashboard from './user_trainee/trainee_dashboard'
 
 // Import Navbar components
 import Contact from './project/nav_bar/contact'
@@ -22,14 +23,16 @@ import Administration from './project/nav_bar/administration'
 function AppContent() {
   const location = useLocation()
   const isAdminRoute = location.pathname.startsWith('/admin')
+  const isTraineeRoute = location.pathname.startsWith('/trainee')
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900">
-      {!isAdminRoute && <Head />}
+      {!isAdminRoute && !isTraineeRoute && <Head />}
       <main className="w-full flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/trainee/dashboard" element={<TraineeDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />
@@ -48,7 +51,7 @@ function AppContent() {
           <Route path="/settings" element={<div className="text-lg font-medium text-slate-800 p-6 bg-white m-6 rounded-lg border border-gray-250 shadow-2xs">Settings Page</div>} />
         </Routes>
       </main>
-      {!isAdminRoute && <Foot />}
+      {!isAdminRoute && !isTraineeRoute && <Foot />}
     </div>
   )
 }
