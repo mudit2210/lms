@@ -479,6 +479,15 @@ export default function ReportAnalyticsDashboard() {
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer" aria-label="Open Menu">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
+            <button
+              onClick={() => navigate('/admin/dashboard')}
+              title="Back to Admin Dashboard"
+              className="mr-1.5 p-1.5 rounded-full hover:bg-slate-100 text-slate-650 hover:text-[#08493d] transition-all cursor-pointer focus:outline-none inline-flex items-center justify-center shrink-0 border border-transparent hover:border-gray-200 shadow-3xs hover:shadow-xs"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
             <div>
               <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">📊 Report Generation & Analytics</h1>
               <p className="text-xs text-slate-400 font-semibold mt-0.5">National Statistical Training Academy (NSSTA) • Comprehensive Insights Dashboard</p>
