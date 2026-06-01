@@ -21,7 +21,8 @@ function SidebarExpandableMenu({
   setActiveDashboardTab,
   setActiveSubTab,
   setIsSidebarOpen,
-  subItems
+  subItems,
+  theme
 }) {
   return (
     <div className="space-y-1">
@@ -34,22 +35,28 @@ function SidebarExpandableMenu({
           }
         }}
         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
-          activeDashboardTab === tabKey ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-white/5 hover:text-white'
+          activeDashboardTab === tabKey 
+            ? 'bg-blue-600 text-white shadow-md' 
+            : theme === 'light'
+              ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
+              : 'text-slate-300 hover:bg-white/5 hover:text-white'
         }`}
       >
         <div className="flex items-center gap-3">
-          <span className={`shrink-0 ${activeDashboardTab === tabKey ? 'text-blue-200' : 'text-slate-455'}`}>
+          <span className={`shrink-0 ${activeDashboardTab === tabKey ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`}>
             {icon}
           </span>
-          <span>{title}</span>
+          <span className={`${activeDashboardTab === tabKey ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>{title}</span>
         </div>
-        <svg className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className={`w-4.5 h-4.5 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {isExpanded && (
-        <div className="pl-4 space-y-1 border-l border-white/10 ml-6 py-1 text-left">
+        <div className={`pl-4 space-y-1 border-l ml-6 py-1 text-left ${
+          theme === 'light' ? 'border-slate-200' : 'border-white/10'
+        }`}>
           {subItems.map((item) => (
             <button
               key={item.id}
@@ -59,7 +66,13 @@ function SidebarExpandableMenu({
                 setIsSidebarOpen(false);
               }}
               className={`w-full text-left px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
-                activeSubTab === item.id ? 'text-yellow-400 font-bold bg-white/5' : 'text-slate-350 hover:text-white'
+                activeSubTab === item.id 
+                  ? theme === 'light'
+                    ? 'text-blue-650 font-bold bg-slate-100'
+                    : 'text-yellow-400 font-bold bg-white/5' 
+                  : theme === 'light'
+                    ? 'text-slate-950 hover:text-black hover:bg-slate-50'
+                    : 'text-slate-350 hover:text-white'
               }`}
             >
               {item.label}
@@ -352,19 +365,45 @@ export default function AdminDashboard() {
           <button
             onClick={() => { setActiveDashboardTab('console'); navigate('/admin/dashboard'); setIsSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
-              activeDashboardTab === 'console' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              activeDashboardTab === 'console'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'console' ? 'text-blue-200' : 'text-slate-455'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'console' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-455'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
-            <span>Command Dashboard</span>
+            <span className={`${activeDashboardTab === 'console' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Command Dashboard</span>
           </button>
+
+          <button
+            onClick={() => { navigate('/admin/reports'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
+              activeDashboardTab === 'reports'
+                ? 'bg-blue-600 text-white shadow-md'
+                : theme === 'light'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'reports' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span className={`${activeDashboardTab === 'reports' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Reports & Analytics</span>
+          </button>
+
+          {/* Group 2: LMS Access */}
+          <div className={`border-t my-3 pt-3 ${theme === 'light' ? 'border-slate-200/80' : 'border-white/5'}`}>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">LMS Access</p>
+          </div>
 
           {/* Module 2: Course & Training Management with expandable Sub-menu */}
           <SidebarExpandableMenu
             title="Course & Training"
             tabKey="training"
+            theme={theme}
             icon={
               <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
@@ -394,6 +433,7 @@ export default function AdminDashboard() {
           <SidebarExpandableMenu
             title="Calendar & Events"
             tabKey="events"
+            theme={theme}
             icon={
               <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -422,14 +462,14 @@ export default function AdminDashboard() {
               activeDashboardTab === 'tna'
                 ? 'bg-blue-600 text-white shadow-md'
                 : theme === 'light'
-                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'tna' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span>TNA Need Assessment</span>
+            <span className={`${activeDashboardTab === 'tna' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>TNA Need Assessment</span>
           </button>
 
           {/* Group & Batches */}
@@ -439,14 +479,14 @@ export default function AdminDashboard() {
               activeDashboardTab === 'batch'
                 ? 'bg-blue-600 text-white shadow-md'
                 : theme === 'light'
-                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'batch' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <span>Batches & Groups</span>
+            <span className={`${activeDashboardTab === 'batch' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Batches & Groups</span>
           </button>
 
           {/* Attendance Module */}
@@ -456,14 +496,14 @@ export default function AdminDashboard() {
               activeDashboardTab === 'attendance'
                 ? 'bg-blue-600 text-white shadow-md'
                 : theme === 'light'
-                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'attendance' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
-            <span>Roster Attendance</span>
+            <span className={`${activeDashboardTab === 'attendance' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Roster Attendance</span>
           </button>
 
           {/* Assignment Desk */}
@@ -473,14 +513,14 @@ export default function AdminDashboard() {
               activeDashboardTab === 'assignment'
                 ? 'bg-blue-600 text-white shadow-md'
                 : theme === 'light'
-                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'assignment' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
             </svg>
-            <span>Assignment Desk</span>
+            <span className={`${activeDashboardTab === 'assignment' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Assignment Desk</span>
           </button>
 
           {/* CMS Module */}
@@ -490,112 +530,144 @@ export default function AdminDashboard() {
               activeDashboardTab === 'cms'
                 ? 'bg-blue-600 text-white shadow-md'
                 : theme === 'light'
-                  ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${activeDashboardTab === 'cms' ? 'text-blue-200' : theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
-            <span>Syllabus CMS</span>
+            <span className={`${activeDashboardTab === 'cms' ? 'text-white' : theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Syllabus CMS</span>
           </button>
+
+          {/* Group 3: Portal Access */}
+          <div className={`border-t my-3 pt-3 ${theme === 'light' ? 'border-slate-200/80' : 'border-white/5'}`}>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Portal Access</p>
+          </div>
 
           <button
             onClick={() => { navigate('/admin/e-hostel'); setIsSidebarOpen(false); }}
-
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
               theme === 'light'
-                ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
                 : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span>e-Hostel Logistics</span>
+            <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>e-Hostel Logistics</span>
           </button>
 
           <button
             onClick={() => { navigate('/admin/kms'); setIsSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
               theme === 'light'
-                ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
                 : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
-            <span>Knowledge (KMS)</span>
+            <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Knowledge (KMS)</span>
           </button>
 
           <button
             onClick={() => { navigate('/admin/users'); setIsSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-all cursor-pointer text-left ${
               theme === 'light'
-                ? 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
                 : 'text-slate-300 hover:bg-white/5 hover:text-white'
             }`}
           >
-            <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <span>User Accounts</span>
+            <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>User Accounts</span>
           </button>
 
-          <div className={`border-t my-4 pt-4 space-y-1.5 ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
+          <div className="border-t border-white/5 my-4 pt-4 space-y-1.5">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Workspace Navigation</p>
 
             <button
               onClick={() => { navigate('/admin/dashboard'); setIsSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
                 theme === 'light'
-                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'text-slate-950 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-350 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <svg className="w-4.5 h-4.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-blue-505'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <rect x="3" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
                 <rect x="14" y="3" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
                 <rect x="3" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
                 <rect x="14" y="14" width="7" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span>Back to Admin Dashboard</span>
+              <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-350'}`}>Back to Admin Dashboard</span>
             </button>
 
             <button
               onClick={() => { navigate('/'); }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
                 theme === 'light'
-                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              <span>Back to Public Site</span>
+              <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Back to Public Site</span>
             </button>
 
             <button
               onClick={() => { navigate('/admin/users'); setIsSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
                 theme === 'light'
-                  ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <svg className="w-4.5 h-4.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
-              <span>User Directory</span>
+              <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>User Directory</span>
+            </button>
+
+            <button
+              onClick={() => { navigate('/admin/reports'); setIsSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Reports & Analytics</span>
+            </button>
+
+            <button
+              onClick={() => { navigate('/admin/kms'); setIsSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
+                theme === 'light'
+                  ? 'text-slate-955 hover:bg-slate-100 hover:text-black font-extrabold'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <svg className={`w-4.5 h-4.5 shrink-0 ${theme === 'light' ? 'text-slate-900' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span className={`${theme === 'light' ? 'text-slate-950' : 'text-slate-300'}`}>Knowledge Management</span>
             </button>
 
             <button
               onClick={handleLogout}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-left ${
                 theme === 'light'
-                  ? 'text-rose-600 hover:bg-rose-50 hover:text-rose-800'
+                  ? 'text-rose-650 hover:bg-rose-50 hover:text-rose-800 font-black'
                   : 'text-rose-350 hover:bg-rose-900/20 hover:text-rose-200'
               }`}
             >
@@ -639,33 +711,10 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 text-xs font-bold text-slate-500">
-            {/* Dynamic Premium Theme Switcher Button */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl hover:bg-slate-100 text-slate-550 hover:text-slate-800 transition-all cursor-pointer focus:outline-none border border-slate-200/80 shadow-3xs flex items-center gap-2"
-              title={`Switch to ${theme === 'light' ? 'Dark Green' : 'Light White'} Theme`}
-            >
-              {theme === 'light' ? (
-                <>
-                  <svg className="w-4.5 h-4.5 text-emerald-600 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
-                  <span className="text-[10px] uppercase font-bold text-slate-700 tracking-wider">Dark Green</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-4.5 h-4.5 text-amber-500 animate-spin-slow transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                  </svg>
-                  <span className="text-[10px] uppercase font-bold text-slate-600 tracking-wider">Light White</span>
-                </>
-              )}
-            </button>
-
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#eff7f5] text-[#08493d] border border-emerald-250 rounded-lg">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              Live Sandbox Server
+          <div className="flex items-center gap-4 text-xs font-bold text-slate-500">
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+              <span className="font-extrabold tracking-wide">System Online</span>
             </span>
           </div>
         </header>
@@ -743,8 +792,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Primary Main Modules Cards Grid (The Core Requested Panels) */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Card 1: e-Hostel Logistics Dashboard Card */}
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col group text-left">
               {/* Premium Gradient Top Cap */}
@@ -858,6 +906,65 @@ export default function AdminDashboard() {
                   className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow hover:translate-x-0.5 transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   Enter KMS Portal
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Card 3: Reports Center & Interactive Analytics Card */}
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col group text-left">
+              {/* Premium Gradient Top Cap */}
+              <div className="h-2 bg-gradient-to-r from-purple-500 to-indigo-700"></div>
+              
+              <div className="p-6 flex-grow space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="w-12 h-12 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-center text-purple-800 group-hover:scale-105 transition-transform">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-purple-100 text-purple-850 border border-purple-200 rounded-full">
+                    Reports & Analytics
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-lg font-black text-slate-800 group-hover:text-purple-900">Reports Center & Interactive Analytics</h3>
+                  <p className="text-xs text-slate-450 leading-relaxed font-semibold">
+                    Dynamic dashboard analytics tracking MoSPI trainee distributions. Access interactive reports, apply multi-dimensional filters (State, Cadre, Designation, Training Type), and generate PDF/Excel summaries.
+                  </p>
+                </div>
+
+                {/* Module Metrics grid inside card */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Reports</p>
+                    <p className="text-sm font-extrabold text-slate-700 mt-1">1,280 Generated</p>
+                  </div>
+                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Dynamic Filters</p>
+                    <p className="text-sm font-extrabold text-indigo-700 mt-1">8 Composite Scales</p>
+                  </div>
+                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Certifications</p>
+                    <p className="text-sm font-extrabold text-purple-850 mt-1">450 Certified</p>
+                  </div>
+                  <div className="bg-slate-50 border border-gray-150 p-3 rounded-xl">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Data Sync</p>
+                    <p className="text-sm font-extrabold text-emerald-700 mt-1">Real-Time Reactive</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enter Module trigger */}
+              <div className="px-6 py-4 bg-slate-50 border-t border-gray-150 flex justify-end">
+                <button
+                  onClick={() => navigate('/admin/reports')}
+                  className="px-5 py-2.5 bg-purple-650 hover:bg-purple-750 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow hover:translate-x-0.5 transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  Enter Analytics Center
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
