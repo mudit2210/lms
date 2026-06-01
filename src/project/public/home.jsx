@@ -114,11 +114,85 @@ const partnerCourses = [
   }
 ];
 
+const renderImageFallback = (course) => {
+  const isScholarship = course.category === 'scholarship';
+  const fromColor = isScholarship ? 'from-rose-500' : 'from-[#0B4F9C]';
+  const toColor = isScholarship ? 'to-pink-600' : 'to-blue-700';
+  
+  // Custom SVG icon based on partner/title
+  let icon = (
+    <svg className="w-8 h-8 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+    </svg>
+  );
+
+  const partnerUpper = course.partner.toUpperCase();
+  if (partnerUpper.includes('AWS')) {
+    icon = (
+      <svg className="w-8 h-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+      </svg>
+    );
+  } else if (partnerUpper.includes('ADOBE')) {
+    icon = (
+      <svg className="w-8 h-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122l9.37-9.37a2.121 2.121 0 113 3l-9.37 9.37a4.5 4.5 0 01-1.697 1.096l-3.2 1.067 1.067-3.2a4.5 4.5 0 011.096-1.697z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5.878 18.122l4.244-4.244m1.414-1.414L15 11" />
+      </svg>
+    );
+  } else if (partnerUpper.includes('ROBOTICS') || partnerUpper.includes('AUTOFINA')) {
+    icon = (
+      <svg className="w-8 h-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.68-.34-1.34-.8-1.92-1.38s-1.04-1.24-1.38-1.92M13.5 8.25V6a2.25 2.25 0 00-2.25-2.25H9A2.25 2.25 0 006.75 6v2.25m6.75 0h1.5a2.25 2.25 0 012.25 2.25v1.5m-10.5-3.75h-1.5A2.25 2.25 0 003 10.5v1.5m1.5 5.25v2.25A2.25 2.25 0 006.75 21.75h1.5a2.25 2.25 0 002.25-2.25V17.25m6-9v9m-9-9h9M6 10.5h12M6 13.5h12" />
+      </svg>
+    );
+  } else if (partnerUpper.includes('EC- COUNCIL') || partnerUpper.includes('EC-COUNCIL')) {
+    icon = (
+      <svg className="w-8 h-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+      </svg>
+    );
+  } else if (partnerUpper.includes('PHYTEC')) {
+    icon = (
+      <svg className="w-8 h-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+      </svg>
+    );
+  } else if (partnerUpper.includes('RED HAT')) {
+    icon = (
+      <svg className="w-8 h-8 text-white/95" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+      </svg>
+    );
+  }
+
+  return (
+    <div className={`w-full h-full bg-gradient-to-br ${fromColor} ${toColor} flex flex-col items-center justify-center p-4 relative overflow-hidden group-hover:scale-105 duration-300 transition-transform`}>
+      {/* Subtle overlay lines/dots for textures */}
+      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      
+      <div className="z-10 flex flex-col items-center justify-center space-y-2">
+        <div className="p-2.5 bg-white/10 rounded-xl backdrop-blur-xs border border-white/20 shadow-sm flex items-center justify-center">
+          {icon}
+        </div>
+        <span className="text-[9px] font-black tracking-widest text-white/90 uppercase text-center font-sans">
+          {course.partner}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('news');
   const [activePartnerTab, setActivePartnerTab] = useState('ALL');
   const [selectedCourseType, setSelectedCourseType] = useState('all'); 
   const [currentCoursePage, setCurrentCoursePage] = useState(0);
+  const [imageErrors, setImageErrors] = useState({});
+
+  const handleImageError = (courseId) => {
+    setImageErrors(prev => ({ ...prev, [courseId]: true }));
+  };
 
   const handlePartnerTabChange = (tab) => {
     setActivePartnerTab(tab);
@@ -555,11 +629,16 @@ export default function Home() {
                     >
                       {/* Top graphic part with Duration tag */}
                       <div className="relative h-36 w-full overflow-hidden bg-slate-100 shrink-0 border-b border-slate-150">
-                        <img
-                          src={course.image}
-                          alt={course.title}
-                          className="w-full h-full object-cover group-hover:scale-105 duration-300 transition-transform"
-                        />
+                        {!imageErrors[course.id] ? (
+                          <img
+                            src={course.image}
+                            alt={course.title}
+                            className="w-full h-full object-cover group-hover:scale-105 duration-300 transition-transform"
+                            onError={() => handleImageError(course.id)}
+                          />
+                        ) : (
+                          renderImageFallback(course)
+                        )}
                         
                         {/* Vertical Duration Badge Tag (Matches layout exactly - pinned to absolute right-0) */}
                         <div className="absolute right-0 top-0 bottom-0 bg-white border-l border-slate-200 px-2 flex items-center justify-center shadow-2xs">
