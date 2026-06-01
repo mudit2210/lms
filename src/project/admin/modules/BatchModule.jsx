@@ -98,7 +98,7 @@ export default function BatchModule({ theme }) {
         <div>
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
             <span className="w-2.5 h-6 bg-violet-600 rounded-full inline-block"></span>
-            👥 Groups & Batch Management Workspace
+            Groups & Batch Management Workspace
           </h2>
           <p className="text-xs text-slate-400 font-semibold mt-1">Configure academic trainee cohorts, allocate coordinators, and schedule alerts.</p>
         </div>
@@ -107,10 +107,10 @@ export default function BatchModule({ theme }) {
       {/* Batch Subtabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3 font-sans">
         {[
-          { id: 'all', label: '🗂️ All Batches' },
-          { id: 'create', label: '➕ Create Batch' },
-          { id: 'membership', label: '👥 Group Membership' },
-          { id: 'notifications', label: '📢 Dispatch Notifications' }
+          { id: 'all', label: 'All Batches' },
+          { id: 'create', label: 'Create Batch' },
+          { id: 'membership', label: 'Group Membership' },
+          { id: 'notifications', label: 'Dispatch Notifications' }
         ].map(sub => (
           <button
             key={sub.id}

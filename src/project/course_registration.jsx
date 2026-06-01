@@ -96,7 +96,7 @@ export default function CourseRegistration() {
             Thank you, <strong className="text-slate-700">{formData.fullName}</strong>. Your nomination for <em className="text-emerald-800 font-semibold">{formData.course}</em> has been recorded successfully.
           </p>
           <div className="bg-amber-50 text-amber-800 border border-amber-200 text-xs p-3 rounded-lg font-medium leading-relaxed">
-            ⚠️ **Admin Approval Pending**: Your self-registration will be reviewed by the Course Director. You will receive login details upon approval.
+            **Admin Approval Pending**: Your self-registration will be reviewed by the Course Director. You will receive login details upon approval.
           </div>
           <button 
             onClick={() => window.location.href = '/'}
@@ -255,7 +255,7 @@ export default function CourseRegistration() {
           {showMfaInput && (
             <div className="space-y-1.5 p-4 bg-emerald-50/50 border border-emerald-100 rounded-lg animate-fadeIn">
               <label className="block text-xs font-bold text-slate-800">
-                🔒 Multi-Factor Authentication Code (MFA)
+                Multi-Factor Authentication Code (MFA)
               </label>
               <p className="text-[11px] text-slate-500 mb-2">
                 Please enter the 6-digit verification code sent to your registered email to authenticate this nomination.

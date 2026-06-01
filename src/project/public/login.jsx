@@ -407,14 +407,13 @@ export default function Login() {
               {/* Gov SSO Buttons */}
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: 'Janparichay', badge: 'NIC', badgeColor: 'bg-slate-100 text-slate-600', icon: '🛡️', action: () => { setShowSsoModal(true); setSsoStep(1); setSsoUsername(''); setSsoOtp(''); } },
-                  { label: 'e-Pramaan', badge: 'GOV', badgeColor: 'bg-blue-50 text-blue-700', icon: '🔐', action: () => handleSocialLogin('epramaan') },
-                  { label: 'Aadhaar OTP', badge: 'UIDAI', badgeColor: 'bg-emerald-50 text-emerald-700', icon: '📱', action: () => { const u = prompt('Enter Aadhaar Number:'); if (u) { const o = prompt('Enter OTP:'); if (o) handleSocialLogin('aadhaar'); } } },
-                  { label: 'DSC eSign', badge: 'CCA', badgeColor: 'bg-violet-50 text-violet-700', icon: '💾', action: () => handleSocialLogin('dsc') },
+                  { label: 'Janparichay', badge: 'NIC', badgeColor: 'bg-slate-100 text-slate-600', action: () => { setShowSsoModal(true); setSsoStep(1); setSsoUsername(''); setSsoOtp(''); } },
+                  { label: 'e-Pramaan', badge: 'GOV', badgeColor: 'bg-blue-50 text-blue-700', action: () => handleSocialLogin('epramaan') },
+                  { label: 'Aadhaar OTP', badge: 'UIDAI', badgeColor: 'bg-emerald-50 text-emerald-700', action: () => { const u = prompt('Enter Aadhaar Number:'); if (u) { const o = prompt('Enter OTP:'); if (o) handleSocialLogin('aadhaar'); } } },
+                  { label: 'DSC eSign', badge: 'CCA', badgeColor: 'bg-violet-50 text-violet-700', action: () => handleSocialLogin('dsc') },
                 ].map(b => (
                   <button key={b.label} type="button" onClick={b.action}
                     className="flex items-center gap-2 px-3 py-2.5 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 transition-all cursor-pointer shadow-sm hover:shadow">
-                    <span className="text-base">{b.icon}</span>
                     <span className="flex-1 text-left truncate">{b.label}</span>
                     <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${b.badgeColor}`}>{b.badge}</span>
                   </button>

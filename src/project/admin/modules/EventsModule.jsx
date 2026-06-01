@@ -235,7 +235,7 @@ export default function EventsModule({ activeSubTab, setActiveSubTab, theme }) {
                 <p className="text-xs text-slate-400 font-semibold mt-0.5">Click any highlighted day event to display scheduled session insights.</p>
               </div>
               <span className="bg-amber-50 border border-amber-250 text-amber-800 font-black px-3 py-1 rounded-xl text-xs">
-                📅 June 2026
+                June 2026
               </span>
             </div>
 
@@ -497,10 +497,10 @@ export default function EventsModule({ activeSubTab, setActiveSubTab, theme }) {
             <div className="space-y-3 font-semibold text-slate-600 text-xs">
               <p className="text-slate-500 leading-normal font-medium">{selectedDayEvent.desc || 'No further description details available.'}</p>
               <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-[11px]">
-                <p>🗓️ Date: <span className="text-slate-800 font-bold">{selectedDayEvent.date}</span></p>
-                <p>📍 Location: <span className="text-slate-800 font-bold">{selectedDayEvent.venue}</span></p>
-                <p>👥 Enrolled: <span className="text-slate-800 font-bold">{selectedDayEvent.registrants} / {selectedDayEvent.capacity}</span></p>
-                <p>✨ State: <span className="text-slate-850 capitalize font-bold">{selectedDayEvent.status.replace('_', ' ')}</span></p>
+                <p>Date: <span className="text-slate-800 font-bold">{selectedDayEvent.date}</span></p>
+                <p>Location: <span className="text-slate-800 font-bold">{selectedDayEvent.venue}</span></p>
+                <p>Enrolled: <span className="text-slate-800 font-bold">{selectedDayEvent.registrants} / {selectedDayEvent.capacity}</span></p>
+                <p>State: <span className="text-slate-850 capitalize font-bold">{selectedDayEvent.status.replace('_', ' ')}</span></p>
               </div>
             </div>
             <div className="pt-2 flex justify-end">

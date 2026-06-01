@@ -65,7 +65,7 @@ export default function VersionCompareModal({ showCompareModal, onClose, onResto
             {/* Left Active Pane */}
             <div className="bg-white border p-4 rounded-xl shadow space-y-2 h-[180px] overflow-y-auto">
               <p className="text-[9px] font-extrabold text-emerald-800 uppercase tracking-wider border-b pb-1">
-                🟢 Active Version {showCompareModal.version} text snippet
+                Active Version {showCompareModal.version} text snippet
               </p>
               <p className="leading-relaxed text-slate-700 whitespace-pre-wrap">
                 {showCompareModal.versions[0]?.contentSnippet || 'No snippet available.'}
@@ -75,7 +75,7 @@ export default function VersionCompareModal({ showCompareModal, onClose, onResto
             {/* Right Historical Pane */}
             <div className="bg-white border p-4 rounded-xl shadow space-y-2 h-[180px] overflow-y-auto">
               <p className="text-[9px] font-extrabold text-rose-800 uppercase tracking-wider border-b pb-1">
-                🔴 Historical Version 1.0 text snippet
+                Historical Version 1.0 text snippet
               </p>
               <p className="leading-relaxed text-slate-700 whitespace-pre-wrap">
                 {showCompareModal.versions[showCompareModal.versions.length - 1]?.contentSnippet || 'No snippet available.'}

@@ -84,7 +84,7 @@ export default function AssignmentModule({ theme }) {
         <div>
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
             <span className="w-2.5 h-6 bg-pink-500 rounded-full inline-block"></span>
-            📝 Assignment Desk & Evaluation Portal
+            Assignment Desk & Evaluation Portal
           </h2>
           <p className="text-xs text-slate-450 font-semibold mt-1">Publish training handouts, evaluate cryptographic submittal vaults, and post grades.</p>
         </div>
@@ -93,10 +93,10 @@ export default function AssignmentModule({ theme }) {
       {/* Subtabs Menu */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3 font-sans">
         {[
-          { id: 'desk', label: '✍️ Assignment Desk' },
-          { id: 'vault', label: '🗄️ Submission Vault' },
-          { id: 'grading', label: '⚖️ Evaluation & Grading' },
-          { id: 'leaderboard', label: '🏆 Marks Leaderboard' }
+          { id: 'desk', label: 'Assignment Desk' },
+          { id: 'vault', label: 'Submission Vault' },
+          { id: 'grading', label: 'Evaluation & Grading' },
+          { id: 'leaderboard', label: 'Marks Leaderboard' }
         ].map(sub => (
           <button
             key={sub.id}

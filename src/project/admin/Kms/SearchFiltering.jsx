@@ -34,7 +34,11 @@ export default function SearchFiltering({
               : 'border-gray-300 focus:ring-[#08493d]'
           }`}
         />
-        <span className="absolute left-3.5 top-7 text-slate-400 text-sm">🔍</span>
+        <div className="absolute left-3 top-[29px] text-slate-400">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
       </div>
 
       {/* Format Category selector */}

@@ -101,7 +101,7 @@ export default function AttendanceModule({ theme }) {
         <div>
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
             <span className="w-2.5 h-6 bg-cyan-500 rounded-full inline-block"></span>
-            📊 Attendance Management Portal
+            Attendance Management Portal
           </h2>
           <p className="text-xs text-slate-450 font-semibold mt-1">Audit session logs, execute physical biometric checkpoints, or trigger remote check-ins.</p>
         </div>
@@ -110,9 +110,9 @@ export default function AttendanceModule({ theme }) {
       {/* Subtabs bar */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3 font-sans">
         {[
-          { id: 'tracker', label: '📋 Session registers' },
-          { id: 'biometric', label: '📳 NIC Biometrics Gateway' },
-          { id: 'reports', label: '📊 Summary Reports' }
+          { id: 'tracker', label: 'Session Registers' },
+          { id: 'biometric', label: 'NIC Biometrics Gateway' },
+          { id: 'reports', label: 'Summary Reports' }
         ].map(sub => (
           <button
             key={sub.id}

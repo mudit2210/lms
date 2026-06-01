@@ -88,7 +88,7 @@ export default function TNAModule({ theme }) {
         <div>
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
             <span className="w-2.5 h-6 bg-rose-500 rounded-full inline-block"></span>
-            🎯 Training Need Assessment (TNA) Dashboard
+            Training Need Assessment (TNA) Dashboard
           </h2>
           <p className="text-xs text-slate-400 font-semibold mt-1">Identify academic requirements, review skill indices, and map official syllabi.</p>
         </div>
@@ -97,11 +97,11 @@ export default function TNAModule({ theme }) {
       {/* TNA subtabs menu bar */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3 font-sans">
         {[
-          { id: 'overview', label: '📊 TNA Overview' },
-          { id: 'inputs', label: '📥 Department Inputs' },
-          { id: 'gap_analysis', label: '📈 Skill Gap Matrix' },
-          { id: 'approvals', label: '⚖️ Approvals Queue' },
-          { id: 'mapping', label: '🔗 Course Mapping' }
+          { id: 'overview', label: 'TNA Overview' },
+          { id: 'inputs', label: 'Department Inputs' },
+          { id: 'gap_analysis', label: 'Skill Gap Matrix' },
+          { id: 'approvals', label: 'Approvals Queue' },
+          { id: 'mapping', label: 'Course Mapping' }
         ].map(sub => (
           <button
             key={sub.id}

@@ -379,14 +379,14 @@ export default function AdminDashboard() {
             setActiveSubTab={setActiveSubTab}
             setIsSidebarOpen={setIsSidebarOpen}
             subItems={[
-              { id: 'all', label: '🗂️ Overview Summary' },
-              { id: 'induction', label: '🎓 Induction Training' },
-              { id: 'refresher', label: '🔄 Refresher Training' },
-              { id: 'domain', label: '💻 Domain Training' },
-              { id: 'international', label: '🌎 International Training' },
-              { id: 'schedules', label: '🗓️ Session Scheduling' },
-              { id: 'faculty', label: '👥 Faculty Mapping' },
-              { id: 'venues', label: '📍 Venue Allocation' }
+              { id: 'all', label: 'Overview Summary' },
+              { id: 'induction', label: 'Induction Training' },
+              { id: 'refresher', label: 'Refresher Training' },
+              { id: 'domain', label: 'Domain Training' },
+              { id: 'international', label: 'International Training' },
+              { id: 'schedules', label: 'Session Scheduling' },
+              { id: 'faculty', label: 'Faculty Mapping' },
+              { id: 'venues', label: 'Venue Allocation' }
             ]}
           />
 
@@ -407,11 +407,11 @@ export default function AdminDashboard() {
             setActiveSubTab={setActiveSubTab}
             setIsSidebarOpen={setIsSidebarOpen}
             subItems={[
-              { id: 'all', label: '🗂️ Events Overview' },
-              { id: 'training_cal', label: '📅 Training Calendar' },
-              { id: 'faculty_cal', label: '👨‍🏫 Faculty Calendar' },
-              { id: 'trainee_cal', label: '👨‍🎓 Trainee Calendar' },
-              { id: 'campus_events', label: '🏅 Campus Events' }
+              { id: 'all', label: 'Events Overview' },
+              { id: 'training_cal', label: 'Training Calendar' },
+              { id: 'faculty_cal', label: 'Faculty Calendar' },
+              { id: 'trainee_cal', label: 'Trainee Calendar' },
+              { id: 'campus_events', label: 'Campus Events' }
             ]}
           />
 
@@ -633,7 +633,7 @@ export default function AdminDashboard() {
             </button>
             <div>
               <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                👤 Admin Command Console
+                Admin Command Console
               </h1>
               <p className="text-xs text-slate-450 font-semibold mt-0.5">National Statistical Training Academy (NSSTA) • Portal Management Hub</p>
             </div>
@@ -886,9 +886,9 @@ export default function AdminDashboard() {
                 Control user account profiles and credentials database files. Manage roles assignment configuration scopes (Super Admins, Content Managers, Trainers, Course Directors, Wardens, Trainee Learners).
               </p>
               <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500 font-bold pt-1">
-                <span>👑 System Admins: <strong>6 Accounts</strong></span>
-                <span>🎓 Faculty: <strong>42 Accounts</strong></span>
-                <span>📖 Active Trainees: <strong>1,200 Accounts</strong></span>
+                <span>System Admins: <strong>6 Accounts</strong></span>
+                <span>Faculty: <strong>42 Accounts</strong></span>
+                <span>Active Trainees: <strong>1,200 Accounts</strong></span>
               </div>
             </div>
 

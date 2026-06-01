@@ -480,6 +480,8 @@ export default function Home() {
             <DashboardTab 
               setActiveSidebarTab={setActiveSidebarTab}
               setShowDetailsModal={setShowDetailsModal}
+              setShowAllotModal={setShowAllotModal}
+              setShowTicketModal={setShowTicketModal}
               allotments={allotments}
               tickets={tickets}
             />
@@ -600,13 +602,13 @@ export default function Home() {
 
           {/* Footer Copyright bar */}
           <footer className="pt-6 border-t border-gray-200/50 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] sm:text-xs text-slate-400 font-semibold select-none">
-            <span>© 2025 LMS. All rights reserved.</span>
+            <span>© 2025 NSSTA. All rights reserved.</span>
             <div className="flex gap-4">
-              <a href="#privacy" className="hover:text-slate-650">Privacy Policy</a>
-              <span>•</span>
-              <a href="#terms" className="hover:text-slate-655" >Terms of Use</a>
-              <span>•</span>
-              <a href="#support" className="hover:text-slate-650">Help & Support</a>
+              <a href="#privacy" className="hover:text-slate-600">Privacy Policy</a>
+              <span>|</span>
+              <a href="#terms" className="hover:text-slate-600" >Terms of Use</a>
+              <span>|</span>
+              <a href="#support" className="hover:text-slate-600">Help & Support</a>
             </div>
           </footer>
 

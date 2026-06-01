@@ -185,7 +185,7 @@ export default function CMSModule({ theme }) {
         <div>
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
             <span className="w-2.5 h-6 bg-emerald-600 rounded-full inline-block"></span>
-            📚 MoSPI Content & Syllabus LCMS Workspace
+            MoSPI Content & Syllabus LCMS Workspace
           </h2>
           <p className="text-xs text-slate-450 font-semibold mt-1">Design academic course outlines, upload instructional media files, and manage version history logs.</p>
         </div>
@@ -194,9 +194,9 @@ export default function CMSModule({ theme }) {
       {/* Subtabs Menu */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3 font-sans">
         {[
-          { id: 'tree', label: '🌳 Curriculum outline' },
-          { id: 'upload', label: '📁 Media asset uploads' },
-          { id: 'version_control', label: '🛡️ Version Control Ledger' }
+          { id: 'tree', label: 'Curriculum Outline' },
+          { id: 'upload', label: 'Media Asset Uploads' },
+          { id: 'version_control', label: 'Version Control Ledger' }
         ].map(sub => (
           <button
             key={sub.id}
