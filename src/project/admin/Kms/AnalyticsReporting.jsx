@@ -1,4 +1,5 @@
 import React from 'react';
+import IndiaMap from './IndiaMap';
 
 export default function AnalyticsReporting({
   repoFiles,
@@ -43,7 +44,7 @@ export default function AnalyticsReporting({
       </div>
 
       {/* Main drive charts log block */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Storage analysis */}
         <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-2xs space-y-4">
@@ -92,6 +93,48 @@ export default function AnalyticsReporting({
               <span className="font-bold">GovThreatGuard threat detection rate:</span>
               <span className="font-black text-emerald-700">100.0% (Clean)</span>
             </div>
+          </div>
+        </div>
+
+        {/* Learner Distribution by State */}
+        <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-2xs space-y-4">
+          <div>
+            <h4 className="font-extrabold text-[#08493d] uppercase tracking-wider text-xs">LEARNER DISTRIBUTION BY STATE</h4>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Statewise training enrollment count</span>
+          </div>
+
+          <div className="flex flex-col items-center">
+            {/* India SVG Map */}
+            <IndiaMap className="w-36 h-36 my-1 drop-shadow-xs" />
+
+            {/* Legend */}
+            <div className="flex items-center gap-2 w-28 mb-3">
+              <span className="text-[9px] text-slate-500 font-bold">Low</span>
+              <div className="h-2.5 flex-grow rounded-full bg-gradient-to-r from-[#93c5fd] to-[#1e40af] border border-blue-200"></div>
+              <span className="text-[9px] text-slate-500 font-bold">High</span>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="space-y-0 border-t border-slate-200">
+            {[
+              { state: 'Uttar Pradesh', count: '30,117' },
+              { state: 'Rajasthan', count: '25,380' },
+              { state: 'Maharashtra', count: '21,740' },
+              { state: 'Karnataka', count: '18,549' },
+              { state: 'Madhya Pradesh', count: '16,255' }
+            ].map((item) => (
+              <div key={item.state} className="flex justify-between items-center py-1.5 border-b border-slate-100 last:border-0">
+                <span className="text-[11px] text-slate-700 font-medium">{item.state}</span>
+                <span className="text-[11px] text-slate-900 font-bold">{item.count}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-1 text-center">
+            <button className="text-[10px] text-emerald-800 font-extrabold hover:underline">
+              View All States
+            </button>
           </div>
         </div>
 

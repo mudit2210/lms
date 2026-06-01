@@ -1,4 +1,5 @@
 import React from 'react';
+import IndiaMap from './IndiaMap';
 
 export default function ReportsAnalytics({
   auditLogs,
@@ -101,6 +102,48 @@ export default function ReportsAnalytics({
           </div>
         </div>
 
+      </div>
+
+      {/* Third row: Map and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+        {/* State Distribution Card */}
+        <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-150 shadow-2xs">
+          <h3 className="font-black text-[#0f172a] uppercase tracking-wider border-b border-slate-300 pb-3 text-xs mb-4">LEARNER DISTRIBUTION BY STATE</h3>
+          
+          <div className="flex flex-col items-center">
+            {/* India SVG Map */}
+            <IndiaMap className="w-36 h-36 my-4 drop-shadow-sm" />
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center gap-2 w-32 mb-4">
+            <span className="text-[10px] text-slate-500 font-bold">Low</span>
+            <div className="h-3.5 flex-grow rounded-full bg-gradient-to-r from-[#93c5fd] to-[#1e40af] border border-blue-200 shadow-inner"></div>
+            <span className="text-[10px] text-slate-500 font-bold">High</span>
+          </div>
+
+          {/* Table */}
+          <div className="space-y-0 border-t border-slate-300">
+            {[
+              { state: 'Uttar Pradesh', count: '30,117' },
+              { state: 'Rajasthan', count: '25,380' },
+              { state: 'Maharashtra', count: '21,740' },
+              { state: 'Karnataka', count: '18,549' },
+              { state: 'Madhya Pradesh', count: '16,255' }
+            ].map((item) => (
+              <div key={item.state} className="flex justify-between items-center py-2.5 border-b border-slate-300">
+                <span className="text-[11px] text-slate-700 font-medium">{item.state}</span>
+                <span className="text-[11px] text-[#0f172a] font-bold">{item.count}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-5 text-center">
+            <button className="text-[11px] text-[#0f172a] font-black hover:underline">
+              View All States
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>

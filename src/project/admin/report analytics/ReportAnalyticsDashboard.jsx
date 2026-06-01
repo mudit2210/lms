@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import IndiaMap from '../Kms/IndiaMap';
 
 export default function ReportAnalyticsDashboard() {
   const navigate = useNavigate();
@@ -522,14 +523,7 @@ export default function ReportAnalyticsDashboard() {
             
             {/* Outline map of India simulation */}
             <div className="py-4 flex justify-center relative">
-              <svg className="w-32 h-36 opacity-80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Simulated India Map polygon paths */}
-                <path d="M50 5 L75 25 L85 50 L65 75 L50 95 L25 80 L15 50 L35 20 Z" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1" />
-                {/* Active shaded states */}
-                <path d="M50 5 L65 20 L55 35 L45 25 Z" fill="#3b82f6" title="Uttar Pradesh" />
-                <path d="M25 35 L45 25 L35 50 L20 40 Z" fill="#2563eb" title="Rajasthan" />
-                <path d="M35 50 L55 55 L45 75 L30 65 Z" fill="#1d4ed8" title="Maharashtra" />
-              </svg>
+              <IndiaMap className="w-32 h-36 opacity-80" />
               
               {/* Legend bar */}
               <div className="absolute bottom-1 left-2 flex items-center gap-1 text-[8.5px] font-bold text-slate-400">
