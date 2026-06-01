@@ -70,6 +70,7 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(userObj));
       window.dispatchEvent(new Event('auth-change'));
       if (activeRole === 'admin') navigate('/admin/dashboard');
+      else if (activeRole === 'student') navigate('/trainee/dashboard');
       else navigate('/');
     }, 1400);
   };
@@ -105,7 +106,8 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(userObj));
       window.dispatchEvent(new Event('auth-change'));
       setShowSsoModal(false);
-      navigate('/');
+      if (activeRole === 'student') navigate('/trainee/dashboard');
+      else navigate('/');
     }, 1500);
   };
 
@@ -117,6 +119,7 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(userObj));
       window.dispatchEvent(new Event('auth-change'));
       if (activeRole === 'admin') navigate('/admin/dashboard');
+      else if (activeRole === 'student') navigate('/trainee/dashboard');
       else navigate('/');
     }, 1200);
   };
