@@ -270,12 +270,12 @@ export default function Home() {
               Empowering official statisticians across India and the globe. LMS coordinates and conducts training, promotes statistical research, and maintains the primary Knowledge Portal for official statistics in India.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
-              <button className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-[#08493d] font-bold text-sm rounded shadow transition-all duration-200 transform hover:-translate-y-0.5">
+              {/* <button className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-[#08493d] font-bold text-sm rounded shadow transition-all duration-200 transform hover:-translate-y-0.5">
                 Go to Classroom
               </button>
               <button className="px-5 py-2.5 border border-emerald-300/40 hover:bg-white/10 text-white font-semibold text-sm rounded transition-all duration-200">
                 Browse Repository
-              </button>
+              </button> */}
             </div>
           </div>
 
