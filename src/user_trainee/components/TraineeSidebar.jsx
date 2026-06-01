@@ -110,8 +110,28 @@ const NAV_ITEMS = [
   },
 ];
 
+import { t } from '../locales';
+
+const SIDEBAR_KEYS = {
+  home: 'dashboard',
+  courses: 'my_courses',
+  trainings: 'my_trainings',
+  newcourses: 'new_courses',
+  schedule: 'schedule',
+  eventscheduled: 'event_schedule',
+  calendar: 'calendar_view',
+  classroom: 'classroom',
+  group: 'group_join',
+  assignments: 'assignments',
+  attendance: 'attendances',
+  certificates: 'certificates',
+  grades: 'grades_results',
+  hostel: 'e_hostel',
+  profile: 'my_profile',
+};
+
 export default function TraineeSidebar({
-  activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, user, handleLogout
+  activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, user, handleLogout, lang = 'en'
 }) {
   const initials = user?.name
     ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
@@ -129,7 +149,7 @@ export default function TraineeSidebar({
           </div>
           <div>
             <p className="trainee-sidebar-title">ISS Academy</p>
-            <p className="trainee-sidebar-subtitle">Trainee Portal</p>
+            <p className="trainee-sidebar-subtitle">{t('trainee_portal', lang)}</p>
           </div>
         </div>
         <button className="trainee-sidebar-close lg-hidden" onClick={() => setIsSidebarOpen(false)}>
@@ -143,29 +163,33 @@ export default function TraineeSidebar({
       <div className="trainee-user-card">
         <div className="trainee-avatar-lg">{initials}</div>
         <div className="trainee-user-info">
-          <p className="trainee-user-name">{user?.name || 'Trainee User'}</p>
-          <p className="trainee-user-role">Trainee / Learner</p>
-          <span className="trainee-badge-green">46th ISS Batch</span>
+          <p className="trainee-user-name">{user?.name || (lang === 'hi' ? 'प्रशिक्षु अधिकारी' : 'Trainee Officer')}</p>
+          <p className="trainee-user-role">{lang === 'hi' ? 'प्रशिक्षु / शिक्षार्थी' : 'Trainee / Learner'}</p>
+          <span className="trainee-badge-green">{lang === 'hi' ? '46वां आईएसएस बैच' : '46th ISS Batch'}</span>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="trainee-nav">
-        <p className="trainee-nav-section-label">Learning Portal</p>
-        {NAV_ITEMS.map(item => (
-          <button
-            key={item.id}
-            onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); }}
-            className={`trainee-nav-item ${activeTab === item.id ? 'active' : ''}`}
-          >
-            <span className="trainee-nav-icon">{item.icon}</span>
-            <span className="trainee-nav-label">{item.label}</span>
-            {item.badge && <span className="trainee-nav-badge">{item.badge}</span>}
-          </button>
-        ))}
+        <p className="trainee-nav-section-label">{t('learning_portal', lang)}</p>
+        {NAV_ITEMS.map(item => {
+          const key = SIDEBAR_KEYS[item.id] || item.id;
+          const displayLabel = t(key, lang);
+          return (
+            <button
+              key={item.id}
+              onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); }}
+              className={`trainee-nav-item ${activeTab === item.id ? 'active' : ''}`}
+            >
+              <span className="trainee-nav-icon">{item.icon}</span>
+              <span className="trainee-nav-label">{displayLabel}</span>
+              {item.badge && <span className="trainee-nav-badge">{item.badge}</span>}
+            </button>
+          );
+        })}
 
         <div className="trainee-nav-divider" />
-        <p className="trainee-nav-section-label">Account</p>
+        <p className="trainee-nav-section-label">{t('account', lang)}</p>
 
         <button onClick={handleLogout} className="trainee-nav-item logout">
           <span className="trainee-nav-icon">
@@ -173,14 +197,14 @@ export default function TraineeSidebar({
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
           </span>
-          <span className="trainee-nav-label">Sign Out</span>
+          <span className="trainee-nav-label">{t('sign_out', lang)}</span>
         </button>
       </nav>
 
       {/* Footer */}
       <div className="trainee-sidebar-footer">
-        <p>System Version 3.1.5</p>
-        <p className="trainee-footer-sub">MoSPI · Secure Gov Portal</p>
+        <p>{lang === 'hi' ? 'प्रणाली संस्करण 3.1.5' : 'System Version 3.1.5'}</p>
+        <p className="trainee-footer-sub">{t('mospi_secure', lang)}</p>
       </div>
     </aside>
   );
